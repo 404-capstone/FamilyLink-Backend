@@ -1,5 +1,6 @@
 package capstone._4.controller;
 
+import capstone._4.dto.SocialResultDto;
 import capstone._4.service.SocialService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class SocialController {
 
     @PostMapping("/login/naver")
     public ResponseEntity<?> naverLogin(@RequestHeader(HttpHeaders.AUTHORIZATION)String authToken){
-        socialService.naverLoginService(authToken);
+        SocialResultDto socialResultDto =socialService.naverLoginService(authToken);
         return ResponseEntity.ok().build();
     }
 }

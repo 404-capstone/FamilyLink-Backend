@@ -8,11 +8,18 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
-@RequiredArgsConstructor
 @Getter
-@Setter
 public class User {
+
+    public User() {
+
+    }
+
+    public User(String social, String email, String username){
+        this.social=social;
+        this.email=email;
+        this.username=username;
+    }
 
     @Id
     @Column(name="u_id")
@@ -26,6 +33,9 @@ public class User {
     private String email;
 
     @Column
+    private String username;
+
+    @Column
     private int age;
 
     @Column
@@ -36,5 +46,7 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private Groupsuser groupsuser;
+
+
 
 }
