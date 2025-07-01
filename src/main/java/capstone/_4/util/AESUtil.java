@@ -9,6 +9,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+// 암호화 클래스
+
 @Component
 public class AESUtil {
 

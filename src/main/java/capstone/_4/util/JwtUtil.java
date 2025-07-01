@@ -1,16 +1,19 @@
 package capstone._4.util;
 
 import capstone._4.domain.User;
+import capstone._4.exception.TokenException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+@Component
 public class JwtUtil {
     private final AESUtil aesUtil;
 
@@ -32,6 +35,8 @@ public class JwtUtil {
 
     }
 
+
+
     public String generateRefreshToken(final Key REFRESH_SECRET, long REFRESH_EXPIRATION, User user) {
         Long now=System.currentTimeMillis();
         return Jwts.builder()
@@ -43,6 +48,27 @@ public class JwtUtil {
                 .signWith(REFRESH_SECRET,SignatureAlgorithm.HS256)
                 .compact();
     }
+
+    public boolean getTokenStatus(String token,Key secretKey){
+        try{
+            Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        }catch (ExpiredJwtException | IllegalArgumentException e){
+            throw new IllegalArgumentException("유효기간 지남");
+        }
+        catch(TokenException e){
+            throw new TokenException("토큰 검증 실패.");
+        }
+    }
+
+    public Key generateSigningKey(String signingKey){
+        String encodeKey = Base64.getEncoder().encodeToString(signingKey.getBytes());
+        return Keys.hmacShaKeyFor(encodeKey.getBytes(StandardCharsets.UTF_8));
+    }
+
 
     private String createAesSubject(User user) {
         return aesUtil.encrypt(String.valueOf(user.getId()));
