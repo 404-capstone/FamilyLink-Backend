@@ -2,6 +2,7 @@ package capstone._4.controller;
 
 import capstone._4.dto.SocialResultDto;
 import capstone._4.service.SocialService;
+import capstone._4.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,16 +16,16 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class SocialController {
 
-    private final SocialService socialService;
+    private final UserService userService;
 
     @Autowired
-    public SocialController(SocialService socialService) {
-        this.socialService = socialService;
+    public SocialController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/login/naver")
     public ResponseEntity<?> naverLogin(@RequestHeader(HttpHeaders.AUTHORIZATION)String authToken){
-        SocialResultDto socialResultDto =socialService.naverLoginService(authToken);
-        return ResponseEntity.ok().build();
+        SocialResultDto socialResultDto = userService.userSave(authToken);
+        return ResponseEntity.ok().body(socialResultDto);
     }
 }

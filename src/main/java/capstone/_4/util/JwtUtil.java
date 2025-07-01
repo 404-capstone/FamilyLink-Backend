@@ -26,7 +26,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setHeaderParam("typ",Header.JWT_TYPE)
                 .setHeaderParam("alg","HS256")
-                .setSubject(user.getUsername())
+                .setSubject(createAesSubject(user))
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now+ACCESS_EXPIRATION))
                 .addClaims(createClaims(user))
@@ -77,9 +77,9 @@ public class JwtUtil {
     private Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
         String email= aesUtil.encrypt(user.getEmail());
-        String id= aesUtil.encrypt(String.valueOf(user.getId()));
+        String name= user.getUsername();
         claims.put("email",email);
-        claims.put("id",id);
+        claims.put("name",name);
         return claims;
     }
 }
