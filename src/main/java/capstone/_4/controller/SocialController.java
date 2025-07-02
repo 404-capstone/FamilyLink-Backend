@@ -25,8 +25,8 @@ public class SocialController {
     @PostMapping("/login/naver")
     public ResponseEntity<?> naverLogin(@RequestHeader(HttpHeaders.AUTHORIZATION)String authToken, HttpServletResponse response){
         SocialResultDto socialResultDto = userService.userSave(authToken);
-        response.setHeader("Authorization", socialResultDto.getAccessToken());
-        response.setHeader("Refresh-Token", socialResultDto.getRefreshToken());
+        response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
+        response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());
         return ResponseEntity.ok().body(socialResultDto);
     }
 }

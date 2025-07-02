@@ -32,7 +32,7 @@ public class UserService {
 
     @Transactional
     public SocialResultDto userSave(String SocialToken) {
-        SocialInfoDto socialInfoDto = new SocialInfoDto("naver","h@naver.com","하하하");//socialService.naverLoginService(SocialToken);
+        SocialInfoDto socialInfoDto = socialService.naverLoginService(SocialToken);//new SocialInfoDto("naver","h@naver.com","하하하");
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
 
         User user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname());
