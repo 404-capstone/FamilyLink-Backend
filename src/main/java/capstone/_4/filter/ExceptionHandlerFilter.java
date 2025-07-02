@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,7 +27,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             setErrorResponse(response,ErrorCode.TOKEN_EXPIRED,e.getMessage());
         }catch (TokenException e){
             setErrorResponse(response,ErrorCode.INVALID_TOKEN,e.getMessage());
-        } catch (Exception e){
+        }catch(RedisConnectionFailureException e){
+            setErrorResponse(response,ErrorCode.CONNECT_FAILED,e.getMessage());
+        }
+        catch (Exception e){
             setErrorResponse(response, ErrorCode.EXCEPTION,ErrorCode.EXCEPTION.getMessage());
         }
 

@@ -6,6 +6,7 @@ import capstone._4.dto.SocialResultDto;
 import capstone._4.repository.UserRepository;
 import capstone._4.service.token.JwtService;
 import capstone._4.util.AESUtil;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,9 @@ public class UserService {
         this.aesUtil=aesUtil;
     }
 
+    @Transactional
     public SocialResultDto userSave(String SocialToken) {
-        SocialInfoDto socialInfoDto = socialService.naverLoginService(SocialToken);
+        SocialInfoDto socialInfoDto = new SocialInfoDto("naver","h@naver.com","하하하");//socialService.naverLoginService(SocialToken);
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
 
         User user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname());
