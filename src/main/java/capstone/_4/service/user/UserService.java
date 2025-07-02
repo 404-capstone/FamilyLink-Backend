@@ -1,4 +1,4 @@
-package capstone._4.service;
+package capstone._4.service.user;
 
 import capstone._4.domain.User;
 import capstone._4.dto.SocialInfoDto;
@@ -43,4 +43,6 @@ public class UserService {
                 socialInfoDto.getSocial(), accessToken, refreshToken);
         return socialResultDto;
     }
+
+    //public User findByIdentifier()
 }

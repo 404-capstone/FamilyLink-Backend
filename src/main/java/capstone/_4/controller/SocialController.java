@@ -1,10 +1,7 @@
 package capstone._4.controller;
 
 import capstone._4.dto.SocialResultDto;
-import capstone._4.service.SocialService;
-import capstone._4.service.UserService;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import capstone._4.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

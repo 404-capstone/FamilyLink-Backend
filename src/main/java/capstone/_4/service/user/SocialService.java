@@ -1,11 +1,7 @@
-package capstone._4.service;
+package capstone._4.service.user;
 
-import capstone._4.domain.User;
 import capstone._4.dto.NaverInfoDto;
 import capstone._4.dto.SocialInfoDto;
-import capstone._4.dto.SocialResultDto;
-import capstone._4.repository.UserJpaRepository;
-import capstone._4.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

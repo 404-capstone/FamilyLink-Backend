@@ -2,10 +2,7 @@ package capstone._4.util;
 
 import capstone._4.domain.User;
 import capstone._4.exception.TokenException;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -68,6 +65,7 @@ public class JwtUtil {
         String encodeKey = Base64.getEncoder().encodeToString(signingKey.getBytes());
         return Keys.hmacShaKeyFor(encodeKey.getBytes(StandardCharsets.UTF_8));
     }
+
 
 
     private String createAesSubject(User user) {
