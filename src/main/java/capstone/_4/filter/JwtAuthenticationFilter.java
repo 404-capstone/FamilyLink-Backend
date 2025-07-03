@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
     private final UserService userService;
-    private static final List<String> ignoredUrls = List.of("/user/login/naver","/");
+    private static final List<String> ignoredUrls = List.of("/user/login/naver","/","/favicon.ico");
 
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, JwtService jwtService,UserService userService) {
@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path=request.getRequestURI();
+        log.info("path={}",path);
         return ignoredUrls.contains(path);
     }
 

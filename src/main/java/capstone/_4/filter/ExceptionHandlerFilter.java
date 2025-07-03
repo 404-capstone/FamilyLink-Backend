@@ -32,7 +32,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             setErrorResponse(response,ErrorCode.CONNECT_FAILED,e.getMessage());
         }
         catch (Exception e){
-            setErrorResponse(response, ErrorCode.EXCEPTION,ErrorCode.EXCEPTION.getMessage());
+            e.printStackTrace();
+            setErrorResponse(response, ErrorCode.EXCEPTION,e.getMessage());
         }
 
     }
@@ -42,7 +43,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         httpServletResponse.setStatus(error.getStaus());
         httpServletResponse.setContentType("application/json; charset=UTF-8");
         httpServletResponse.setCharacterEncoding("UTF-8");
-        ErrorResponse errorResponse = new ErrorResponse(error.getStaus(),error.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(error.getStaus(),message);
         try{
             httpServletResponse.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }catch (Exception e){

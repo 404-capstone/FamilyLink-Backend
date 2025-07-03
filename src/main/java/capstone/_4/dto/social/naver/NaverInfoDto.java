@@ -20,6 +20,6 @@ public class NaverInfoDto {
         private String nickname;
     }
 
-    public String getEmail(){return this.getEmail();}
-    public String getNickname(){return this.getNickname();}
+    public String getEmail(){return response != null?response.getEmail():null;}
+    public String getNickname(){return response != null?response.getNickname():null;}
 }
