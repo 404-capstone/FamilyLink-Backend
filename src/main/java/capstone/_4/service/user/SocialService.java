@@ -1,14 +1,22 @@
 package capstone._4.service.user;
 
-import capstone._4.dto.NaverInfoDto;
-import capstone._4.dto.SocialInfoDto;
+import capstone._4.dto.social.naver.NaverInfoDto;
+import capstone._4.dto.social.SocialInfoDto;
+import capstone._4.dto.social.SocialInputDto;
+import capstone._4.dto.social.naver.NaverLoginInfoDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -16,20 +24,33 @@ import org.springframework.web.reactive.function.client.WebClientException;
 public class SocialService {
 
     private final String urlNaver;
-    private final WebClient webClient;
+    private final String urlLogin;
+    private final String naverid;
+    private final String naverSecret;
+    private final WebClient.Builder webClient;
 
 
     @Autowired
-    public SocialService(@Value("${url.naver}")  String urlNaver) {
+    public SocialService(@Value("${url.naver}")  String urlNaver,
+                         @Value("${url.naver-login}") String urlLogin,
+                         @Value("${secret.naver_id}") String naverid,
+                         @Value("${secret.naver_client}")String naverSecret,
+                         WebClient.Builder webClient) {
         this.urlNaver = urlNaver;
-        this.webClient = WebClient.builder().
-        baseUrl(urlNaver).build();
-
+        this.urlLogin = urlLogin;
+        this.naverid = naverid;
+        this.naverSecret = naverSecret;
+        this.webClient = webClient;
     }
 
-    public SocialInfoDto naverLoginService(String token){
+    //사용자 정보를 조회하는 메소드.
+    public SocialInfoDto naverLoginService(SocialInputDto socialInputDto) {
         try{
-            NaverInfoDto naverInfoDto = webClient.get()
+            //a
+            String token = getAccessToken(socialInputDto);
+            NaverInfoDto naverInfoDto = webClient.build()
+                    .get()
+                    .uri(urlNaver)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer "+token)
                     .retrieve()
                     .bodyToMono(NaverInfoDto.class)
@@ -43,5 +64,26 @@ public class SocialService {
         }
 
 
+    }
+
+    //네이버로부터 accestoken을 얻어오는 메소드.
+    private String getAccessToken(SocialInputDto socialInputDto) {
+        MultiValueMap<String,String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("grant_type","authorization_code");
+        queryParams.add("client_id", naverid);
+        queryParams.add("client_secret", naverSecret);
+        queryParams.add("code", socialInputDto.getCode());
+        queryParams.add("state", socialInputDto.getState());
+
+        NaverLoginInfoDto naverLoginInfoDto= webClient.build()
+                .get().uri(url-> url
+                        .path(urlLogin)
+                        .queryParams(queryParams)
+                        .build())
+                .retrieve()
+                .bodyToMono(NaverLoginInfoDto.class)
+                .block();
+        String token=naverLoginInfoDto.getAccess_token();
+        return token;
     }
 }

@@ -1,4 +1,4 @@
-package capstone._4.dto;
+package capstone._4.dto.social.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

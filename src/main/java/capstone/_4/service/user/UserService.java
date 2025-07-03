@@ -1,8 +1,9 @@
 package capstone._4.service.user;
 
 import capstone._4.domain.User;
-import capstone._4.dto.SocialInfoDto;
-import capstone._4.dto.SocialResultDto;
+import capstone._4.dto.social.SocialInfoDto;
+import capstone._4.dto.social.SocialInputDto;
+import capstone._4.dto.social.SocialResultDto;
 import capstone._4.repository.UserRepository;
 import capstone._4.service.token.JwtService;
 import capstone._4.util.AESUtil;
@@ -31,8 +32,8 @@ public class UserService {
     }
 
     @Transactional
-    public SocialResultDto userSave(String SocialToken) {
-        SocialInfoDto socialInfoDto = socialService.naverLoginService(SocialToken);//new SocialInfoDto("naver","h@naver.com","하하하");
+    public SocialResultDto userSave(SocialInputDto socialInputDto) {
+        SocialInfoDto socialInfoDto = socialService.naverLoginService(socialInputDto);//new SocialInfoDto("naver","h@naver.com","하하하");
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
 
         User user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname());
