@@ -1,9 +1,9 @@
 package capstone._4.service.user;
 
-import capstone._4.dto.social.naver.NaverInfoDto;
-import capstone._4.dto.social.SocialInfoDto;
-import capstone._4.dto.social.SocialInputDto;
-import capstone._4.dto.social.naver.NaverLoginInfoDto;
+import capstone._4.dto.user.naver.NaverInfoDto;
+import capstone._4.dto.user.SocialInfoDto;
+import capstone._4.dto.user.SocialInputDto;
+import capstone._4.dto.user.naver.NaverLoginInfoDto;
 import capstone._4.exception.SocialLoginException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Service

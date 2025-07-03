@@ -30,5 +30,14 @@ public class UserJpaRepository implements UserRepository {
                 .stream().findFirst();
     }
 
+    @Override
+    public Optional<User> findById(int id) {
+        return em.createQuery("select u from User u " +
+                "where u.id=:id",User.class)
+                .setParameter("id", id)
+                .getResultList()
+                .stream().findFirst();
+    }
+
 
 }

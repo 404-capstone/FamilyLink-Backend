@@ -1,4 +1,4 @@
-package capstone._4.dto.social;
+package capstone._4.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
