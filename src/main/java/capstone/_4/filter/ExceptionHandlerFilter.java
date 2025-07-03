@@ -1,5 +1,6 @@
 package capstone._4.filter;
 
+import capstone._4.exception.ErrorCode;
 import capstone._4.exception.TokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -24,7 +25,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try{
             filterChain.doFilter(request, response);
         }catch (ExpiredJwtException | IllegalArgumentException e){
-            setErrorResponse(response,ErrorCode.TOKEN_EXPIRED,e.getMessage());
+            setErrorResponse(response, ErrorCode.TOKEN_EXPIRED,e.getMessage());
         }catch (TokenException e){
             setErrorResponse(response,ErrorCode.INVALID_TOKEN,e.getMessage());
         }catch(RedisConnectionFailureException e){

@@ -4,6 +4,7 @@ import capstone._4.dto.social.naver.NaverInfoDto;
 import capstone._4.dto.social.SocialInfoDto;
 import capstone._4.dto.social.SocialInputDto;
 import capstone._4.dto.social.naver.NaverLoginInfoDto;
+import capstone._4.exception.SocialLoginException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class SocialService {
             String name=naverInfoDto.getNickname();
             return new SocialInfoDto("naver",email,name);
         }catch (WebClientException e){
-            throw new RuntimeException("네이버 api 호출 실패"+e.getMessage());
+            throw new SocialLoginException("네이버 api 호출 실패"+e.getMessage());
         }
 
 
@@ -68,22 +69,26 @@ public class SocialService {
 
     //네이버로부터 accestoken을 얻어오는 메소드.
     private String getAccessToken(SocialInputDto socialInputDto) {
-        MultiValueMap<String,String> queryParams = new LinkedMultiValueMap<>();
-        queryParams.add("grant_type","authorization_code");
-        queryParams.add("client_id", naverid);
-        queryParams.add("client_secret", naverSecret);
-        queryParams.add("code", socialInputDto.getCode());
-        queryParams.add("state", socialInputDto.getState());
+        try {
+            MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+            queryParams.add("grant_type", "authorization_code");
+            queryParams.add("client_id", naverid);
+            queryParams.add("client_secret", naverSecret);
+            queryParams.add("code", socialInputDto.getCode());
+            queryParams.add("state", socialInputDto.getState());
 
-        NaverLoginInfoDto naverLoginInfoDto= webClient.build()
-                .get().uri(url-> url
-                        .path(urlLogin)
-                        .queryParams(queryParams)
-                        .build())
-                .retrieve()
-                .bodyToMono(NaverLoginInfoDto.class)
-                .block();
-        String token=naverLoginInfoDto.getAccess_token();
-        return token;
+            NaverLoginInfoDto naverLoginInfoDto = webClient.build()
+                    .get().uri(url -> url
+                            .path(urlLogin)
+                            .queryParams(queryParams)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(NaverLoginInfoDto.class)
+                    .block();
+            return naverLoginInfoDto.getAccess_token();
+        }catch (WebClientException e){
+            throw new SocialLoginException("네이버 로그인에 실패했습니다: "+e.getMessage());
+        }
+
     }
 }
