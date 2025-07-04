@@ -189,5 +189,3 @@ public class KakaoUserInfoResponseDto {
 
 }
 
-//내주소
-// https://kauth.kakao.com/oauth/authorize?client_id=de6405c34729023eefc53200f2e48bde&redirect_uri=http://localhost:8080/callback&response_type=code
