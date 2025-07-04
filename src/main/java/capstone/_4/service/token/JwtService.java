@@ -3,6 +3,7 @@ package capstone._4.service.token;
 import capstone._4.domain.User;
 import capstone._4.dto.user.GenerateTokenDto;
 import capstone._4.exception.TokenException;
+import capstone._4.repository.UserRepository;
 import capstone._4.service.redis.RedisService;
 import capstone._4.service.user.UserService;
 import capstone._4.util.AESUtil;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.security.auth.Subject;
 import java.security.Key;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,7 +26,7 @@ public class JwtService {
     private final CustomUserdetailsService customUserdetailsService;
     private final JwtUtil jwtUtil;
     private final RedisService redisService;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     private final Key ACCESS_SECRET_KEY;
     private final Key REFRESH_SECRET_KEY;
@@ -38,11 +40,11 @@ public class JwtService {
                       @Value("${jwt.access-secret}") String ACCESS_SECRET_KEY,
                       @Value("${jwt.refresh-secret}") String REFRESH_SECRET_KEY,
                       @Value("${jwt.access-expiration}") long ACCESS_EXPIRATION,
-                      @Value("${jwt.refresh-expiration}") long REFRESH_EXPIRATION, AESUtil aESUtil,UserService userService) {
+                      @Value("${jwt.refresh-expiration}") long REFRESH_EXPIRATION, AESUtil aESUtil,UserRepository userRepository) {
         this.customUserdetailsService = customUserdetailsService;
         this.jwtUtil = jwtUtil;
         this.redisService = redisService;
-        this.userService = userService;
+        this.userRepository = userRepository;
         this.ACCESS_SECRET_KEY = jwtUtil.generateSigningKey(ACCESS_SECRET_KEY);
         this.REFRESH_SECRET_KEY = jwtUtil.generateSigningKey(REFRESH_SECRET_KEY);
         this.ACCESS_EXPIRATION = ACCESS_EXPIRATION;
@@ -60,9 +62,9 @@ public class JwtService {
                 if(validateRefreshToken(token)){
                     int id=Integer.parseInt(getIdFromToken(token));
                     log.info("id: {}",id);
-                    User user=userService.findById(id);
-                    generateTokenDto.setAccessToken(generateAccessToken(user));
-                    generateTokenDto.setRefreshToken(generateRefreshToken(user));
+                    Optional<User> user=userRepository.findById(id);
+                    generateTokenDto.setAccessToken(generateAccessToken(user.orElse(null)));
+                    generateTokenDto.setRefreshToken(generateRefreshToken(user.orElse(null)));
                 }
             }catch(Exception e){
                 throw new TokenException("user가 존재하지 않습니다."+e.getMessage());
