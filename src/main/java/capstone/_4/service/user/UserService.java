@@ -35,7 +35,7 @@ public class UserService {
 
     @Transactional
     public SocialResultDto userSave(SocialInputDto socialInputDto) {
-        SocialInfoDto socialInfoDto = socialService.naverLoginService(socialInputDto);//new SocialInfoDto("naver","h@naver.com","하하하");
+        SocialInfoDto socialInfoDto = socialService.naverLoginService(socialInputDto); //new SocialInfoDto("naver","h@naver.com","하하하");
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
 
         User user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname());
