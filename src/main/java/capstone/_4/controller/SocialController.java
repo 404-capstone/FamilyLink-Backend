@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 @Slf4j
+//경로용
 public class SocialController {
 
     private final UserService userService;

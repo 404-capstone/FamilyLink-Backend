@@ -1,5 +1,7 @@
 package capstone._4.service.user;
 
+import capstone._4.service.Kakao.KakaoService;
+import capstone._4.dto.KakaoUserInfoResponseDto;
 import capstone._4.dto.user.naver.NaverInfoDto;
 import capstone._4.dto.user.SocialInfoDto;
 import capstone._4.dto.user.SocialInputDto;
@@ -19,21 +21,28 @@ import org.springframework.web.reactive.function.client.WebClientException;
 @Service
 @Slf4j
 public class SocialService {
-
+    //카카오 추가
     private final String urlNaver;
     private final String urlLogin;
     private final String naverid;
     private final String naverSecret;
+
     private final WebClient loginwebClient;
     private final WebClient socialWebClient;
 
+    private final KakaoService kakaoService;
 
+
+    //네이버
     @Autowired
-    public SocialService(@Value("${url.naver}") String urlNaver,
-                         @Value("${url.naver-login}") String urlLogin,
-                         @Value("${secret.naver_id}") String naverid,
-                         @Value("${secret.naver_client}") String naverSecret
+    public SocialService(
+            KakaoService kakaoService,
+            @Value("${url.naver}") String urlNaver,
+            @Value("${url.naver-login}") String urlLogin,
+            @Value("${secret.naver_id}") String naverid,
+            @Value("${secret.naver_client}") String naverSecret
     ) {
+        this.kakaoService = kakaoService;
         this.urlNaver = urlNaver;
         this.urlLogin = urlLogin;
         this.naverid = naverid;
@@ -42,7 +51,7 @@ public class SocialService {
         this.socialWebClient = WebClient.builder().baseUrl(urlNaver).build();
     }
 
-    //사용자 정보를 조회하는 메소드.
+    //네이버 사용자 정보를 조회하는 메소드.
     public SocialInfoDto naverLoginService(SocialInputDto socialInputDto) {
         try {
             //a
@@ -87,5 +96,20 @@ public class SocialService {
             throw new SocialLoginException("네이버 로그인에 실패했습니다: " + e.getMessage());
         }
 
+    }
+
+    // 카카오 로그인 처리 메서드
+    public SocialInfoDto kakaoLoginService(String code) {
+        try {
+            String accessToken = kakaoService.getAccessTokenFromKakao(code);
+            KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
+
+            String email = userInfo.getKakaoAccount().getEmail();
+            String name = userInfo.getKakaoAccount().getName();
+
+            return new SocialInfoDto("kakao", email, name);
+        } catch (Exception e) {
+            throw new SocialLoginException("카카오 로그인 실패: " + e.getMessage());
+        }
     }
 }

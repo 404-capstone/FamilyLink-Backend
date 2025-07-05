@@ -20,8 +20,8 @@ import reactor.core.publisher.Mono;
 public class KakaoService {
 
     private String clientId;
-    private final String KAUTH_TOKEN_URL_HOST ;
-    private final String KAUTH_USER_URL_HOST;
+    private final String KAUTH_TOKEN_URL_HOST ; //토큰 발급 요청
+    private final String KAUTH_USER_URL_HOST; //사용자 정보 요청 url
 
     @Autowired
     public KakaoService(@Value("${kakao.client_id}") String clientId) {
@@ -30,7 +30,7 @@ public class KakaoService {
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
     }
 
-    public String getAccessTokenFromKakao(String code) {
+    public String getAccessTokenFromKakao(String code) { //인가코드를 카카오로 보내고 토큰 발급
 
         KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
                 .uri(uriBuilder -> uriBuilder
@@ -61,7 +61,7 @@ public class KakaoService {
 
 
 
-    public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
+    public KakaoUserInfoResponseDto getUserInfo(String accessToken) {// 카카오에서 받은 accessToken 으로 사용자 정보를 조회
 
         KakaoUserInfoResponseDto userInfo = WebClient.create(KAUTH_USER_URL_HOST)
                 .get()
@@ -79,8 +79,8 @@ public class KakaoService {
                 .block();
 
         log.info("[ Kakao Service ] Auth ID ---> {} ", userInfo.getId());
-        log.info("[ Kakao Service ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickName());
-        log.info("[ Kakao Service ] ProfileImageUrl ---> {} ", userInfo.getKakaoAccount().getProfile().getProfileImageUrl());
+        log.info("[ Kakao Service ] Name ---> {} ", userInfo.getKakaoAccount().getName());
+        log.info("[ Kakao Service ] Email ---> {} ", userInfo.getKakaoAccount().getEmail());
 
         return userInfo;
     }
