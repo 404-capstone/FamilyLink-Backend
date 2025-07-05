@@ -41,9 +41,8 @@ public class GroupController {
     public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name, HttpServletRequest request) {
         int id=jwtService.getIdFromToken(request.getHeader("Authorization"));
         GroupResponseDto groupResponseDto = groupService.generateGroup(name,id);
-        return ResponseEntity.ok().build(new ApiResponseDto<>(
+        return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
-                groupResponseDto
-        ));
+                groupResponseDto));
     }
 }

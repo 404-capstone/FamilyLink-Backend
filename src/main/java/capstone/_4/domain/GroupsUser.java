@@ -1,15 +1,25 @@
 package capstone._4.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "groups_user")
+@NoArgsConstructor
 @Getter
 @Setter
-public class Groupsuser {
+public class GroupsUser {
+
+    public GroupsUser(Groups group, User user, boolean leader) {
+        this.group=group;
+        this.user=user;
+        this.leader=leader;
+
+        this.group.addUser(this);
+        this.user.addGroupUser(this);
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

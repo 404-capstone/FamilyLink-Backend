@@ -15,6 +15,10 @@ import java.util.List;
 @Getter
 public class Groups {
 
+    public Groups(String name) {
+        this.group_name=name;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int gup_id;
@@ -30,6 +34,10 @@ public class Groups {
 
     @OneToMany(mappedBy = "group",fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Groupsuser> groupsuser;
+    private List<GroupsUser> groupsuser;
+
+    public void addUser(GroupsUser groupsuser){
+        this.groupsuser.add(groupsuser);
+    }
 
 }

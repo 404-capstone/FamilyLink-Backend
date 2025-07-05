@@ -47,8 +47,11 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<Groupsuser> groupsuser;
+    private List<GroupsUser> groupsuser;
 
+    public void addGroupUser(GroupsUser groupsuser){
+        this.groupsuser.add(groupsuser);
+    }
 
 
 }
