@@ -1,4 +1,4 @@
-package capstone._4.util;
+package capstone._4.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

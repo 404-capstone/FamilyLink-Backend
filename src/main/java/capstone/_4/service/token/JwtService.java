@@ -60,7 +60,7 @@ public class JwtService {
             log.info("token: {}",token);
             try{
                 if(validateRefreshToken(token)){
-                    int id=Integer.parseInt(getIdFromToken(token));
+                    int id=getIdFromToken(token);
                     log.info("id: {}",id);
                     Optional<User> user=userRepository.findById(id);
                     generateTokenDto.setAccessToken(generateAccessToken(user.orElse(null)));
@@ -105,13 +105,22 @@ public class JwtService {
         return jwtUtil.getTokenStatus(token, ACCESS_SECRET_KEY);
     }
 
-    public String getIdFromToken(String token){
+    public Integer getIdFromToken(String token){
         Claims cli= Jwts.parserBuilder()
                 .setSigningKey(ACCESS_SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return aESUtil.decrypt(cli.getSubject());
+        return Integer.parseInt(aESUtil.decrypt(cli.getSubject()));
 
+    }
+
+    public String getEmailFromToken(String token) {
+        Claims cli = Jwts.parserBuilder()
+                .setSigningKey(ACCESS_SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return aESUtil.decrypt(cli.get("email",String.class));
     }
 }

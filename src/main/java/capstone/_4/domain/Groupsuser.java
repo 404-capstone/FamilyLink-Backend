@@ -11,8 +11,11 @@ import lombok.Setter;
 @Setter
 public class Groupsuser {
 
-    @EmbeddedId
-    private UserId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "guser_id")
+    private int groupUserId;
+
 
     @Column
     private String role;
@@ -24,12 +27,10 @@ public class Groupsuser {
     private boolean leader;
 
     @ManyToOne
-    @MapsId("gup_id")
     @JoinColumn(name="gup_id")
-    private Gruops group;
+    private Groups group;
 
     @ManyToOne
-    @MapsId("u_id")
     @JoinColumn(name = "u_id")
     private User user;
 }
