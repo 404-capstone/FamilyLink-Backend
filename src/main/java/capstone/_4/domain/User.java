@@ -1,13 +1,14 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
+@ToString(exclude="groupsuser")
 @Getter
 public class User {
 
@@ -44,8 +45,9 @@ public class User {
     @Column
     private String image;
 
-    @OneToOne(mappedBy = "user")
-    private Groupsuser groupsuser;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Groupsuser> groupsuser;
 
 
 

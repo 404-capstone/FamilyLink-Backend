@@ -1,4 +1,4 @@
-package capstone._4.dto;
+package capstone._4.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

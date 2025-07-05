@@ -1,5 +1,6 @@
 package capstone._4.filter;
 
+import capstone._4.exception.ErrorCode;
 import capstone._4.exception.TokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -24,14 +25,15 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try{
             filterChain.doFilter(request, response);
         }catch (ExpiredJwtException | IllegalArgumentException e){
-            setErrorResponse(response,ErrorCode.TOKEN_EXPIRED,e.getMessage());
+            setErrorResponse(response, ErrorCode.TOKEN_EXPIRED,e.getMessage());
         }catch (TokenException e){
             setErrorResponse(response,ErrorCode.INVALID_TOKEN,e.getMessage());
         }catch(RedisConnectionFailureException e){
             setErrorResponse(response,ErrorCode.CONNECT_FAILED,e.getMessage());
         }
         catch (Exception e){
-            setErrorResponse(response, ErrorCode.EXCEPTION,ErrorCode.EXCEPTION.getMessage());
+            e.printStackTrace();
+            setErrorResponse(response, ErrorCode.EXCEPTION,e.getMessage());
         }
 
     }
@@ -41,7 +43,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         httpServletResponse.setStatus(error.getStaus());
         httpServletResponse.setContentType("application/json; charset=UTF-8");
         httpServletResponse.setCharacterEncoding("UTF-8");
-        ErrorResponse errorResponse = new ErrorResponse(error.getStaus(),error.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(error.getStaus(),message);
         try{
             httpServletResponse.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }catch (Exception e){

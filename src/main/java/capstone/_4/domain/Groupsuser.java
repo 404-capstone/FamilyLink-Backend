@@ -28,7 +28,7 @@ public class Groupsuser {
     @JoinColumn(name="gup_id")
     private Gruops group;
 
-    @OneToOne
+    @ManyToOne
     @MapsId("u_id")
     @JoinColumn(name = "u_id")
     private User user;

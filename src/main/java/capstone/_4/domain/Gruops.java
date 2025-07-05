@@ -1,8 +1,10 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
 @Table(name = "groups")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
 public class Gruops {
 
     @Id
@@ -28,6 +30,7 @@ public class Gruops {
     private String image;
 
     @OneToMany(mappedBy = "group")
+    @JsonIgnore
     private List<Groupsuser> groupsuser;
 
 }

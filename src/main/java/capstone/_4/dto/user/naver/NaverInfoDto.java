@@ -1,4 +1,4 @@
-package capstone._4.dto;
+package capstone._4.dto.user.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -20,6 +20,6 @@ public class NaverInfoDto {
         private String nickname;
     }
 
-    public String getEmail(){return this.getEmail();}
-    public String getNickname(){return this.getNickname();}
+    public String getEmail(){return response != null?response.getEmail():null;}
+    public String getNickname(){return response != null?response.getNickname():null;}
 }
