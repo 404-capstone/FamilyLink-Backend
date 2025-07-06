@@ -32,7 +32,7 @@ public class Groups {
     @Column
     private String image;
 
-    @OneToMany(mappedBy = "group",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "group",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<GroupsUser> groupsuser;
 

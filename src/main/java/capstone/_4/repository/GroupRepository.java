@@ -28,5 +28,10 @@ public class GroupRepository {
     }
 
 
-
+    public int deleteGroupe(Integer groupId) {
+        return em.createQuery("delete from Groups g " +
+                "where g.gup_id = :groupId")
+                .setParameter("groupId", groupId)
+                .executeUpdate();
+    }
 }

@@ -26,4 +26,14 @@ public class GroupsUserReponsitory {
                 "where g.gup_id=:groupid",GroupUserInfoDto.class).getResultList();
 
     }
+
+    public int deleteUser(Integer groupId,Integer userid) {
+        return em.createQuery("delete from GroupsUser gu " +
+                "where gu.group.gup_id = :groupid and " +
+                "gu.user.id = :userid")
+                .setParameter("groupid", groupId)
+                .setParameter("userid", groupId)
+                .executeUpdate();
+
+    }
 }

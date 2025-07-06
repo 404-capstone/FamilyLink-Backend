@@ -45,7 +45,7 @@ public class User {
     @Column
     private String image;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<GroupsUser> groupsuser;
 

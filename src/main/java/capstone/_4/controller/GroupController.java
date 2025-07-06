@@ -45,8 +45,8 @@ public class GroupController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> groupSearch(@RequestParam Integer groupid) {
-        GroupInfoDto groupInfoDto=groupService.searchGroup(groupid);
+    public ResponseEntity<?> groupSearch(@RequestParam Integer groupId) {
+        GroupInfoDto groupInfoDto=groupService.searchGroup(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),groupInfoDto));
     }
 
@@ -64,5 +64,23 @@ public class GroupController {
                 ResponseEnum.SUCCESS.getMessage(),groupid ));
     }
 
+    /**
+     *여기 response부분 수정하기.
+     */
+
+    @DeleteMapping("/quit")
+    public ResponseEntity<?> groupQuit(@RequestParam Integer groupId,HttpServletRequest request) {
+        int id=jwtService.getIdFromToken(request.getHeader("Authorization"));
+        groupService.quitGroup(groupId,id);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
+                ResponseEnum.QUIT_SUCCESS.getMessage(),id));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> groupDelete(@RequestParam Integer groupId,HttpServletRequest request) {
+        groupService.deleteGroup(groupId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
+                ResponseEnum.DELETE_SUCCESS.getMessage(),groupId));
+    }
 
 }

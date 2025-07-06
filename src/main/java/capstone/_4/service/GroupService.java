@@ -79,4 +79,19 @@ public class GroupService {
         Groups group=groupRepository.findById(groupid).get();
         return group.getGup_id();
     }
+
+    @Transactional
+    public void quitGroup(Integer groupId,Integer userid) {
+        int count = groupsUserReponsitory.deleteUser(groupId,userid);
+        if(count == 0){
+            throw new RuntimeException("삭제가 되지 않았음.");
+        }
+    }
+
+    public void deleteGroup(Integer groupId) {
+        int count = groupRepository.deleteGroupe(groupId);
+        if(count == 0){
+            throw new RuntimeException("그룹 삭제 안됨");
+        }
+    }
 }
