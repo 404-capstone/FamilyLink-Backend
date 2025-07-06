@@ -1,11 +1,13 @@
 package capstone._4.repository;
 
 import capstone._4.domain.Groups;
+import capstone._4.domain.GroupsUser;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,6 +21,12 @@ public class GroupRepository {
         em.persist(groups);
         return true;
     }
+
+    public Optional<Groups> findById(int groupid){
+        Optional<Groups> groups=Optional.ofNullable(em.find(Groups.class, groupid));
+        return groups;
+    }
+
 
 
 }

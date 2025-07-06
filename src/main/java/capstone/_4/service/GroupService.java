@@ -3,14 +3,20 @@ package capstone._4.service;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
+import capstone._4.dto.GroupInfoDto;
 import capstone._4.dto.group.GroupResponseDto;
+import capstone._4.dto.group.GroupUserInfoDto;
 import capstone._4.repository.GroupRepository;
 import capstone._4.repository.GroupsUserReponsitory;
 import capstone._4.repository.UserRepository;
+import capstone._4.service.redis.RedisService;
+import com.soundicly.jnanoidenhanced.jnanoid.NanoIdUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +26,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final GroupsUserReponsitory groupsUserReponsitory;
+    private final RedisService redisService;
 
 
 /**
@@ -34,5 +41,34 @@ public class GroupService {
         GroupsUser groupsuser=new GroupsUser(groups,user,true);
         groupsUserReponsitory.save(groupsuser);
         return new GroupResponseDto(groups.getGroup_name(),groups.getGup_id());
+    }
+
+    /**
+     * 초대 코드를 생성하는 메소드
+     * @apiNote 1.코드를 생성할 그룹을 찾는다
+     * 2. nanoid로 코드를 생성한다
+     * 3.redis에서 검증을 위해 저장한다.
+     * 4. 유저에게 코드를 전송한다.
+     * */
+    @Transactional
+    public String generateCode(Integer group_id) {
+        Groups group= groupRepository.findById(group_id).get();
+        String id = NanoIdUtils.randomNanoId(6);
+        redisService.saveCode(id, group.getGup_id());
+        group.setCode(id);
+        return id;
+
+    }
+
+    //그룹 정보 조회 그룹원까지
+    public GroupInfoDto searchGroup(Integer groupid) {
+        Groups group=groupRepository.findById(groupid).get();
+        List<GroupUserInfoDto> users=groupsUserReponsitory.findBygroupId(groupid);
+        return GroupInfoDto.builder()
+                .group_name(group.getGroup_name())
+                .group_id(groupid)
+                .userinfo(users)
+                .build();
+
     }
 }

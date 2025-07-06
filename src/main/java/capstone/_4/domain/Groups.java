@@ -39,5 +39,6 @@ public class Groups {
     public void addUser(GroupsUser groupsuser){
         this.groupsuser.add(groupsuser);
     }
+    public void setCode(String code){this.code=code;}
 
 }

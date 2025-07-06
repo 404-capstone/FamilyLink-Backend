@@ -1,6 +1,7 @@
 package capstone._4.controller;
 
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.GroupInfoDto;
 import capstone._4.dto.group.GroupResponseDto;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.GroupService;
@@ -9,10 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/group")
@@ -27,7 +25,6 @@ public class GroupController {
         this.groupService = groupService;
         this.jwtService = jwtService;
     }
-
 
     /**
     * 그룹을 저장한다
@@ -45,4 +42,19 @@ public class GroupController {
                 ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 groupResponseDto));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> groupSearch(@RequestParam Integer groupid) {
+        GroupInfoDto groupInfoDto=groupService.searchGroup(groupid);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),groupInfoDto));
+    }
+
+    @PostMapping("/code")
+    public ResponseEntity<?> groupCodeGeneration(@RequestParam Integer groupid){
+        String code=groupService.generateCode(groupid);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),code));
+    }
+
+
 }

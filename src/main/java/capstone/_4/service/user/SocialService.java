@@ -54,9 +54,12 @@ public class SocialService {
                     .retrieve()
                     .bodyToMono(NaverInfoDto.class)
                     .block();
-            String email = naverInfoDto.getEmail();
-            String name = naverInfoDto.getNickname();
-            return new SocialInfoDto("naver", email, name);
+
+            return SocialInfoDto.builder()
+                    .social("naver")
+                    .email(naverInfoDto.getEmail())
+                    .nickname(naverInfoDto.getNickname())
+                    .build();
         } catch (WebClientException e) {
             throw new SocialLoginException("네이버 api 호출 실패" + e.getMessage());
         }

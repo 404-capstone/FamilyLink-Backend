@@ -16,7 +16,7 @@ public class RedisService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void saveJwt(String key,String value){
+    public void saveJwt(String key,int value){
         try{
             redisTemplate.opsForValue().set(key,value,7, TimeUnit.DAYS);
         }catch (RedisConnectionFailureException e){
@@ -25,7 +25,7 @@ public class RedisService {
 
     }
 
-    public void saveCode(String Key,String value){
+    public void saveCode(String Key,int value){
         try{
         redisTemplate.opsForValue().set(Key,value,10, TimeUnit.MINUTES);
 

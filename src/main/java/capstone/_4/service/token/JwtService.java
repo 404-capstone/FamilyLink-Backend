@@ -92,7 +92,7 @@ public class JwtService {
 
     public String generateRefreshToken(User user){
         String refreshToken= jwtUtil.generateRefreshToken(REFRESH_SECRET_KEY,REFRESH_EXPIRATION,user);
-        redisService.saveJwt(refreshToken, String.valueOf(user.getId()));
+        redisService.saveJwt(refreshToken, user.getId());
         return refreshToken;
     }
 
