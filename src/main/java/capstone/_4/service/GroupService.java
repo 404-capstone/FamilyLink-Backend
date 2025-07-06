@@ -3,8 +3,8 @@ package capstone._4.service;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
-import capstone._4.dto.GroupInfoDto;
-import capstone._4.dto.group.GroupResponseDto;
+import capstone._4.dto.group.GroupInfoDto;
+import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.dto.group.GroupUserInfoDto;
 import capstone._4.repository.GroupRepository;
 import capstone._4.repository.GroupsUserReponsitory;
@@ -34,13 +34,13 @@ public class GroupService {
  */
 
     @Transactional
-    public GroupResponseDto generateGroup(String name, int id) {
+    public GroupGenerateDto generateGroup(String name, int id) {
         User user=userRepository.findById(id).get();
         Groups groups=new Groups(name);
         groupRepository.save(groups);
         GroupsUser groupsuser=new GroupsUser(groups,user,true);
         groupsUserReponsitory.save(groupsuser);
-        return new GroupResponseDto(groups.getGroup_name(),groups.getGup_id());
+        return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
     }
 
     /**
@@ -69,6 +69,14 @@ public class GroupService {
                 .group_id(groupid)
                 .userinfo(users)
                 .build();
+    }
 
+    public int searchGroupWithCode(String code) {
+        Integer groupid=(Integer) redisService.getData(code);
+        if(groupid==null){
+            throw new RuntimeException("코드가 존재하지 않습니다.");
+        }
+        Groups group=groupRepository.findById(groupid).get();
+        return group.getGup_id();
     }
 }

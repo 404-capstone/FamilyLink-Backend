@@ -1,13 +1,14 @@
 package capstone._4.controller;
 
 import capstone._4.dto.ApiResponseDto;
-import capstone._4.dto.GroupInfoDto;
-import capstone._4.dto.group.GroupResponseDto;
+import capstone._4.dto.group.GroupInfoDto;
+import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.GroupService;
 import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class GroupController {
     @PostMapping("/generation")
     public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name, HttpServletRequest request) {
         int id=jwtService.getIdFromToken(request.getHeader("Authorization"));
-        GroupResponseDto groupResponseDto = groupService.generateGroup(name,id);
+        GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id);
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 groupResponseDto));
@@ -54,6 +55,13 @@ public class GroupController {
         String code=groupService.generateCode(groupid);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),code));
+    }
+
+    @PostMapping("/access")
+    public ResponseEntity<?> groupAccess(@RequestParam String code){
+        int groupid=groupService.searchGroupWithCode(code);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),groupid ));
     }
 
 

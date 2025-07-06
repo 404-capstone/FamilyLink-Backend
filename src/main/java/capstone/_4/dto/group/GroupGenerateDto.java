@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class GroupResponseDto {
+public class GroupGenerateDto {
     private String groupName;
     private int groupId;
 

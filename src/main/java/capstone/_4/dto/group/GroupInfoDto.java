@@ -1,12 +1,10 @@
-package capstone._4.dto;
+package capstone._4.dto.group;
 
-import capstone._4.dto.group.GroupUserInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @Getter
