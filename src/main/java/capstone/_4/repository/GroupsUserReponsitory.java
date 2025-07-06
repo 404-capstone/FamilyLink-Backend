@@ -21,10 +21,21 @@ public class GroupsUserReponsitory {
     public List<GroupUserInfoDto> findBygroupId(int groupid) {
         return em.createQuery("select new capstone._4.dto.group.GroupUserInfoDto(u.username,gu.role,u.age,u.image,gu.leader) " +
                 "from GroupsUser gu " +
-                "join fetch gu.group g " +
-                "join fetch gu.user u " +
-                "where g.gup_id=:groupid",GroupUserInfoDto.class).getResultList();
+                "join gu.group g " +
+                "join gu.user u " +
+                "where g.gup_id=:groupid",GroupUserInfoDto.class)
+                .setParameter("groupid",groupid)
+                .getResultList();
 
+    }
+
+    public boolean existsByGroupIdAndUserid(int groupid,int userid){
+        Long count=em.createQuery("select count(gu) from GroupsUser gu " +
+                "where gu.group.gup_id=:groupid and gu.user.id=:userid",Long.class)
+                .setParameter("groupid",groupid)
+                .setParameter("userid",userid)
+                .getSingleResult();
+        return count > 0;
     }
 
     public int deleteUser(Integer groupId,Integer userid) {
@@ -32,7 +43,7 @@ public class GroupsUserReponsitory {
                 "where gu.group.gup_id = :groupid and " +
                 "gu.user.id = :userid")
                 .setParameter("groupid", groupId)
-                .setParameter("userid", groupId)
+                .setParameter("userid", userid)
                 .executeUpdate();
 
     }

@@ -74,9 +74,8 @@ public class JwtUtil {
 
     private Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
-        String email= aesUtil.encrypt(user.getEmail());
         String name= user.getUsername();
-        claims.put("email",email);
+        claims.put("email",user.getEmail());
         claims.put("name",name);
         return claims;
     }

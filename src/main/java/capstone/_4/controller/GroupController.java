@@ -36,9 +36,10 @@ public class GroupController {
     * @return : dto
     * */
     @PostMapping("/generation")
-    public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name, HttpServletRequest request) {
-        int id=jwtService.getIdFromToken(request.getHeader("Authorization"));
-        GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id);
+    public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role, HttpServletRequest request) {
+        String token=request.getHeader("Authorization").substring(7).trim();
+        int id=jwtService.getIdFromToken(token);
+        GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role);
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 groupResponseDto));
@@ -57,11 +58,20 @@ public class GroupController {
                 ResponseEnum.SUCCESS.getMessage(),code));
     }
 
-    @PostMapping("/access")
-    public ResponseEntity<?> groupAccess(@RequestParam String code){
+    @PostMapping("/search/code")
+    public ResponseEntity<?> groupSerachwithCode(@RequestParam String code) {
         int groupid=groupService.searchGroupWithCode(code);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),groupid ));
+    }
+
+    @PostMapping("/access")
+    public ResponseEntity<?> groupAccess(@RequestParam String code,@RequestParam String role,HttpServletRequest request){
+        String token=request.getHeader("Authorization").substring(7).trim();
+        int id=jwtService.getIdFromToken(token);
+        GroupGenerateDto groupGenerateDto=groupService.accessGroupWithCode(code,id,role);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),groupGenerateDto));
     }
 
     /**
@@ -70,7 +80,8 @@ public class GroupController {
 
     @DeleteMapping("/quit")
     public ResponseEntity<?> groupQuit(@RequestParam Integer groupId,HttpServletRequest request) {
-        int id=jwtService.getIdFromToken(request.getHeader("Authorization"));
+        String token=request.getHeader("Authorization").substring(7).trim();
+        int id=jwtService.getIdFromToken(token);
         groupService.quitGroup(groupId,id);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
                 ResponseEnum.QUIT_SUCCESS.getMessage(),id));

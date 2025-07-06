@@ -34,11 +34,11 @@ public class GroupService {
  */
 
     @Transactional
-    public GroupGenerateDto generateGroup(String name, int id) {
+    public GroupGenerateDto generateGroup(String name, int id,String role) {
         User user=userRepository.findById(id).get();
         Groups groups=new Groups(name);
         groupRepository.save(groups);
-        GroupsUser groupsuser=new GroupsUser(groups,user,true);
+        GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
         groupsUserReponsitory.save(groupsuser);
         return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
     }
@@ -71,6 +71,7 @@ public class GroupService {
                 .build();
     }
 
+    @Transactional
     public int searchGroupWithCode(String code) {
         Integer groupid=(Integer) redisService.getData(code);
         if(groupid==null){
@@ -78,6 +79,27 @@ public class GroupService {
         }
         Groups group=groupRepository.findById(groupid).get();
         return group.getGup_id();
+    }
+
+    //실제 가입
+    @Transactional
+    public GroupGenerateDto accessGroupWithCode(String code,int id,String role) {
+        Integer groupid=(Integer) redisService.getData(code);
+        if(groupid==null){
+            throw new RuntimeException("코드가 존재하지 않습니다.");
+        }
+        Groups group=groupRepository.findById(groupid).get();
+        boolean flag = groupsUserReponsitory.existsByGroupIdAndUserid(groupid,id);
+        if(flag){
+            throw new RuntimeException("이미 그룹에 가입했습니다");
+        }
+        User user=userRepository.findById(id).get();
+        GroupsUser groupsUser=new GroupsUser(group,user,role,false);
+        groupsUserReponsitory.save(groupsUser);
+        return GroupGenerateDto.builder()
+                .groupName(group.getGroup_name())
+                .groupId(group.getGup_id())
+                .build();
     }
 
     @Transactional
@@ -88,6 +110,7 @@ public class GroupService {
         }
     }
 
+    @Transactional
     public void deleteGroup(Integer groupId) {
         int count = groupRepository.deleteGroupe(groupId);
         if(count == 0){

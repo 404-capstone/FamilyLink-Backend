@@ -121,6 +121,6 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return aESUtil.decrypt(cli.get("email",String.class));
+        return cli.get("email",String.class); //aESUtil.decrypt();
     }
 }

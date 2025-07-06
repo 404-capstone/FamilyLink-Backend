@@ -39,6 +39,7 @@ public class SocialController {
 
     @GetMapping("/token/refresh")
     public ResponseEntity<?> reAccessContoller(@RequestHeader(name = "Refresh-Token")String refreshToken){
+        log.info("Refresh-Token:"+refreshToken);
         GenerateTokenDto generateTokenDto=jwtService.generateToken(refreshToken);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),generateTokenDto));

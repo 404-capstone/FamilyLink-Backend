@@ -25,6 +25,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //서버가 세션 생성하지 않게 방지 하기.
                 .authorizeHttpRequests(auth -> auth //http 인가 관련 설정.
                         .requestMatchers("/user/login/naver").permitAll()
+                        .requestMatchers("/user/token/refresh").permitAll()
+                        .requestMatchers("/user/login/kakao").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
                 )

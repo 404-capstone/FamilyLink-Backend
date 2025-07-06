@@ -1,5 +1,6 @@
 package capstone._4.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.Base64;
 // 암호화 클래스
 
 @Component
+@Slf4j
 public class AESUtil {
 
     private final String ALGORITHM = "AES";
@@ -40,6 +42,7 @@ public class AESUtil {
     //복호화 수행.
     public String decrypt(String input) {
         try {
+            log.info("length"+SECRET_KEY.length());
             SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, keySpec);

@@ -6,16 +6,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "groups_user")
+@Table(name = "`groups_user`")
 @NoArgsConstructor
 @Getter
 @Setter
 public class GroupsUser {
 
-    public GroupsUser(Groups group, User user, boolean leader) {
+    public GroupsUser(Groups group, User user,String role, boolean leader) {
         this.group=group;
         this.user=user;
         this.leader=leader;
+        this.role=role;
 
         this.group.addUser(this);
         this.user.addGroupUser(this);
