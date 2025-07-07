@@ -37,8 +37,8 @@ public class GroupController {
     * */
     @PostMapping("/generation")
     public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role, HttpServletRequest request) {
-        String token=request.getHeader("Authorization").substring(7).trim();
-        int id=jwtService.getIdFromToken(token);
+        String token=request.getHeader("Authorization");
+        int id=jwtService.returnToken(token);
         GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role);
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
@@ -67,8 +67,8 @@ public class GroupController {
 
     @PostMapping("/access")
     public ResponseEntity<?> groupAccess(@RequestParam String code,@RequestParam String role,HttpServletRequest request){
-        String token=request.getHeader("Authorization").substring(7).trim();
-        int id=jwtService.getIdFromToken(token);
+        String token=request.getHeader("Authorization");
+        int id=jwtService.returnToken(token);
         GroupGenerateDto groupGenerateDto=groupService.accessGroupWithCode(code,id,role);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),groupGenerateDto));
@@ -80,8 +80,8 @@ public class GroupController {
 
     @DeleteMapping("/quit")
     public ResponseEntity<?> groupQuit(@RequestParam Integer groupId,HttpServletRequest request) {
-        String token=request.getHeader("Authorization").substring(7).trim();
-        int id=jwtService.getIdFromToken(token);
+        String token=request.getHeader("Authorization");
+        int id=jwtService.returnToken(token);
         groupService.quitGroup(groupId,id);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
                 ResponseEnum.QUIT_SUCCESS.getMessage(),id));

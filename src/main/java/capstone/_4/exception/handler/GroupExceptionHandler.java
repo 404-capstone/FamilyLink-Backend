@@ -1,0 +1,44 @@
+package capstone._4.exception.handler;
+
+import capstone._4.controller.GroupController;
+import capstone._4.dto.ApiResponseDto;
+import capstone._4.enums.ErrorCode;
+import capstone._4.exception.DecryptionException;
+import io.lettuce.core.RedisException;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice(assignableTypes = {GroupController.class})
+@Slf4j
+public class GroupExceptionHandler {
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> entityNotFoundException(EntityNotFoundException e){
+        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ErrorCode.ENTITY_NOT_FOUND.getStaus(),
+                ErrorCode.ENTITY_NOT_FOUND.getMessage(),e.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RedisException.class)
+    public ResponseEntity<?> redisNotFoundException(RedisException e){
+        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ErrorCode.REDIS_NOT_FOUND.getStaus(),
+                ErrorCode.REDIS_NOT_FOUND.getMessage(),e.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<?> entityExistsException(EntityExistsException e){
+        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ErrorCode.ENTITY_EXISTS.getStaus(),
+                ErrorCode.ENTITY_EXISTS.getMessage(),e.getMessage()
+        ));
+    }
+
+
+}

@@ -33,11 +33,6 @@ public class UserJpaRepository implements UserRepository {
     @Override
     public Optional<User> findById(int id) {
         return Optional.ofNullable(em.find(User.class, id));
-//        return em.createQuery("select u from User u " +
-//                "where u.id=:id",User.class)
-//                .setParameter("id", id)
-//                .getResultList()
-//                .stream().findFirst();
     }
 
     @Override

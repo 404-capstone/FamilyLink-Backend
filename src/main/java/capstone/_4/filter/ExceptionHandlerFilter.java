@@ -27,7 +27,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         }catch (ExpiredJwtException | IllegalArgumentException e){
             setErrorResponse(response, ErrorCode.TOKEN_EXPIRED,e.getMessage());
         }catch (TokenException e){
-            setErrorResponse(response,ErrorCode.INVALID_TOKEN,e.getMessage());
+            setErrorResponse(response,ErrorCode.TOKEN_INVALID,e.getMessage());
         }catch(RedisConnectionFailureException e){
             setErrorResponse(response,ErrorCode.CONNECT_FAILED,e.getMessage());
         }

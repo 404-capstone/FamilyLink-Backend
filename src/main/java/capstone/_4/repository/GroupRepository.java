@@ -1,7 +1,7 @@
 package capstone._4.repository;
 
 import capstone._4.domain.Groups;
-import capstone._4.domain.GroupsUser;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,12 @@ public class GroupRepository {
 
     @PersistenceContext
     EntityManager em;
+
+    JPAQueryFactory jpaQueryFactory;
+
+    public GroupRepository(){
+        this.jpaQueryFactory=new JPAQueryFactory(em);
+    }
 
     public boolean save(Groups groups) {
         em.persist(groups);

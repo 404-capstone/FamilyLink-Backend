@@ -11,6 +11,9 @@ import capstone._4.repository.GroupsUserReponsitory;
 import capstone._4.repository.UserRepository;
 import capstone._4.service.redis.RedisService;
 import com.soundicly.jnanoidenhanced.jnanoid.NanoIdUtils;
+import io.lettuce.core.RedisException;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +38,7 @@ public class GroupService {
 
     @Transactional
     public GroupGenerateDto generateGroup(String name, int id,String role) {
-        User user=userRepository.findById(id).get();
+        User user = getUserFromId(id);
         Groups groups=new Groups(name);
         groupRepository.save(groups);
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
@@ -52,7 +55,7 @@ public class GroupService {
      * */
     @Transactional
     public String generateCode(Integer group_id) {
-        Groups group= groupRepository.findById(group_id).get();
+        Groups group= getGroupFromId(group_id);
         String id = NanoIdUtils.randomNanoId(6);
         redisService.saveCode(id, group.getGup_id());
         group.setCode(id);
@@ -62,7 +65,7 @@ public class GroupService {
 
     //그룹 정보 조회 그룹원까지
     public GroupInfoDto searchGroup(Integer groupid) {
-        Groups group=groupRepository.findById(groupid).get();
+        Groups group= getGroupFromId(groupid);
         List<GroupUserInfoDto> users=groupsUserReponsitory.findBygroupId(groupid);
         return GroupInfoDto.builder()
                 .group_name(group.getGroup_name())
@@ -73,27 +76,21 @@ public class GroupService {
 
     @Transactional
     public int searchGroupWithCode(String code) {
-        Integer groupid=(Integer) redisService.getData(code);
-        if(groupid==null){
-            throw new RuntimeException("코드가 존재하지 않습니다.");
-        }
-        Groups group=groupRepository.findById(groupid).get();
+        Integer groupid=getGroupIdFromRedis(code);
+        Groups group= getGroupFromId(groupid);
         return group.getGup_id();
     }
 
     //실제 가입
     @Transactional
     public GroupGenerateDto accessGroupWithCode(String code,int id,String role) {
-        Integer groupid=(Integer) redisService.getData(code);
-        if(groupid==null){
-            throw new RuntimeException("코드가 존재하지 않습니다.");
-        }
-        Groups group=groupRepository.findById(groupid).get();
+        Integer groupid = getGroupIdFromRedis(code);
+        Groups group= getGroupFromId(groupid);
         boolean flag = groupsUserReponsitory.existsByGroupIdAndUserid(groupid,id);
         if(flag){
-            throw new RuntimeException("이미 그룹에 가입했습니다");
+            throw new EntityExistsException("이미 그룹에 가입했습니다");
         }
-        User user=userRepository.findById(id).get();
+        User user = getUserFromId(id);
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
         groupsUserReponsitory.save(groupsUser);
         return GroupGenerateDto.builder()
@@ -106,7 +103,7 @@ public class GroupService {
     public void quitGroup(Integer groupId,Integer userid) {
         int count = groupsUserReponsitory.deleteUser(groupId,userid);
         if(count == 0){
-            throw new RuntimeException("삭제가 되지 않았음.");
+            throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
     }
 
@@ -114,7 +111,28 @@ public class GroupService {
     public void deleteGroup(Integer groupId) {
         int count = groupRepository.deleteGroupe(groupId);
         if(count == 0){
-            throw new RuntimeException("그룹 삭제 안됨");
+            throw new EntityNotFoundException("그룹 삭제 안됨");
         }
+    }
+
+    private Groups getGroupFromId(Integer groupid) {
+        return groupRepository.findById(groupid).orElseThrow(
+                () -> new EntityNotFoundException("그룹이 존재하지 않습니다.")
+        );
+    }
+
+    private User getUserFromId(int id) {
+        User user=userRepository.findById(id).orElseThrow(
+                ()-> new EntityNotFoundException("유저가 존재하지 않습니다.")
+        );
+        return user;
+    }
+
+    private Integer getGroupIdFromRedis(String code) {
+        Integer groupid=(Integer) redisService.getData(code);
+        if(groupid==null){
+            throw new RedisException("코드가 존재하지 않습니다.");
+        }
+        return groupid;
     }
 }

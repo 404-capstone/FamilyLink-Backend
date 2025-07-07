@@ -41,4 +41,12 @@ public class RedisService {
             throw new RedisConnectionFailureException("redis 연결문제: "+ e.getMessage());
         }
     }
+
+    public boolean delete(String key){
+        try {
+            return redisTemplate.delete(key);
+        }catch (RedisConnectionFailureException e){
+            throw new RedisConnectionFailureException("redis 연결문제: "+ e.getMessage());
+        }
+    }
 }

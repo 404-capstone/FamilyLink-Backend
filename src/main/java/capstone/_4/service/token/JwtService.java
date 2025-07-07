@@ -72,6 +72,7 @@ public class JwtService {
         }else{
             throw new TokenException("토큰이없거나 Bearer이 존재하지않습니다.");
         }
+        redisService.delete(refreshToken);
         return generateTokenDto;
     }
 
@@ -122,5 +123,15 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
         return cli.get("email",String.class); //aESUtil.decrypt();
+    }
+
+    public int returnToken(String token){
+        if(token.startsWith("Bearer ")){
+            String accessToken=token.substring(7);
+            int id=getIdFromToken(accessToken);
+            return id;
+        }else{
+            throw new TokenException("토큰 번호가 잘못되었습니다");
+        }
     }
 }
