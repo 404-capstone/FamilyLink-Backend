@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +41,8 @@ public class GroupController {
         String token=request.getHeader("Authorization");
         int id=jwtService.returnToken(token);
         GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(
-                ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
+                ResponseEnum.GENERATE_COMPLETED.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 groupResponseDto));
     }
 
@@ -54,8 +55,8 @@ public class GroupController {
     @PostMapping("/code")
     public ResponseEntity<?> groupCodeGeneration(@RequestParam Integer groupid){
         String code=groupService.generateCode(groupid);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
-                ResponseEnum.SUCCESS.getMessage(),code));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
+                ResponseEnum.GENERATE_COMPLETED.getMessage(),code));
     }
 
     @PostMapping("/search/code")
@@ -83,14 +84,14 @@ public class GroupController {
         String token=request.getHeader("Authorization");
         int id=jwtService.returnToken(token);
         groupService.quitGroup(groupId,id);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
                 ResponseEnum.QUIT_SUCCESS.getMessage(),id));
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> groupDelete(@RequestParam Integer groupId,HttpServletRequest request) {
         groupService.deleteGroup(groupId);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
                 ResponseEnum.DELETE_SUCCESS.getMessage(),groupId));
     }
 

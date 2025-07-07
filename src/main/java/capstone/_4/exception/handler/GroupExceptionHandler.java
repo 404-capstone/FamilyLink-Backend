@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GroupExceptionHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> entityNotFoundException(EntityNotFoundException e){
-        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ErrorCode.ENTITY_NOT_FOUND.getStaus(),
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ErrorCode.ENTITY_NOT_FOUND.getStaus(),
                 ErrorCode.ENTITY_NOT_FOUND.getMessage(),e.getMessage()));
     }
 
@@ -32,10 +32,10 @@ public class GroupExceptionHandler {
                 ErrorCode.REDIS_NOT_FOUND.getMessage(),e.getMessage()));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<?> entityExistsException(EntityExistsException e){
-        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ErrorCode.ENTITY_EXISTS.getStaus(),
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ErrorCode.ENTITY_EXISTS.getStaus(),
                 ErrorCode.ENTITY_EXISTS.getMessage(),e.getMessage()
         ));
     }
