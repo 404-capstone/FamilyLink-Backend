@@ -58,8 +58,7 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),code));
     }
-
-    @PostMapping("/search/code")
+    @PostMapping("/access/search/code")
     public ResponseEntity<?> groupSerachwithCode(@RequestParam String code) {
         int groupid=groupService.searchGroupWithCode(code);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
