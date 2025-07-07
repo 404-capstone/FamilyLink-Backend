@@ -60,7 +60,7 @@ public class JwtService {
             log.info("token: {}",token);
             try{
                 if(validateRefreshToken(token)){
-                    int id=Integer.parseInt(getIdFromToken(token));
+                    int id=getIdFromToken(token);
                     log.info("id: {}",id);
                     Optional<User> user=userRepository.findById(id);
                     generateTokenDto.setAccessToken(generateAccessToken(user.orElse(null)));
@@ -72,6 +72,7 @@ public class JwtService {
         }else{
             throw new TokenException("토큰이없거나 Bearer이 존재하지않습니다.");
         }
+        redisService.delete(refreshToken);
         return generateTokenDto;
     }
 
@@ -92,7 +93,7 @@ public class JwtService {
 
     public String generateRefreshToken(User user){
         String refreshToken= jwtUtil.generateRefreshToken(REFRESH_SECRET_KEY,REFRESH_EXPIRATION,user);
-        redisService.saveJwt(refreshToken, String.valueOf(user.getId()));
+        redisService.saveJwt(refreshToken, user.getId());
         return refreshToken;
     }
 
@@ -105,13 +106,32 @@ public class JwtService {
         return jwtUtil.getTokenStatus(token, ACCESS_SECRET_KEY);
     }
 
-    public String getIdFromToken(String token){
+    public Integer getIdFromToken(String token){
         Claims cli= Jwts.parserBuilder()
                 .setSigningKey(ACCESS_SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return aESUtil.decrypt(cli.getSubject());
+        return Integer.parseInt(aESUtil.decrypt(cli.getSubject()));
 
+    }
+
+    public String getEmailFromToken(String token) {
+        Claims cli = Jwts.parserBuilder()
+                .setSigningKey(ACCESS_SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return cli.get("email",String.class); //aESUtil.decrypt();
+    }
+
+    public int returnToken(String token){
+        if(token.startsWith("Bearer ")){
+            String accessToken=token.substring(7);
+            int id=getIdFromToken(accessToken);
+            return id;
+        }else{
+            throw new TokenException("토큰 번호가 잘못되었습니다");
+        }
     }
 }

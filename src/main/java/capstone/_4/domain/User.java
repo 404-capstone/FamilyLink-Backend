@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,10 +46,13 @@ public class User {
     @Column
     private String image;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     @JsonIgnore
-    private List<Groupsuser> groupsuser;
+    private List<GroupsUser> groupsuser = new ArrayList<>();
 
+    public void addGroupUser(GroupsUser groupsuser){
+        this.groupsuser.add(groupsuser);
+    }
 
 
 }
