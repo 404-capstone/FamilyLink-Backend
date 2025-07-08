@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/group")
@@ -94,4 +95,17 @@ public class GroupController {
                 ResponseEnum.DELETE_SUCCESS.getMessage(),groupId));
     }
 
+    @PatchMapping("/edit")
+    public ResponseEntity<?> groupEdit(@RequestParam Integer groupId, @RequestParam String name, @RequestParam(required = false) MultipartFile image) {
+        groupService.updateGroup(groupId,name,image);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.UPDATE_SUCCESS.getCode(),
+                ResponseEnum.UPDATE_SUCCESS.getMessage(),groupId));
+    }
+
+    @DeleteMapping("/user/delete")
+    public ResponseEntity<?> groupUserDelete(@RequestParam Integer groupId,@RequestParam Integer userId) {
+        groupService.deleteUserWithGroup(groupId,userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
+                ResponseEnum.DELETE_SUCCESS.getMessage(),userId));
+    }
 }

@@ -10,6 +10,7 @@ import capstone._4.repository.GroupRepository;
 import capstone._4.repository.GroupsUserReponsitory;
 import capstone._4.repository.UserRepository;
 import capstone._4.service.redis.RedisService;
+import capstone._4.util.ImageHandler;
 import com.soundicly.jnanoidenhanced.jnanoid.NanoIdUtils;
 import io.lettuce.core.RedisException;
 import jakarta.persistence.EntityExistsException;
@@ -18,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class GroupService {
     private final UserRepository userRepository;
     private final GroupsUserReponsitory groupsUserReponsitory;
     private final RedisService redisService;
+    private final ImageHandler imageHandler;
 
 
 /**
@@ -115,6 +118,16 @@ public class GroupService {
         }
     }
 
+    @Transactional
+    public void updateGroup(Integer groupId, String name, MultipartFile image) {
+        String path =null;
+        if(image !=null){ path = imageHandler.saveImage(image);}
+        Long count= groupRepository.updateGroup(groupId,name,path);
+        if(count == 0){
+            throw new EntityNotFoundException("그룹이 존재하지 않습니다.");
+        }
+    }
+
     private Groups getGroupFromId(Integer groupid) {
         return groupRepository.findById(groupid).orElseThrow(
                 () -> new EntityNotFoundException("그룹이 존재하지 않습니다.")
@@ -134,5 +147,14 @@ public class GroupService {
             throw new RedisException("코드가 존재하지 않습니다.");
         }
         return groupid;
+    }
+
+
+    @Transactional
+    public void deleteUserWithGroup(Integer groupId,Integer userid) {
+        int count = groupsUserReponsitory.deleteUser(groupId,userid);
+        if(count == 0){
+            throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
+        }
     }
 }
