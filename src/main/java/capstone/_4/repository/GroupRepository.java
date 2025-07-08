@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -16,17 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 @Slf4j
 public class GroupRepository {
 
     @PersistenceContext
-    EntityManager em;
-
-    JPAQueryFactory jpaQueryFactory;
-
-    public GroupRepository(){
-        this.jpaQueryFactory=new JPAQueryFactory(em);
-    }
+    private final EntityManager em;
+    private final JPAQueryFactory jpaQueryFactory;
 
     public boolean save(Groups groups) {
         em.persist(groups);
@@ -58,8 +55,5 @@ public class GroupRepository {
         }
         return update.where(qGroups.gup_id.eq(groupId))
                 .execute();
-
-
-
     }
 }

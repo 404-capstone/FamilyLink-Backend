@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class GroupInfoDto {
+public class GroupInfoResponseDto {
     private Integer group_id;
     private String group_name;
     private List<GroupUserInfoDto> userinfo;

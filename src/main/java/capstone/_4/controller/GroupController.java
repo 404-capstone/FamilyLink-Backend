@@ -1,16 +1,16 @@
 package capstone._4.controller;
 
 import capstone._4.dto.ApiResponseDto;
-import capstone._4.dto.group.GroupInfoDto;
+import capstone._4.dto.group.GroupInfoResponseDto;
 import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.GroupService;
 import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,11 +37,12 @@ public class GroupController {
     * @param name 그룹이름
     * @return : dto
     * */
-    @PostMapping("/generation")
-    public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role, HttpServletRequest request) {
+    @PostMapping(value = "/generation",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role,@RequestParam(required = false) MultipartFile image
+            ,HttpServletRequest request) {
         String token=request.getHeader("Authorization");
         int id=jwtService.returnToken(token);
-        GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role);
+        GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role,image);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
                 ResponseEnum.GENERATE_COMPLETED.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 groupResponseDto));
@@ -49,8 +50,8 @@ public class GroupController {
 
     @GetMapping("/search")
     public ResponseEntity<?> groupSearch(@RequestParam Integer groupId) {
-        GroupInfoDto groupInfoDto=groupService.searchGroup(groupId);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),groupInfoDto));
+        GroupInfoResponseDto groupInfoResponseDto =groupService.searchGroup(groupId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(), groupInfoResponseDto));
     }
 
     @PostMapping("/code")
@@ -59,6 +60,15 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),code));
     }
+
+    @GetMapping("/code/search")
+    public ResponseEntity<?> groupCodeSearch(@RequestParam Integer groupid){
+        String code=groupService.searchCode(groupid);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),code));
+    }
+
+
     @PostMapping("/access/search/code")
     public ResponseEntity<?> groupSerachwithCode(@RequestParam String code) {
         int groupid=groupService.searchGroupWithCode(code);
@@ -95,8 +105,9 @@ public class GroupController {
                 ResponseEnum.DELETE_SUCCESS.getMessage(),groupId));
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping(value = "/edit",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> groupEdit(@RequestParam Integer groupId, @RequestParam String name, @RequestParam(required = false) MultipartFile image) {
+        log.info("start");
         groupService.updateGroup(groupId,name,image);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.UPDATE_SUCCESS.getCode(),
                 ResponseEnum.UPDATE_SUCCESS.getMessage(),groupId));

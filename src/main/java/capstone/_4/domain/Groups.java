@@ -20,6 +20,11 @@ public class Groups {
         this.group_name=name;
     }
 
+    public Groups(String name, String image) {
+        this.group_name=name;
+        this.image=image;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int gup_id;

@@ -3,7 +3,7 @@ package capstone._4.service;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
-import capstone._4.dto.group.GroupInfoDto;
+import capstone._4.dto.group.GroupInfoResponseDto;
 import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.dto.group.GroupUserInfoDto;
 import capstone._4.repository.GroupRepository;
@@ -40,9 +40,10 @@ public class GroupService {
  */
 
     @Transactional
-    public GroupGenerateDto generateGroup(String name, int id,String role) {
+    public GroupGenerateDto generateGroup(String name, int id,String role,MultipartFile image) {
         User user = getUserFromId(id);
-        Groups groups=new Groups(name);
+        String path = checkImage(image);
+        Groups groups=new Groups(name,path);
         groupRepository.save(groups);
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
         groupsUserReponsitory.save(groupsuser);
@@ -67,10 +68,10 @@ public class GroupService {
     }
 
     //그룹 정보 조회 그룹원까지
-    public GroupInfoDto searchGroup(Integer groupid) {
+    public GroupInfoResponseDto searchGroup(Integer groupid) {
         Groups group= getGroupFromId(groupid);
         List<GroupUserInfoDto> users=groupsUserReponsitory.findBygroupId(groupid);
-        return GroupInfoDto.builder()
+        return GroupInfoResponseDto.builder()
                 .group_name(group.getGroup_name())
                 .group_id(groupid)
                 .userinfo(users)
@@ -120,11 +121,18 @@ public class GroupService {
 
     @Transactional
     public void updateGroup(Integer groupId, String name, MultipartFile image) {
-        String path =null;
-        if(image !=null){ path = imageHandler.saveImage(image);}
+        String path = checkImage(image);
         Long count= groupRepository.updateGroup(groupId,name,path);
         if(count == 0){
             throw new EntityNotFoundException("그룹이 존재하지 않습니다.");
+        }
+    }
+
+    @Transactional
+    public void deleteUserWithGroup(Integer groupId,Integer userid) {
+        int count = groupsUserReponsitory.deleteUser(groupId,userid);
+        if(count == 0){
+            throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
     }
 
@@ -150,11 +158,22 @@ public class GroupService {
     }
 
 
-    @Transactional
-    public void deleteUserWithGroup(Integer groupId,Integer userid) {
-        int count = groupsUserReponsitory.deleteUser(groupId,userid);
-        if(count == 0){
-            throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
+    private String checkImage(MultipartFile image) {
+        if(image !=null){
+            return imageHandler.saveImage(image);
+        }else{
+            return null;
+        }
+    }
+
+
+    public String searchCode(Integer groupid) {
+        String code=groupRepository.findById(groupid).get().getCode();
+        Object check=redisService.getData(code);
+        if(check != null){
+            return code;
+        }else{
+            throw new RedisException("그룹 초대코드가 만료되었습니다");
         }
     }
 }
