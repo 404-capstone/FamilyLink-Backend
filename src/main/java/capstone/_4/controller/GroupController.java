@@ -1,6 +1,7 @@
 package capstone._4.controller;
 
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.ServeyDto;
 import capstone._4.dto.group.GroupInfoResponseDto;
 import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.enums.ResponseEnum;
@@ -40,8 +41,7 @@ public class GroupController {
     @PostMapping(value = "/generation",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role,@RequestParam(required = false) MultipartFile image
             ,HttpServletRequest request) {
-        String token=request.getHeader("Authorization");
-        int id=jwtService.returnToken(token);
+        int id = tokenTakeUserId(request);
         GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role,image);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
                 ResponseEnum.GENERATE_COMPLETED.getCode(), ResponseEnum.SUCCESS.getMessage(),
@@ -78,8 +78,7 @@ public class GroupController {
 
     @PostMapping("/access")
     public ResponseEntity<?> groupAccess(@RequestParam String code,@RequestParam String role,HttpServletRequest request){
-        String token=request.getHeader("Authorization");
-        int id=jwtService.returnToken(token);
+        int id = tokenTakeUserId(request);
         GroupGenerateDto groupGenerateDto=groupService.accessGroupWithCode(code,id,role);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),groupGenerateDto));
@@ -91,8 +90,7 @@ public class GroupController {
 
     @DeleteMapping("/quit")
     public ResponseEntity<?> groupQuit(@RequestParam Integer groupId,HttpServletRequest request) {
-        String token=request.getHeader("Authorization");
-        int id=jwtService.returnToken(token);
+        int id = tokenTakeUserId(request);
         groupService.quitGroup(groupId,id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
                 ResponseEnum.QUIT_SUCCESS.getMessage(),id));
@@ -118,5 +116,27 @@ public class GroupController {
         groupService.deleteUserWithGroup(groupId,userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
                 ResponseEnum.DELETE_SUCCESS.getMessage(),userId));
+    }
+
+    @PostMapping("/servey/save")
+    public ResponseEntity<?> serveySave(@RequestParam Integer groupId, @RequestBody ServeyDto dto, HttpServletRequest request) {
+        int id=tokenTakeUserId(request);
+        groupService.saveScore(dto,groupId,id);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),"점수저장에 성공했습니다."));
+    }
+
+
+    @GetMapping("/servey/search")
+    public ResponseEntity<?> serveySearch(@RequestParam Integer groupId,HttpServletRequest request) {
+        int id=tokenTakeUserId(request);
+        ServeyDto responseDto=groupService.searchUserScore(groupId,id);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),responseDto));
+    }
+
+    private int tokenTakeUserId(HttpServletRequest request) {
+        String token= request.getHeader("Authorization");
+        return jwtService.returnToken(token);
     }
 }

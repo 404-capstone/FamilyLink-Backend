@@ -25,17 +25,23 @@ public class GroupsUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "guser_id")
-    private int groupUserId;
+    private Integer groupUserId;
 
 
     @Column
     private String role;
 
     @Column
-    private int score;
+    private Integer score;
+
+    @Column(name="correct_percent")
+    private Integer percent;
+
+    @Column
+    private String level;
 
     @Column(columnDefinition = "tinyint(1)")
-    private boolean leader;
+    private Boolean leader;
 
     @ManyToOne
     @JoinColumn(name="gup_id")
@@ -44,4 +50,10 @@ public class GroupsUser {
     @ManyToOne
     @JoinColumn(name = "u_id")
     private User user;
+
+    public void setScore(int score,int percent,String level) {
+        this.score=score;
+        this.percent=percent;
+        this.level=level;
+    }
 }

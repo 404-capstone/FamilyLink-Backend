@@ -3,6 +3,7 @@ package capstone._4.service;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
+import capstone._4.dto.ServeyDto;
 import capstone._4.dto.group.GroupInfoResponseDto;
 import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.dto.group.GroupUserInfoDto;
@@ -136,6 +137,34 @@ public class GroupService {
         }
     }
 
+    public String searchCode(Integer groupid) {
+        String code=groupRepository.findById(groupid).get().getCode();
+        Object check=redisService.getData(code);
+        if(check != null){
+            return code;
+        }else{
+            throw new RedisException("그룹 초대코드가 만료되었습니다");
+        }
+    }
+
+    @Transactional
+    public void saveScore(ServeyDto dto, int groupid,int id) {
+        log.info("score :{} level:{} percent:{}", dto.getLevel(), dto.getScore(), dto.getPercent());
+        GroupsUser groupsUser= getGroupsUser(groupid, id);
+        groupsUser.setScore(dto.getScore(),dto.getPercent(),dto.getLevel());
+    }
+
+    public ServeyDto searchUserScore(Integer groupId, int id) {
+        GroupsUser groupsUser= getGroupsUser(groupId, id);
+        return ServeyDto.builder()
+                .score(groupsUser.getScore())
+                .level(groupsUser.getLevel())
+                .percent(groupsUser.getPercent())
+                .build();
+    }
+
+
+
     private Groups getGroupFromId(Integer groupid) {
         return groupRepository.findById(groupid).orElseThrow(
                 () -> new EntityNotFoundException("그룹이 존재하지 않습니다.")
@@ -166,14 +195,12 @@ public class GroupService {
         }
     }
 
-
-    public String searchCode(Integer groupid) {
-        String code=groupRepository.findById(groupid).get().getCode();
-        Object check=redisService.getData(code);
-        if(check != null){
-            return code;
-        }else{
-            throw new RedisException("그룹 초대코드가 만료되었습니다");
-        }
+    private GroupsUser getGroupsUser(Integer groupId, int id) {
+        return groupsUserReponsitory.findByIds(groupId, id).orElseThrow(
+                () -> new EntityNotFoundException("그룹 유저가 존재하지 않습니다.")
+        );
     }
+
+
+
 }

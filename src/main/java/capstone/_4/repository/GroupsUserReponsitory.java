@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class GroupsUserReponsitory {
@@ -18,13 +19,23 @@ public class GroupsUserReponsitory {
         return true;
     }
 
-    public List<GroupUserInfoDto> findBygroupId(int groupid) {
+    public Optional<GroupsUser> findByIds(int groupId, int userId){
+       return em.createQuery("select gu from GroupsUser gu " +
+                "where gu.group.id = :groupId and gu.user.id = :userId",GroupsUser.class)
+                .setParameter("groupId",groupId)
+                .setParameter("userId",userId)
+                .getResultList().stream().findFirst();
+
+
+    }
+
+    public List<GroupUserInfoDto> findBygroupId(int groupId) {
         return em.createQuery("select new capstone._4.dto.group.GroupUserInfoDto(u.username,gu.role,u.age,u.image,gu.leader) " +
                 "from GroupsUser gu " +
                 "join gu.group g " +
                 "join gu.user u " +
-                "where g.gup_id=:groupid",GroupUserInfoDto.class)
-                .setParameter("groupid",groupid)
+                "where g.gup_id=:groupId",GroupUserInfoDto.class)
+                .setParameter("groupId",groupId)
                 .getResultList();
 
     }
