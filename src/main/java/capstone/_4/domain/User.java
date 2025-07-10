@@ -38,7 +38,7 @@ public class User {
     private String username;
 
     @Column
-    private int age;
+    private Integer age;
 
     @Column
     private String gender;

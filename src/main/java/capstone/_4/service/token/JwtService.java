@@ -65,6 +65,7 @@ public class JwtService {
                     Optional<User> user=userRepository.findById(id);
                     generateTokenDto.setAccessToken(generateAccessToken(user.orElse(null)));
                     generateTokenDto.setRefreshToken(generateRefreshToken(user.orElse(null)));
+                    redisService.delete(token);
                 }
             }catch(Exception e){
                 throw new TokenException("user가 존재하지 않습니다."+e.getMessage());
@@ -72,7 +73,6 @@ public class JwtService {
         }else{
             throw new TokenException("토큰이없거나 Bearer이 존재하지않습니다.");
         }
-        redisService.delete(refreshToken);
         return generateTokenDto;
     }
 

@@ -1,18 +1,20 @@
 package capstone._4.controller;
 
 import capstone._4.dto.ApiResponseDto;
-import capstone._4.dto.group.GroupInfoDto;
+import capstone._4.dto.ServeyDto;
+import capstone._4.dto.group.GroupInfoResponseDto;
 import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.GroupService;
 import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/group")
@@ -36,11 +38,11 @@ public class GroupController {
     * @param name 그룹이름
     * @return : dto
     * */
-    @PostMapping("/generation")
-    public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role, HttpServletRequest request) {
-        String token=request.getHeader("Authorization");
-        int id=jwtService.returnToken(token);
-        GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role);
+    @PostMapping(value = "/generation",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role,@RequestParam(required = false) MultipartFile image
+            ,HttpServletRequest request) {
+        int id = tokenTakeUserId(request);
+        GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role,image);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
                 ResponseEnum.GENERATE_COMPLETED.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 groupResponseDto));
@@ -48,8 +50,8 @@ public class GroupController {
 
     @GetMapping("/search")
     public ResponseEntity<?> groupSearch(@RequestParam Integer groupId) {
-        GroupInfoDto groupInfoDto=groupService.searchGroup(groupId);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),groupInfoDto));
+        GroupInfoResponseDto groupInfoResponseDto =groupService.searchGroup(groupId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(), groupInfoResponseDto));
     }
 
     @PostMapping("/code")
@@ -58,6 +60,15 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),code));
     }
+
+    @GetMapping("/code/search")
+    public ResponseEntity<?> groupCodeSearch(@RequestParam Integer groupid){
+        String code=groupService.searchCode(groupid);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),code));
+    }
+
+
     @PostMapping("/access/search/code")
     public ResponseEntity<?> groupSerachwithCode(@RequestParam String code) {
         int groupid=groupService.searchGroupWithCode(code);
@@ -67,8 +78,7 @@ public class GroupController {
 
     @PostMapping("/access")
     public ResponseEntity<?> groupAccess(@RequestParam String code,@RequestParam String role,HttpServletRequest request){
-        String token=request.getHeader("Authorization");
-        int id=jwtService.returnToken(token);
+        int id = tokenTakeUserId(request);
         GroupGenerateDto groupGenerateDto=groupService.accessGroupWithCode(code,id,role);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),groupGenerateDto));
@@ -80,8 +90,7 @@ public class GroupController {
 
     @DeleteMapping("/quit")
     public ResponseEntity<?> groupQuit(@RequestParam Integer groupId,HttpServletRequest request) {
-        String token=request.getHeader("Authorization");
-        int id=jwtService.returnToken(token);
+        int id = tokenTakeUserId(request);
         groupService.quitGroup(groupId,id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
                 ResponseEnum.QUIT_SUCCESS.getMessage(),id));
@@ -94,4 +103,40 @@ public class GroupController {
                 ResponseEnum.DELETE_SUCCESS.getMessage(),groupId));
     }
 
+    @PatchMapping(value = "/edit",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> groupEdit(@RequestParam Integer groupId, @RequestParam String name, @RequestParam(required = false) MultipartFile image) {
+        log.info("start");
+        groupService.updateGroup(groupId,name,image);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.UPDATE_SUCCESS.getCode(),
+                ResponseEnum.UPDATE_SUCCESS.getMessage(),groupId));
+    }
+
+    @DeleteMapping("/user/delete")
+    public ResponseEntity<?> groupUserDelete(@RequestParam Integer groupId,@RequestParam Integer userId) {
+        groupService.deleteUserWithGroup(groupId,userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
+                ResponseEnum.DELETE_SUCCESS.getMessage(),userId));
+    }
+
+    @PostMapping("/servey/save")
+    public ResponseEntity<?> serveySave(@RequestParam Integer groupId, @RequestBody ServeyDto dto, HttpServletRequest request) {
+        int id=tokenTakeUserId(request);
+        groupService.saveScore(dto,groupId,id);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),"점수저장에 성공했습니다."));
+    }
+
+
+    @GetMapping("/servey/search")
+    public ResponseEntity<?> serveySearch(@RequestParam Integer groupId,HttpServletRequest request) {
+        int id=tokenTakeUserId(request);
+        ServeyDto responseDto=groupService.searchUserScore(groupId,id);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),responseDto));
+    }
+
+    private int tokenTakeUserId(HttpServletRequest request) {
+        String token= request.getHeader("Authorization");
+        return jwtService.returnToken(token);
+    }
 }
