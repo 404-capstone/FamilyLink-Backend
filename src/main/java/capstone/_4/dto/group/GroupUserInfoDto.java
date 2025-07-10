@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupUserInfoDto {
+    private Integer userId;
     private String name;
     private String role;
     private int age;

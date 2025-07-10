@@ -1,16 +1,20 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "schedule")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Schedule {
 
     @Id
@@ -42,5 +46,9 @@ public class Schedule {
     @JoinColumn(name="cal_id")
     @JsonManagedReference
     private Calendar calendar;
+
+    @OneToMany(mappedBy = "schedule")
+    @JsonBackReference
+    private List<GroupsSchedule> groupsSchedule;
 
 }

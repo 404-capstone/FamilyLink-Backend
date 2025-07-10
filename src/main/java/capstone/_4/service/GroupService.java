@@ -3,7 +3,7 @@ package capstone._4.service;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
-import capstone._4.dto.ServeyDto;
+import capstone._4.dto.group.ServeyDto;
 import capstone._4.dto.group.GroupInfoResponseDto;
 import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.dto.group.GroupUserInfoDto;

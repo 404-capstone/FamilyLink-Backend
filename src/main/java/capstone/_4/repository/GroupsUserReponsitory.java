@@ -30,7 +30,7 @@ public class GroupsUserReponsitory {
     }
 
     public List<GroupUserInfoDto> findBygroupId(int groupId) {
-        return em.createQuery("select new capstone._4.dto.group.GroupUserInfoDto(u.username,gu.role,u.age,u.image,gu.leader) " +
+        return em.createQuery("select new capstone._4.dto.group.GroupUserInfoDto(u.id,u.username,gu.role,u.age,u.image,gu.leader) " +
                 "from GroupsUser gu " +
                 "join gu.group g " +
                 "join gu.user u " +

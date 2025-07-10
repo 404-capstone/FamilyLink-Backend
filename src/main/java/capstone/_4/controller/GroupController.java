@@ -1,7 +1,7 @@
 package capstone._4.controller;
 
 import capstone._4.dto.ApiResponseDto;
-import capstone._4.dto.ServeyDto;
+import capstone._4.dto.group.ServeyDto;
 import capstone._4.dto.group.GroupInfoResponseDto;
 import capstone._4.dto.group.GroupGenerateDto;
 import capstone._4.enums.ResponseEnum;
