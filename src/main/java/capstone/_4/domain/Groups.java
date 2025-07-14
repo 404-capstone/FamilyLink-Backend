@@ -43,9 +43,13 @@ public class Groups {
     @JsonBackReference
     private List<GroupsUser> groupsuser = new ArrayList<>();
 
-    @OneToOne(mappedBy = "groups",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "groups")
     @JsonBackReference
     private Calendar calendar;
+
+    @OneToMany(mappedBy = "groups",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    private List<Album> albums = new ArrayList<>();
 
     public void addUser(GroupsUser groupsuser){
         this.groupsuser.add(groupsuser);

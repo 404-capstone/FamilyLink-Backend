@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Builder
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 public class PersonalSchedule {
     private Integer scheduleid;
     private String title;
-    private LocalDateTime start_time;
-    private LocalDateTime end_time;
+    private Date start_time;
+    private Date end_time;
 
     public PersonalSchedule(Schedule schedule) {
         this.scheduleid = schedule.getId();

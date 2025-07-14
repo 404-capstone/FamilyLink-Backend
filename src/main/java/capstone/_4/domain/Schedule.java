@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,11 +26,11 @@ public class Schedule {
     @Column(name="sch_title")
     private String title;
 
-    @Column(name="start_time")
-    private LocalDateTime startTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTime;
 
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTime;
 
     @Column(name = "sch_content")
     private String content;
