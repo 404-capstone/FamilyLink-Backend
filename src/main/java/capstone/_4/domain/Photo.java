@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -13,9 +14,16 @@ import java.util.List;
 
 @Entity
 @Table
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Photo {
+
+    public Photo(Date date,String area, String content) {
+        this.date=date;
+        this.area=area;
+        this.content=content;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +31,7 @@ public class Photo {
     private Integer id;
 
     @Temporal(TemporalType.DATE)
+    @Column(name="photo_date")
     private Date date;
 
     @Column(name="photo_area")
@@ -30,9 +39,6 @@ public class Photo {
 
     @Column(name="photo_content")
     private String content;
-
-    @Column(name="photo_image")
-    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id")
@@ -42,4 +48,21 @@ public class Photo {
     @OneToMany(mappedBy = "photo",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @JsonBackReference
     private List<PhotoUser> photoUser=new ArrayList<>();
+
+    @OneToMany(mappedBy = "photo",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<PhotoImage> photoImages=new ArrayList<>();
+
+    public void addPhotourl(PhotoImage photoImage){
+        photoImages.add(photoImage);
+        photoImage.setPhoto(this);
+    }
+
+    public void setPhotoImages(List<PhotoImage> photoUser) {
+        this.photoImages=photoImages;
+    }
+
+    public void setAlbum(Album album) {
+        this.album=album;
+    }
 }

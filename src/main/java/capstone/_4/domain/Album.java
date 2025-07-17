@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -13,7 +14,14 @@ import java.util.List;
 @Table(name = "album")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class Album {
+
+    public Album(Integer year,Integer month,Groups groups){
+        this.year=year;
+        this.month=month;
+        this.groups=groups;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +45,8 @@ public class Album {
     @OneToMany(mappedBy = "album",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Photo> photo=new ArrayList<>();
+
+    public void addPhoto(Photo photo){
+        this.photo.add(photo);
+    }
 }
