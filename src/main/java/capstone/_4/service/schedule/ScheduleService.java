@@ -34,7 +34,7 @@ public class ScheduleService {
                                 .toList(); //여기까지 personal스케쥴 만들고
                     return new ScheduleInfoDto(id,personalSchedules);
                 }).toList();
-        List<GroupScheduleDto> groupScheduleDto =scheduleReposiory.getGroupSchedules(groupId);
+        List<GroupScheduleDto> groupScheduleDto =scheduleReposiory.getGroupSchedulesV2(groupId);
 
         return ScheduleResponseDto.builder()
                 .groupSchedule(groupScheduleDto)

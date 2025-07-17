@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -13,7 +14,12 @@ import java.util.List;
 public class GroupScheduleDto {
     private Integer scheduleId;
     private String title;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Date startTime;
+    private Date endTime;
     private List<Integer> groupUserId;
+
+//    public GroupScheduleDto(Integer scheduleId, String title,
+//                            LocalDateTime startTime, LocalDateTime endTime, List<Integer> groupUserId) {
+//        this
+//    }
 }
