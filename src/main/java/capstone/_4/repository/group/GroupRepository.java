@@ -1,8 +1,7 @@
-package capstone._4.repository;
+package capstone._4.repository.group;
 
 import capstone._4.domain.Groups;
 import capstone._4.domain.QGroups;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import jakarta.persistence.EntityManager;
@@ -11,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

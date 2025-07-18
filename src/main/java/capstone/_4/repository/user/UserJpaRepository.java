@@ -1,4 +1,4 @@
-package capstone._4.repository;
+package capstone._4.repository.user;
 
 import capstone._4.domain.User;
 import jakarta.persistence.EntityManager;

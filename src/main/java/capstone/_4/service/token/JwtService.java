@@ -3,9 +3,8 @@ package capstone._4.service.token;
 import capstone._4.domain.User;
 import capstone._4.dto.user.GenerateTokenDto;
 import capstone._4.exception.TokenException;
-import capstone._4.repository.UserRepository;
+import capstone._4.repository.user.UserRepository;
 import capstone._4.service.redis.RedisService;
-import capstone._4.service.user.UserService;
 import capstone._4.util.AESUtil;
 import capstone._4.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -16,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.Subject;
 import java.security.Key;
 import java.util.Optional;
 

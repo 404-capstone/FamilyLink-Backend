@@ -1,53 +1,47 @@
 package capstone._4.service;
 
-import capstone._4.domain.Album;
-import capstone._4.domain.Groups;
-import capstone._4.domain.Photo;
-import capstone._4.domain.PhotoImage;
-import capstone._4.dto.album.AlbumInputDto;
-import capstone._4.dto.album.PhotoResponseDto;
-import capstone._4.dto.album.S3PhotoInfoDto;
-import capstone._4.repository.AlbumRepository;
-import capstone._4.repository.GroupRepository;
-import capstone._4.repository.PhotoImageRepository;
-import capstone._4.repository.PhotoRepository;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.*;
+import capstone._4.domain.*;
+import capstone._4.dto.PhotoInfoDto;
+import capstone._4.dto.album.*;
+import capstone._4.repository.album.AlbumRepository;
+import capstone._4.repository.album.PhotoImageRepository;
+import capstone._4.repository.album.PhotoRepository;
+import capstone._4.repository.group.GroupRepository;
+import capstone._4.repository.user.UserRepository;
+import com.querydsl.core.Tuple;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
+import java.util.Calendar;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AlbumService {
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
 
-    private final AmazonS3 amazonS3;
     private final PhotoRepository photoRepository;
     private final AlbumRepository albumRepository;
     private final PhotoImageRepository photoImageRepository;
     private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public PhotoResponseDto addPitcure(AlbumInputDto albumInputDto) {
         S3PhotoInfoDto info=null;
         List<MultipartFile> files=albumInputDto.getFiles();
         List<PhotoImage> photos = new ArrayList<>();
+        List<Integer> userIds = albumInputDto.getUserId();
         if(files == null || files.isEmpty()){
             throw new NoSuchElementException("파일이 존재하지 않습니다.");
-//        }else if(files.size()== 1){
-//            oneUploadFile(files.get(0));
         }else {
-            info=uploadFiles(files);  //여러개 저장.
+            info=s3Service.uploadFiles(files);  //여러개 저장.
         }
         Album album=getAlbum(albumInputDto); //새 앨범 생성
         log.info("album={}",album.getId());
@@ -65,12 +59,82 @@ public class AlbumService {
         }
         photo.setPhotoImages(photos);//포토 저장.
         photoImageRepository.saveAll(photos); //이미지 저장
-
+        for(int j=0;j<userIds.size();j++){
+            User user=userRepository.findById(userIds.get(j)).get();
+            PhotoUser photoUser=new PhotoUser(user,photo);
+            photoRepository.savePhotoUser(photoUser);
+            photo.addPhotoUser(photoUser);
+        }
 
         return PhotoResponseDto.builder()
                 .albumId(album.getId())
                 .photoId(photo.getId())
                 .size(photos.size()).build();
+    }
+
+    @Transactional
+    public PhotoInfoResponseDto editPhotoInfo(PhotoEditDto photoEditDto) {
+        Integer photoid=photoEditDto.getPhotoid();
+
+        Photo photo=photoRepository.findById(photoid)
+                .orElseThrow(()-> new EntityNotFoundException("사진 정보가 존재하지 않습니다."));
+        List<PhotoUser> photoUsers=photo.getPhotoUser();
+        Set<Integer> users=photoUsers.stream()
+                .map(pu->pu.getUser().getId())
+                .collect(Collectors.toSet());
+        Set<Integer> newuser=new HashSet<>(photoEditDto.getUserid());
+
+        for(PhotoUser photoUser:photoUsers){ //여기서 기존 id가 포함되지 않을시.
+            Integer userId=photoUser.getUser().getId();
+            if(!newuser.contains(userId)){
+                photoRepository.deleteUser(photoUser);
+                photo.removeUser(photoUser);
+            }
+        }
+
+        for(Integer userId:newuser){
+            if(!users.contains(userId)){
+                User user=userRepository.findById(userId)
+                        .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."));
+                PhotoUser photoUser=new PhotoUser(user,photo);
+                photo.addPhotoUser(photoUser);
+                photoRepository.savePhotoUser(photoUser);
+            }
+        }
+        photo.editInfo(photoEditDto.getTitle(),photoEditDto.getDate(),
+                photoEditDto.getArea(),photoEditDto.getContent());
+        return PhotoInfoResponseDto.builder()
+                .photoid(photo.getId())
+                .title(photo.getTitle())
+                .date(photo.getDate())
+                .content(photo.getContent())
+                .userIds(photo.getPhotoUser().stream().map(pu->pu.getId())
+                        .collect(Collectors.toList())).build();
+    }
+
+    public void deletePhoto(Integer groupId, Integer photoId) {
+        Integer count=photoRepository.deletePhotoById(photoId);
+        if(count <=0){
+            throw new EntityNotFoundException("사진이 존재하지 않습니다.");
+        }
+    }
+
+    public AlbumInfoResponseDto searchAlbum(Integer groupId) {
+        QAlbum album=QAlbum.album;
+        List<Tuple> albumInfo=albumRepository.searchAlbums(groupId);
+        List<AlbumInfoDto> albumInfoDtoList=albumInfo.stream()
+                .map(t ->{
+                    List<PhotoInfoDto> photoInfoDtoList=new ArrayList<>();
+                    photoInfoDtoList=photoRepository.searchPhotoWithGroup(t.get(album.id));
+                    String date=String.format("04d-02d",t.get(album.year),t.get(album.month));
+                    return AlbumInfoDto.builder().
+                            date(date)
+                            .photoInfoDtoList(photoInfoDtoList)
+                    .build();
+                }).toList();
+
+        return AlbumInfoResponseDto.builder()
+                .groupId(groupId).albumInfoDtoList(albumInfoDtoList).build();
     }
 
     private Album getAlbum(AlbumInputDto albumInputDto) {
@@ -89,70 +153,6 @@ public class AlbumService {
         return album;
     }
 
-
-//    public String oneUploadFile(MultipartFile file) {  //하나만 삭제 가능.
-//        if(file.isEmpty()){
-//            return null;
-//        }
-//        String fileName = createFileName(file.getOriginalFilename());
-//        ObjectMetadata objectMetadata = new ObjectMetadata();
-//        objectMetadata.setContentLength(file.getSize());
-//        objectMetadata.setContentType(file.getContentType());
-//
-//        try(InputStream inputStream = file.getInputStream()){
-//            amazonS3.putObject(new PutObjectRequest(bucket,fileName,inputStream,objectMetadata)
-//                    .withCannedAcl(CannedAccessControlList.PublicRead));
-//        }catch (IOException e){
-//            throw new AmazonS3Exception("저장에 실패했습니다" + e.getMessage());
-//        }
-//        amazonS3.getUrl(bucket,fileName).toString(); //url 주소.
-//        return fileName;
-//    }
-
-    public void deleteFile(String fileName) {
-        try {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-        }catch (AmazonS3Exception e){
-            throw new AmazonS3Exception("삭제에 실패하였습니다"+e.getMessage());
-        }
-    }
-
-    private String createFileName(String fileName){
-        return UUID.randomUUID().toString().concat(fileName);
-    }
-
-    private String getFileExtension(String fileName){
-        try{
-            return fileName.substring(fileName.lastIndexOf("."));
-        }catch (StringIndexOutOfBoundsException e){
-            throw new IllegalArgumentException("파일명이 잘못되었습니다.");
-        }
-
-    }
-
-    private S3PhotoInfoDto uploadFiles(List<MultipartFile> files){
-        List<String> fileNames = new ArrayList<>();
-        List<String> fileUrls=new ArrayList<>();
-
-        files.forEach(file ->{ //하나씩 파일 꺼내서 처리가능.
-            String fileName = createFileName(file.getOriginalFilename());
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentType(file.getContentType());
-            objectMetadata.setContentLength(file.getSize());
-
-            try(InputStream input= file.getInputStream()){
-                amazonS3.putObject(new PutObjectRequest(bucket,fileName,input,objectMetadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead));
-            }catch (IOException e){
-                throw new AmazonS3Exception("저장에 실패했습니다" + e.getMessage());
-            }
-            fileNames.add(fileName);
-            fileUrls.add(amazonS3.getUrl(bucket,fileName).toString());
-        });
-        return S3PhotoInfoDto.builder()
-                .fileNames(fileNames)
-                .fileUrls(fileUrls).build();
-    }
 
 
 }

@@ -2,7 +2,7 @@ package capstone._4.service.token;
 
 import capstone._4.domain.User;
 import capstone._4.domain.UserPrincipal;
-import capstone._4.repository.UserRepository;
+import capstone._4.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

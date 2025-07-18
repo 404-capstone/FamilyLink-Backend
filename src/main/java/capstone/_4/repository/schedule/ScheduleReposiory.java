@@ -1,4 +1,4 @@
-package capstone._4.repository;
+package capstone._4.repository.schedule;
 
 
 import capstone._4.domain.QGroupsSchedule;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository
 public class ScheduleReposiory {

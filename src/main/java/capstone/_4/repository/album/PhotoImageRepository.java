@@ -1,4 +1,4 @@
-package capstone._4.repository;
+package capstone._4.repository.album;
 
 import capstone._4.domain.PhotoImage;
 import jakarta.persistence.EntityManager;

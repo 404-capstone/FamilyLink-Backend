@@ -22,14 +22,17 @@ public class AlbumInputDto {
     @NotNull(message = "그룹 id값을 채워주세요.")
     private Integer groupId;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private String title;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date date;
 
     private String content;
     private String area;
 
-    private List<MultipartFile> files;
+    private List<Integer> userId;
 
+    private List<MultipartFile> files;
 
 
 

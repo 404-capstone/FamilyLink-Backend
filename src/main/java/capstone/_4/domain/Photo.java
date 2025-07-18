@@ -30,6 +30,9 @@ public class Photo {
     @Column(name="photo_id")
     private Integer id;
 
+    @Column(name="photo_title")
+    private String title;
+
     @Temporal(TemporalType.DATE)
     @Column(name="photo_date")
     private Date date;
@@ -58,11 +61,26 @@ public class Photo {
         photoImage.setPhoto(this);
     }
 
-    public void setPhotoImages(List<PhotoImage> photoUser) {
+    public void setPhotoImages(List<PhotoImage> photoImages) {
         this.photoImages=photoImages;
     }
 
     public void setAlbum(Album album) {
         this.album=album;
+    }
+
+    public void addPhotoUser(PhotoUser photoUser){
+        this.photoUser.add(photoUser);
+    }
+
+    public void editInfo(String title,Date date,String area,String content){
+        this.title=title;
+        this.date=date;
+        this.area=area;
+        this.content=content;
+    }
+
+    public void removeUser(PhotoUser photoUser) {
+        this.photoUser.remove(photoUser);
     }
 }

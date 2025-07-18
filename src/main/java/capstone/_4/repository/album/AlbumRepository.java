@@ -1,13 +1,14 @@
-package capstone._4.repository;
+package capstone._4.repository.album;
 
 import capstone._4.domain.Album;
-import capstone._4.domain.Photo;
+import capstone._4.domain.QAlbum;
+import capstone._4.dto.album.AlbumInfoDto;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,12 @@ import java.util.Optional;
 public class AlbumRepository {
     @PersistenceContext
     EntityManager em;
+
+    private final JPAQueryFactory queryFactory;
+
+    public AlbumRepository(JPAQueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
 
     public Album save(Album album){
         em.persist(album);
@@ -46,5 +53,21 @@ public class AlbumRepository {
                 .getSingleResult();
         return count>0;
 
+    }
+
+
+    public List<Tuple> searchAlbums(Integer groupId) {
+        QAlbum album = QAlbum.album;
+        return queryFactory.select(album.month,album.year,album.id)
+                .from(album)
+                .where(album.groups.gup_id.eq(groupId))
+                .orderBy(album.year.asc(),album.month.asc())
+                .fetch();
+
+//        return em.createQuery("select a from Album a " +
+//                "where a.groups.id=:groupId " +
+//                        "order by a.year asc , a.month asc",Integer.class)
+//                .setParameter("groupId",groupId)
+//                .getResultList();
     }
 }
