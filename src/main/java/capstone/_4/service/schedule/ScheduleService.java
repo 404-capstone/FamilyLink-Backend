@@ -37,6 +37,7 @@ public class ScheduleService {
         List<GroupScheduleDto> groupScheduleDto =scheduleReposiory.getGroupSchedulesV2(groupId);
 
         return ScheduleResponseDto.builder()
+                .groupId(groupId)
                 .groupSchedule(groupScheduleDto)
                 .personalUserSchedule(scheduleInfoDtos).build();
     }

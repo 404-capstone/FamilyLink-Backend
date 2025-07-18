@@ -26,11 +26,11 @@ public class Schedule {
     @Column(name="sch_title")
     private String title;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startTime;
+    @Column
+    private LocalDateTime startTime;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endTime;
+    @Column
+    private LocalDateTime endTime;
 
     @Column(name = "sch_content")
     private String content;

@@ -24,7 +24,7 @@ public class PhotoUser {
     private Boolean main;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "u_id")
     @JsonManagedReference
     private User user;
 

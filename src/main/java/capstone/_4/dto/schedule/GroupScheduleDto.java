@@ -14,8 +14,8 @@ import java.util.List;
 public class GroupScheduleDto {
     private Integer scheduleId;
     private String title;
-    private Date startTime;
-    private Date endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private List<Integer> groupUserId;
 
 //    public GroupScheduleDto(Integer scheduleId, String title,

@@ -8,10 +8,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Transactional
 @Repository
 public class PhotoRepository {
@@ -55,48 +58,63 @@ public class PhotoRepository {
         return em.createQuery("delete from Photo p " +
                 "where p.id=:id")
                 .setParameter("id",photoId)
-                .getResultList().size();
+                .executeUpdate();
     }
 
     public List<PhotoInfoDto> searchPhotoWithGroup(Integer albumId) {
         QPhoto photo = QPhoto.photo;
         QPhotoUser photoUser = QPhotoUser.photoUser;
         QPhotoImage  photoImage = QPhotoImage.photoImage;
-        List<Tuple> photoList =jpaQueryFactory.select(photo,photoUser.user.id,photoImage.url)
-                .from(photo)
-                .join(photo.photoUser, photoUser).fetchJoin()
-                .join(photo.photoImages,photoImage).fetchJoin()
+
+        List<Photo> photos=jpaQueryFactory.selectFrom(photo) //전체 사진만 제공.
                 .where(photo.album.id.eq(albumId))
-                .orderBy(photo.date.asc(),photoImage.id.asc())
                 .fetch();
 
-        Map<Integer,PhotoInfoDto> dto = new HashMap<>();
+        Map<Integer,List<Integer>> userMap= jpaQueryFactory //유저 따로 조회
+                .select(photoUser.photo.id,photoUser.user.id)
+                .from(photoUser)
+                .where(photoUser.photo.album.id.eq(albumId))
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        tuple -> tuple.get(photoUser.photo.id), //photoid가 키
+                        Collectors.mapping(
+                                tuple-> tuple.get(photoUser.user.id)  //그안에 유저아이디가 들어있게 변경
+                        , Collectors.toList())
 
-        for(Tuple t:photoList){
-            Integer photoId=t.get(photo.id);
-            PhotoInfoDto photoInfoDto=dto.get(photoId); //dto에서 기존에 있는거 가져오기
-            if(photoInfoDto==null){
-                photoInfoDto=new PhotoInfoDto(
-                        t.get(photo.id),
-                        t.get(photo.title),
-                        t.get(photoImage.url),
-                        t.get(photo.area),
-                        t.get(photo.content),
-                        new ArrayList<>()
+                ));
+
+        Map<Integer,List<String>> imageMap=jpaQueryFactory
+                .select(photoImage.photo.id,photoImage.url)//이미지 따로 조회
+                .from(photoImage)
+                .where(photoImage.photo.album.id.eq(albumId))
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        tuple-> tuple.get(photoImage.photo.id),
+                        Collectors.mapping(tuple-> tuple.get(photoImage.url)
+                        ,Collectors.toList())
+                ));
+
+
+        List<PhotoInfoDto> dto=new ArrayList<>();
+        for(Photo p:photos){
+            List<Integer> users=userMap.get(p.getId());
+            List<String> Images=imageMap.get(p.getId());
+
+
+            PhotoInfoDto photoInfoDto=new PhotoInfoDto(
+                        p.getId(),
+                        p.getTitle(),
+                        Images.get(0),
+                        p.getArea(),
+                        p.getContent(),
+                        users
                 );
-                dto.put(photoId,photoInfoDto);
-            }
-            //중복 방지.
-            if(photoInfoDto.getThumnailurl()==null||photoInfoDto.getThumnailurl().isEmpty()){
-                photoInfoDto.setThumnailurl(t.get(photoImage.url));
-            }
-            Integer userid=t.get(photoUser.id);
-            if(!photoInfoDto.getUserid().contains(userid)){
-                photoInfoDto.getUserid().add(userid);
-            }
+            dto.add(photoInfoDto);
 
         }
-        return new ArrayList<>(dto.values());
+        return dto;
 
 
     }

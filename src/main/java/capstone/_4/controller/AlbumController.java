@@ -46,12 +46,12 @@ public class AlbumController {
                 ResponseEnum.SUCCESS.getMessage(), albumInfoResponseDto));
     }
 
-    @GetMapping("/search/detail")
-    public ResponseEntity<?> searchAlbumDetail(@RequestParam Integer photoId){
-
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
-                ResponseEnum.SUCCESS.getMessage(), albumInfoResponseDto));
-    }
+//    @GetMapping("/search/detail")
+//    public ResponseEntity<?> searchAlbumDetail(@RequestParam Integer photoId){
+//
+//        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+//                ResponseEnum.SUCCESS.getMessage(), albumInfoResponseDto));
+//    }
 
 
 

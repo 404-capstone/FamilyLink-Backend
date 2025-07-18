@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Calendar;
 import java.util.stream.Collectors;
@@ -62,6 +63,7 @@ public class AlbumService {
         for(int j=0;j<userIds.size();j++){
             User user=userRepository.findById(userIds.get(j)).get();
             PhotoUser photoUser=new PhotoUser(user,photo);
+            user.addPhotoUser(photoUser);
             photoRepository.savePhotoUser(photoUser);
             photo.addPhotoUser(photoUser);
         }
@@ -83,14 +85,24 @@ public class AlbumService {
                 .map(pu->pu.getUser().getId())
                 .collect(Collectors.toSet());
         Set<Integer> newuser=new HashSet<>(photoEditDto.getUserid());
+        Iterator<PhotoUser> iterator=photoUsers.iterator();
 
-        for(PhotoUser photoUser:photoUsers){ //여기서 기존 id가 포함되지 않을시.
+        while(iterator.hasNext()){
+            PhotoUser photoUser=iterator.next();
             Integer userId=photoUser.getUser().getId();
             if(!newuser.contains(userId)){
                 photoRepository.deleteUser(photoUser);
+                iterator.remove();
                 photo.removeUser(photoUser);
             }
         }
+//        for(PhotoUser photoUser:photoUsers){ //여기서 기존 id가 포함되지 않을시.
+//            Integer userId=photoUser.getUser().getId(); //순회중에 리스트 수정을 하면안됨.
+//            if(!newuser.contains(userId)){
+//                photoRepository.deleteUser(photoUser);
+//                photo.removeUser(photoUser);
+//            }
+//        }
 
         for(Integer userId:newuser){
             if(!users.contains(userId)){
@@ -108,7 +120,7 @@ public class AlbumService {
                 .title(photo.getTitle())
                 .date(photo.getDate())
                 .content(photo.getContent())
-                .userIds(photo.getPhotoUser().stream().map(pu->pu.getId())
+                .userIds(photo.getPhotoUser().stream().map(pu->pu.getUser().getId())
                         .collect(Collectors.toList())).build();
     }
 
@@ -139,11 +151,9 @@ public class AlbumService {
 
     private Album getAlbum(AlbumInputDto albumInputDto) {
         Integer groupId= albumInputDto.getGroupId();
-        Date date= albumInputDto.getDate();
-        Calendar cal=Calendar.getInstance();
-        cal.setTime(date);
-        Integer year=cal.get(Calendar.YEAR);
-        Integer month=cal.get(Calendar.MONTH);
+        LocalDateTime date= albumInputDto.getDate();
+        Integer year=date.getYear();
+        Integer month=date.getMonthValue();
         Album album=albumRepository.findByDate(groupId,year,month)
                 .orElseGet(()->{
                     Groups groups=groupRepository.findById(groupId).get();

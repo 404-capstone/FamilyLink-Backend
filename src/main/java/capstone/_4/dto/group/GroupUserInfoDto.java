@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupUserInfoDto {
     private Integer userId;
-    private String name;
+    private String username;
     private String role;
-    private int age;
+    private Integer age;
     private String image;
-    private boolean leader;
+    private Boolean leader;
 }

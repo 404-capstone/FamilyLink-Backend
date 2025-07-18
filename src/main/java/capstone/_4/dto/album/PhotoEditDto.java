@@ -1,10 +1,12 @@
 package capstone._4.dto.album;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class PhotoEditDto {
     private String title;
     private String area;
     private String content;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Date date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime date;
     private List<Integer> userid;
 }

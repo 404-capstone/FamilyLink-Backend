@@ -27,7 +27,7 @@ public class User {
     @Id
     @Column(name="u_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column
     private String social;
@@ -60,4 +60,7 @@ public class User {
     }
 
 
+    public void addPhotoUser(PhotoUser photoUser) {
+        this.photouser.add(photoUser);
+    }
 }

@@ -14,8 +14,8 @@ import java.util.Date;
 public class PersonalSchedule {
     private Integer scheduleid;
     private String title;
-    private Date start_time;
-    private Date end_time;
+    private LocalDateTime start_time;
+    private LocalDateTime end_time;
 
     public PersonalSchedule(Schedule schedule) {
         this.scheduleid = schedule.getId();
