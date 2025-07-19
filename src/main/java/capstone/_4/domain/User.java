@@ -18,7 +18,13 @@ public class User {
 
     }
 
-    public User(String social, String email, String username, String image) {
+    public User(String social, String email, String username) {
+        this.social = social;
+        this.email = email;
+        this.username = username;
+    }
+
+    public User(String social,String email,String username,String image){
         this.social = social;
         this.email = email;
         this.username = username;

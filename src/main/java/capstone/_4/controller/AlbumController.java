@@ -4,7 +4,7 @@ package capstone._4.controller;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.album.*;
 import capstone._4.enums.ResponseEnum;
-import capstone._4.service.AlbumService;
+import capstone._4.service.album.AlbumService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package capstone._4.service;
+package capstone._4.service.album;
 
 import capstone._4.dto.album.S3PhotoInfoDto;
 import com.amazonaws.services.s3.AmazonS3;

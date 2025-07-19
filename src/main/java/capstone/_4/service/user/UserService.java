@@ -35,24 +35,14 @@ public class UserService {
 
     @Transactional
     public SocialResultDto userSave(SocialInputDto socialInputDto) {
-        SocialInfoDto socialInfoDto = new SocialInfoDto("naver","user2@naver.com","유저2");//socialService.naverLoginService(socialInputDto);
+        SocialInfoDto socialInfoDto = socialService.naverLoginService(socialInputDto);//new SocialInfoDto("naver","user2@naver.com","유저2");
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
-<<<<<<< HEAD
 
-        User user = new User(
-                socialInfoDto.getSocial(),
-                email,
-                socialInfoDto.getNickname(),
-                null
-        );
-
-
-=======
         User user=userRepository.findByEmail(email).orElse(null);
         if(user==null) {
-            user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname());
+            user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname(),null);
         }
->>>>>>> f2aefd714ce702ffa645784ffd33e424f5d75f89
+
         userRepository.save(user);
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);

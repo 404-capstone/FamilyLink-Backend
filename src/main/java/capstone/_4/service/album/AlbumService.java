@@ -1,4 +1,4 @@
-package capstone._4.service;
+package capstone._4.service.album;
 
 import capstone._4.domain.*;
 import capstone._4.dto.PhotoInfoDto;
@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Calendar;
 import java.util.stream.Collectors;
 
 @Service
