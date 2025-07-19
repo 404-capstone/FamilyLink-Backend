@@ -50,6 +50,13 @@ public class JwtService {
         this.aESUtil = aESUtil;
     }
 
+    /**
+     * 해당 메소드는, 리프레시 토큰을 통해 액세스 토큰과 리프레시를 재생성 하는 코드로
+     * 토큰 재생성 api외 사용하지 않는다.
+     * @param refreshToken
+     * @return
+     */
+
     public GenerateTokenDto generateToken(String refreshToken){
         //로직이 먼저 refresh받고 안에 상태 검증후에,안에 claim꺼내서 id꺼내서 그걸로 user조회한다음에 재생성.
         GenerateTokenDto generateTokenDto = new GenerateTokenDto();
@@ -74,6 +81,11 @@ public class JwtService {
         return generateTokenDto;
     }
 
+    /**
+     * 리프레시 토큰을 검증하는 메소드.
+     * @param refreshToken
+     * @return
+     */
     private boolean validateRefreshToken(String refreshToken){
         boolean refreshvalid=jwtUtil.getTokenStatus(refreshToken, REFRESH_SECRET_KEY);
         boolean isTokenMatched=false;
@@ -84,27 +96,54 @@ public class JwtService {
         return refreshvalid&&isTokenMatched;
     }
 
+    /**
+     * 넘어온 user도메인을 통해서 액세스 토큰을 만들어주는 메소드
+     * 로그인시 아래 메소드와 같이 생성해서 반환해준다.
+     * 보통 이걸통해서 액세스 토큰을 생성한다
+     * @apiNote jwtutil로 유저 정보를 넘겨서,유저 dbid값과 이메일 값을 암호화한다.
+     * 2. 암호화후 jwt claim안에 저장하고 jwt액세스 토큰을 반환한다.
+     * @param user 도메인 클래스.
+     * @return
+     */
     public String generateAccessToken(User user){
         String accessToken= jwtUtil.generateAccessToken(ACCESS_SECRET_KEY,ACCESS_EXPIRATION,user);
         return accessToken;
     }
 
+    /**
+     * user도메인을 기준으로 리프레시 토큰을 생성한다.
+     * 유저 로그인시, 위 액세스토큰 메소드와 함께 해당 메소드를 사용해서 같이 반환한다.
+     * @param user 도메인 클래스
+     * @return
+     */
     public String generateRefreshToken(User user){
         String refreshToken= jwtUtil.generateRefreshToken(REFRESH_SECRET_KEY,REFRESH_EXPIRATION,user);
         redisService.saveJwt(refreshToken, user.getId());
         return refreshToken;
     }
 
+    /**
+     * 이메일을 통해서 jwt토큰을 이용해 인가를 체크하는 메소드
+     * @param username
+     * @return
+     */
+
     public UsernamePasswordAuthenticationToken getAuthentication(String username){
         UserDetails principal=customUserdetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(principal,"",principal.getAuthorities());
     }
 
+    /**
+     * 토큰상태를 체크하는 메소드.
+     * @param token
+     * @return
+     */
     public boolean checkTokenState(String token){
         return jwtUtil.getTokenStatus(token, ACCESS_SECRET_KEY);
     }
 
-    public Integer getIdFromToken(String token){
+
+    private Integer getIdFromToken(String token){
         Claims cli= Jwts.parserBuilder()
                 .setSigningKey(ACCESS_SECRET_KEY)
                 .build()
