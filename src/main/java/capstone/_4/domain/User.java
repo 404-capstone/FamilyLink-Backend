@@ -15,14 +15,13 @@ public class User {
 
     }
 
-    public User(String social, String email, String username){
-        this.social=social;
-        this.email=email;
-        this.username=username;
+    public User(String social, String email, String username) {
+        this.social = social;
+        this.email = email;
+        this.username = username;
     }
 
     @Id
-    @Column(name="u_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -41,8 +40,8 @@ public class User {
     @Column
     private String gender;
 
-    @Column
-    private String image;
+    //@Column
+    //private String image;
 
     @OneToOne(mappedBy = "user")
     private Groupsuser groupsuser;
