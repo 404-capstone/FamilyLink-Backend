@@ -15,10 +15,11 @@ public class User {
 
     }
 
-    public User(String social, String email, String username) {
+    public User(String social, String email, String username, String image) {
         this.social = social;
         this.email = email;
         this.username = username;
+        this.image = image;
     }
 
     @Id
@@ -40,8 +41,8 @@ public class User {
     @Column
     private String gender;
 
-    //@Column
-    //private String image;
+    @Column
+    private String image;
 
     @OneToOne(mappedBy = "user")
     private Groupsuser groupsuser;

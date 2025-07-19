@@ -100,7 +100,8 @@ public class KakaoService {
                 User user = new User(
                         "kakao",
                         encryptedEmail,
-                        userInfo.getKakaoAccount().getProfile().getNickName()
+                        userInfo.getKakaoAccount().getProfile().getNickName(),
+                        userInfo.getKakaoAccount().getProfile().getThumbnailImageUrl()
                 );
                 userRepository.save(user);
                 log.info("[Kakao Service] 신규 사용자 저장 성공");

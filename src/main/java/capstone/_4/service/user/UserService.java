@@ -35,7 +35,12 @@ public class UserService {
         SocialInfoDto socialInfoDto = socialService.naverLoginService(SocialToken);//new SocialInfoDto("naver","h@naver.com","하하하");
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
 
-        User user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname());
+        User user = new User(
+                socialInfoDto.getSocial(),
+                email,
+                socialInfoDto.getNickname(),
+                null
+        );
 
         userRepository.save(user);
         String accessToken = jwtService.generateAccessToken(user);
