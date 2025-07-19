@@ -1,13 +1,15 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
+@ToString(exclude="groupsuser")
 @Getter
 public class User {
 
@@ -36,7 +38,7 @@ public class User {
     private String username;
 
     @Column
-    private int age;
+    private Integer age;
 
     @Column
     private String gender;
@@ -44,9 +46,13 @@ public class User {
     @Column
     private String image;
 
-    @OneToOne(mappedBy = "user")
-    private Groupsuser groupsuser;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<GroupsUser> groupsuser = new ArrayList<>();
 
+    public void addGroupUser(GroupsUser groupsuser){
+        this.groupsuser.add(groupsuser);
+    }
 
 
 }

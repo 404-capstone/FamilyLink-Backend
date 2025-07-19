@@ -1,5 +1,8 @@
 package capstone._4.util;
 
+import capstone._4.exception.DecryptionException;
+import capstone._4.exception.EncryptionException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +15,7 @@ import java.util.Base64;
 // 암호화 클래스
 
 @Component
+@Slf4j
 public class AESUtil {
 
     private final String ALGORITHM = "AES";
@@ -32,7 +36,7 @@ public class AESUtil {
             return Base64.getEncoder().encodeToString(encrypted); //암호화된 문자 반환
         }
         catch (Exception e) {
-            throw new RuntimeException("암호화 실패.");
+            throw new EncryptionException("암호화 실패.");
         }
 
     }
@@ -40,6 +44,7 @@ public class AESUtil {
     //복호화 수행.
     public String decrypt(String input) {
         try {
+            log.info("length"+SECRET_KEY.length());
             SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, keySpec);
@@ -47,7 +52,7 @@ public class AESUtil {
             byte[] decryptedBytes=cipher.doFinal(encryptedBytes);
             return new String(decryptedBytes);
         }catch (Exception e) {
-            throw new RuntimeException("복호화 실패");
+            throw new DecryptionException("복호화 실패");
         }
 
     }

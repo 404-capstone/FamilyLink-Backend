@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
     private final UserService userService;
-    private static final List<String> ignoredUrls = List.of("/user/login/naver","/");
+    private static final List<String> ignoredUrls = List.of("/user/login/naver","/user/login/kakao","/user/token/refresh");
 
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, JwtService jwtService,UserService userService) {
@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path=request.getRequestURI();
+        log.info("path={}",path);
         return ignoredUrls.contains(path);
     }
 
@@ -46,12 +47,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try{
             String authHeader=request.getHeader("Authorization");
             log.info("authHeader:"+authHeader);
-            if(authHeader!=null || authHeader.startsWith("Bearer ")){
-                String token=authHeader.substring(7);
+            if(authHeader!=null && authHeader.startsWith("Bearer ")){
+                String token=authHeader.substring(7).trim();
                 if(jwtService.checkTokenState(token)){ //토큰상태 정상인지 체크.
-                    String id=jwtService.getIdFromToken(token); //id빼기.
-                    log.info("id:"+id);
-                    setAuthenticationContext(id);
+                    String email=jwtService.getEmailFromToken(token);
+                    //int id=jwtService.getIdFromToken(token); //id빼기.
+                    log.info("id:"+email);
+                    setAuthenticationContext(email); //인가 설정
                     filterChain.doFilter(request,response);
                 }
             }
@@ -60,8 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setAuthenticationContext(String id) {
-        UsernamePasswordAuthenticationToken authenticationToken = jwtService.getAuthentication(id);
+    private void setAuthenticationContext(String email) {
+        UsernamePasswordAuthenticationToken authenticationToken = jwtService.getAuthentication(email);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 }
