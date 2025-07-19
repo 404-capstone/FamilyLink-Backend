@@ -2,6 +2,7 @@ package capstone._4.service.Kakao;
 
 import capstone._4.dto.KakaoTokenResponseDto;
 import capstone._4.dto.KakaoUserInfoResponseDto;
+import capstone._4.repository.user.UserRepository;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import capstone._4.util.AESUtil;
-import capstone._4.repository.UserRepository;
 import capstone._4.domain.User;
 import java.util.Optional;
 

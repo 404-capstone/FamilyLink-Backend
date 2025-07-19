@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,13 @@ public class User {
 
     }
 
-    public User(String social, String email, String username, String image) {
+    public User(String social, String email, String username) {
+        this.social = social;
+        this.email = email;
+        this.username = username;
+    }
+
+    public User(String social,String email,String username,String image){
         this.social = social;
         this.email = email;
         this.username = username;
@@ -26,7 +33,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column
     private String social;
@@ -46,13 +53,20 @@ public class User {
     @Column
     private String image;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
-    @JsonIgnore
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<GroupsUser> groupsuser = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<PhotoUser> photouser = new ArrayList<>();
 
     public void addGroupUser(GroupsUser groupsuser){
         this.groupsuser.add(groupsuser);
     }
 
 
+    public void addPhotoUser(PhotoUser photoUser) {
+        this.photouser.add(photoUser);
+    }
 }

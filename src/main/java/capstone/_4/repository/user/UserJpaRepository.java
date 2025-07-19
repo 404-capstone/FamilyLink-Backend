@@ -1,4 +1,4 @@
-package capstone._4.repository;
+package capstone._4.repository.user;
 
 import capstone._4.domain.User;
 import jakarta.persistence.EntityManager;
@@ -28,14 +28,6 @@ public class UserJpaRepository implements UserRepository {
                 .setParameter("username", username)
                 .getResultList()
                 .stream().findFirst();
-    }
-    @Override
-    public Optional<User> findByEmail(String email) {
-        return em.createQuery("select u from User u where u.email = :email", User.class)
-                .setParameter("email", email)
-                .getResultList()
-                .stream()
-                .findFirst();
     }
 
     @Override

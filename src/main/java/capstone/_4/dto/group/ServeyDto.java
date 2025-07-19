@@ -1,4 +1,4 @@
-package capstone._4.dto;
+package capstone._4.dto.group;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

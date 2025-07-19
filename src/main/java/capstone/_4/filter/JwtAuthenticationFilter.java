@@ -54,9 +54,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     //int id=jwtService.getIdFromToken(token); //id빼기.
                     log.info("id:"+email);
                     setAuthenticationContext(email); //인가 설정
-                    filterChain.doFilter(request,response);
                 }
             }
+            filterChain.doFilter(request,response);
         }catch (Exception ex){
             throw ex;
         }

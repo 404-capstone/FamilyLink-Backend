@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,8 +40,16 @@ public class Groups {
     private String image;
 
     @OneToMany(mappedBy = "group",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JsonIgnore
+    @JsonBackReference
     private List<GroupsUser> groupsuser = new ArrayList<>();
+
+    @OneToOne(mappedBy = "groups")
+    @JsonBackReference
+    private Calendar calendar;
+
+    @OneToMany(mappedBy = "groups",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    private List<Album> albums = new ArrayList<>();
 
     public void addUser(GroupsUser groupsuser){
         this.groupsuser.add(groupsuser);

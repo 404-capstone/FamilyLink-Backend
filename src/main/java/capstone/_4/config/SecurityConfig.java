@@ -27,6 +27,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/login/naver").permitAll()
                         .requestMatchers("/user/token/refresh").permitAll()
                         .requestMatchers("/user/login/kakao").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
                 )
