@@ -63,8 +63,6 @@ public class SocialService {
         } catch (WebClientException e) {
             throw new SocialLoginException("네이버 api 호출 실패" + e.getMessage());
         }
-
-
     }
 
     //네이버로부터 accestoken을 얻어오는 메소드.
