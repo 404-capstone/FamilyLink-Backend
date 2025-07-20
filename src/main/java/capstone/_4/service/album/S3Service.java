@@ -1,6 +1,6 @@
 package capstone._4.service.album;
 
-import capstone._4.dto.album.S3PhotoInfoDto;
+import capstone._4.dto.album.input.S3PhotoInfoDto;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package capstone._4.repository.group;
 
 import capstone._4.domain.GroupsUser;
-import capstone._4.dto.group.GroupUserInfoDto;
+import capstone._4.dto.group.output.GroupUserInfoDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;

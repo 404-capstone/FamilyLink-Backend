@@ -2,8 +2,8 @@ package capstone._4.service.user;
 
 import capstone._4.domain.User;
 import capstone._4.dto.user.SocialInfoDto;
-import capstone._4.dto.user.SocialInputDto;
-import capstone._4.dto.user.SocialResultDto;
+import capstone._4.dto.user.input.SocialInputDto;
+import capstone._4.dto.user.output.SocialResultDto;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.token.JwtService;
 import capstone._4.util.AESUtil;

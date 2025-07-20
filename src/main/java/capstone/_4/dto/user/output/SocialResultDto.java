@@ -1,15 +1,15 @@
-package capstone._4.dto.user;
+package capstone._4.dto.user.output;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class GenerateTokenDto {
+@AllArgsConstructor
+public class SocialResultDto {
+    private int id;
+    private String social;
     private String accessToken;
     private String refreshToken;
 }

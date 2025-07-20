@@ -2,7 +2,7 @@ package capstone._4.service.user;
 
 import capstone._4.dto.user.naver.NaverInfoDto;
 import capstone._4.dto.user.SocialInfoDto;
-import capstone._4.dto.user.SocialInputDto;
+import capstone._4.dto.user.input.SocialInputDto;
 import capstone._4.dto.user.naver.NaverLoginInfoDto;
 import capstone._4.exception.SocialLoginException;
 import lombok.extern.slf4j.Slf4j;

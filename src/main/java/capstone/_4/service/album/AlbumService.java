@@ -1,8 +1,14 @@
 package capstone._4.service.album;
 
 import capstone._4.domain.*;
-import capstone._4.dto.PhotoInfoDto;
-import capstone._4.dto.album.*;
+import capstone._4.dto.album.output.PhotoInfoDto;
+import capstone._4.dto.album.input.AlbumInputDto;
+import capstone._4.dto.album.input.PhotoEditDto;
+import capstone._4.dto.album.input.S3PhotoInfoDto;
+import capstone._4.dto.album.output.AlbumInfoDto;
+import capstone._4.dto.album.output.AlbumInfoResponseDto;
+import capstone._4.dto.album.output.PhotoInfoResponseDto;
+import capstone._4.dto.album.output.PhotoResponseDto;
 import capstone._4.repository.album.AlbumRepository;
 import capstone._4.repository.album.PhotoImageRepository;
 import capstone._4.repository.album.PhotoRepository;
