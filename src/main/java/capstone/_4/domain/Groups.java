@@ -21,9 +21,10 @@ public class Groups {
         this.group_name=name;
     }
 
-    public Groups(String name, String image) {
+    public Groups(String name, String image,String image_name) {
         this.group_name=name;
         this.image=image;
+        this.image_name=image_name;
     }
 
     @Id
@@ -38,6 +39,9 @@ public class Groups {
 
     @Column
     private String image;
+
+    @Column
+    private String image_name;
 
     @OneToMany(mappedBy = "group",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JsonBackReference

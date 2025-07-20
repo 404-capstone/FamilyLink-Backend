@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public interface UserApi {
 
-    @Operation(summary = "네이버 로그인",description = "네이버를 이용하여 앱에 로그인합니다.",security =@SecurityRequirement(name=""))
+    @Operation(summary = "네이버 로그인",description = "네이버를 이용하여 앱에 로그인합니다.,참고로 accesstoken 필요x",security = {})
     @ApiResponse(responseCode = "200",description = "정상적으로 호출되었습니다.",
     content = @Content(mediaType = "application/json",
     schema = @Schema(implementation = LoginApiResponse.class),
@@ -67,6 +67,6 @@ public interface UserApi {
     ))
     @GetMapping("/token/refresh")
     public ResponseEntity<?> reAccessController(
-            @Parameter(description = "재발급 토큰",required = true,in= ParameterIn.HEADER)
+            @Parameter(description = "재발급 토큰,액세스토큰 대신 이거 작성.",required = true,in= ParameterIn.HEADER)
             @RequestHeader(name = "Refresh-Token")String refreshToken, HttpServletResponse response);
 }
