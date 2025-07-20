@@ -9,10 +9,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PhotoResponseDto {
-    @Schema(description = "db 앨범id",example = "1")
+    @Schema(description = "db 앨범id")
     private Integer albumId;
-    @Schema(description = "db 사진id",example = "2")
+    @Schema(description = "db 사진id")
     private Integer photoId;
-    @Schema(description = "저장된 사진총 갯수",example = "3")
+    @Schema(description = "저장된 사진총 갯수")
     private Integer size;
 }
