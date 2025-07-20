@@ -9,6 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class LoginApiResponse extends ApiResponseDto<SocialResultDto> {
     public LoginApiResponse(){
         super(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
-                new SocialResultDto(1,"naver","access","refresh"));
+                new SocialResultDto(1,"naver",true,"access","refresh"));
     }
 }

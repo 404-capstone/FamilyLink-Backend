@@ -37,10 +37,12 @@ public class UserService {
     public SocialResultDto userSave(SocialInputDto socialInputDto) {
         SocialInfoDto socialInfoDto = socialService.naverLoginService(socialInputDto);//new SocialInfoDto("naver","user2@naver.com","유저2");
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
+        boolean newuser=false;
 
         User user=userRepository.findByEmail(email).orElse(null);
         if(user==null) {
             user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname(),null);
+            newuser=true;
         }
 
         userRepository.save(user);
@@ -48,7 +50,7 @@ public class UserService {
         String refreshToken = jwtService.generateRefreshToken(user);
         //jwttoken edit 하는 로직 추가.
         SocialResultDto socialResultDto = new SocialResultDto(user.getId(),
-                socialInfoDto.getSocial(), accessToken, refreshToken);
+                socialInfoDto.getSocial(),newuser ,accessToken, refreshToken);
         return socialResultDto;
     }
 

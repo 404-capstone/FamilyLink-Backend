@@ -1,16 +1,11 @@
 package capstone._4.controller.doc;
 
-import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.album.input.AlbumInputDto;
 import capstone._4.dto.album.input.PhotoEditDto;
-import capstone._4.dto.album.output.AlbumInfoResponseDto;
-import capstone._4.dto.album.output.PhotoInfoResponseDto;
-import capstone._4.dto.album.output.PhotoResponseDto;
 import capstone._4.dto.docs.album.AlbumDeleteResponse;
 import capstone._4.dto.docs.album.AlbumEditResponse;
 import capstone._4.dto.docs.album.AlbumSaveResponse;
 import capstone._4.dto.docs.album.AlbumSearchResponse;
-import capstone._4.enums.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -4,7 +4,7 @@ import capstone._4.domain.*;
 import capstone._4.dto.album.output.PhotoInfoDto;
 import capstone._4.dto.album.input.AlbumInputDto;
 import capstone._4.dto.album.input.PhotoEditDto;
-import capstone._4.dto.album.input.S3PhotoInfoDto;
+import capstone._4.dto.album.S3PhotosInfoDto;
 import capstone._4.dto.album.output.AlbumInfoDto;
 import capstone._4.dto.album.output.AlbumInfoResponseDto;
 import capstone._4.dto.album.output.PhotoInfoResponseDto;
@@ -14,6 +14,7 @@ import capstone._4.repository.album.PhotoImageRepository;
 import capstone._4.repository.album.PhotoRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.service.S3Service;
 import com.querydsl.core.Tuple;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -40,7 +41,7 @@ public class AlbumService {
 
     @Transactional
     public PhotoResponseDto addPitcure(AlbumInputDto albumInputDto) {
-        S3PhotoInfoDto info=null;
+        S3PhotosInfoDto info=null;
         List<MultipartFile> files=albumInputDto.getFiles();
         List<PhotoImage> photos = new ArrayList<>();
         List<Integer> userIds = albumInputDto.getUserId();

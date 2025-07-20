@@ -1,5 +1,6 @@
 package capstone._4.controller.impl;
 
+import capstone._4.controller.doc.GroupApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.group.input.ServeyDto;
 import capstone._4.dto.group.output.GroupInfoResponseDto;
@@ -17,9 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/group")
 @Slf4j
-public class GroupController {
+public class GroupController implements GroupApi {
 
     private final GroupService groupService;
     private final JwtService jwtService;
@@ -38,7 +38,7 @@ public class GroupController {
     * @param name 그룹이름
     * @return : dto
     * */
-    @PostMapping(value = "/generation",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    @Override
     public ResponseEntity<?> groupGeneration(@RequestParam("groupname") String name,@RequestParam String role,@RequestParam(required = false) MultipartFile image
             ,HttpServletRequest request) {
         int id = tokenTakeUserId(request);
@@ -48,20 +48,20 @@ public class GroupController {
                 groupResponseDto));
     }
 
-    @GetMapping("/search")
+    @Override
     public ResponseEntity<?> groupSearch(@RequestParam Integer groupId) {
         GroupInfoResponseDto groupInfoResponseDto =groupService.searchGroup(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(), groupInfoResponseDto));
     }
 
-    @PostMapping("/code")
+    @Override
     public ResponseEntity<?> groupCodeGeneration(@RequestParam Integer groupid){
         String code=groupService.generateCode(groupid);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),code));
     }
 
-    @GetMapping("/code/search")
+    @Override
     public ResponseEntity<?> groupCodeSearch(@RequestParam Integer groupid){
         String code=groupService.searchCode(groupid);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
@@ -69,14 +69,14 @@ public class GroupController {
     }
 
 
-    @PostMapping("/access/search/code")
+    @Override
     public ResponseEntity<?> groupSerachwithCode(@RequestParam String code) {
         int groupid=groupService.searchGroupWithCode(code);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),groupid ));
     }
 
-    @PostMapping("/access")
+    @Override
     public ResponseEntity<?> groupAccess(@RequestParam String code,@RequestParam String role,HttpServletRequest request){
         int id = tokenTakeUserId(request);
         GroupGenerateDto groupGenerateDto=groupService.accessGroupWithCode(code,id,role);
@@ -88,7 +88,7 @@ public class GroupController {
      *여기 response부분 수정하기.
      */
 
-    @DeleteMapping("/quit")
+    @Override
     public ResponseEntity<?> groupQuit(@RequestParam Integer groupId,HttpServletRequest request) {
         int id = tokenTakeUserId(request);
         groupService.quitGroup(groupId,id);
@@ -96,14 +96,14 @@ public class GroupController {
                 ResponseEnum.QUIT_SUCCESS.getMessage(),id));
     }
 
-    @DeleteMapping("/delete")
+    @Override
     public ResponseEntity<?> groupDelete(@RequestParam Integer groupId,HttpServletRequest request) {
         groupService.deleteGroup(groupId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
                 ResponseEnum.DELETE_SUCCESS.getMessage(),groupId));
     }
 
-    @PatchMapping(value = "/edit",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    @Override
     public ResponseEntity<?> groupEdit(@RequestParam Integer groupId, @RequestParam String name, @RequestParam(required = false) MultipartFile image) {
         log.info("start");
         groupService.updateGroup(groupId,name,image);
@@ -111,14 +111,14 @@ public class GroupController {
                 ResponseEnum.UPDATE_SUCCESS.getMessage(),groupId));
     }
 
-    @DeleteMapping("/user/delete")
+    @Override
     public ResponseEntity<?> groupUserDelete(@RequestParam Integer groupId,@RequestParam Integer userId) {
         groupService.deleteUserWithGroup(groupId,userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
                 ResponseEnum.DELETE_SUCCESS.getMessage(),userId));
     }
 
-    @PostMapping("/servey/save")
+    @Override
     public ResponseEntity<?> serveySave(@RequestParam Integer groupId, @RequestBody ServeyDto dto, HttpServletRequest request) {
         int id=tokenTakeUserId(request);
         groupService.saveScore(dto,groupId,id);
@@ -127,7 +127,7 @@ public class GroupController {
     }
 
 
-    @GetMapping("/servey/search")
+    @Override
     public ResponseEntity<?> serveySearch(@RequestParam Integer groupId,HttpServletRequest request) {
         int id=tokenTakeUserId(request);
         ServeyDto responseDto=groupService.searchUserScore(groupId,id);

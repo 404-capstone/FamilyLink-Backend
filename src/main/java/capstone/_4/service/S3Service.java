@@ -1,6 +1,7 @@
-package capstone._4.service.album;
+package capstone._4.service;
 
-import capstone._4.dto.album.input.S3PhotoInfoDto;
+import capstone._4.dto.album.S3PhotoInfoDto;
+import capstone._4.dto.album.S3PhotosInfoDto;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class S3Service {
 
     }
 
-    public S3PhotoInfoDto uploadFiles(List<MultipartFile> files){
+    public S3PhotosInfoDto uploadFiles(List<MultipartFile> files){
         List<String> fileNames = new ArrayList<>();
         List<String> fileUrls=new ArrayList<>();
 
@@ -65,8 +66,31 @@ public class S3Service {
             fileNames.add(fileName);
             fileUrls.add(amazonS3.getUrl(bucket,fileName).toString());
         });
-        return S3PhotoInfoDto.builder()
+        return S3PhotosInfoDto.builder()
                 .fileNames(fileNames)
                 .fileUrls(fileUrls).build();
+    }
+
+    /**
+     * 사진 하나만 저장시 사용(유저사진,그룹사진)
+     * @param file 사진파일.
+     * @return dto반환.
+     */
+    public S3PhotoInfoDto uploadFile(MultipartFile file){
+        String fileName = createFileName(file.getOriginalFilename());
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(file.getContentType());
+        objectMetadata.setContentLength(file.getSize());
+
+        try(InputStream input= file.getInputStream()){
+            amazonS3.putObject(new PutObjectRequest(bucket,fileName,input,objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        }catch (IOException e){
+            throw new AmazonS3Exception("저장에 실패했습니다" + e.getMessage());
+        }
+        return S3PhotoInfoDto.builder()
+                .fileName(fileName)
+                .fileUrl(amazonS3.getUrl(bucket,fileName).toString())
+                .build();
     }
 }
