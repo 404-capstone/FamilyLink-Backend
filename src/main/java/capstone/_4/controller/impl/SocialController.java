@@ -1,5 +1,6 @@
 package capstone._4.controller.impl;
 
+import capstone._4.controller.doc.UserApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.user.GenerateTokenDto;
 import capstone._4.dto.user.input.SocialInputDto;
@@ -16,9 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
 @Slf4j
-public class SocialController {
+public class SocialController implements UserApi {
 
     private final UserService userService;
     private final JwtService jwtService;
@@ -29,7 +29,7 @@ public class SocialController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/login/naver")
+    @Override
     public ResponseEntity<?> naverLoginController(@RequestBody @Valid SocialInputDto socialInputDto, HttpServletResponse response){
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
         response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
@@ -38,7 +38,7 @@ public class SocialController {
                 ResponseEnum.SUCCESS.getMessage(), socialResultDto));
     }
 
-    @GetMapping("/token/refresh")
+    @Override
     public ResponseEntity<?> reAccessController(@RequestHeader(name = "Refresh-Token")String refreshToken,HttpServletResponse response){
         log.info("Refresh-Token:"+refreshToken);
         GenerateTokenDto generateTokenDto=jwtService.generateToken(refreshToken);

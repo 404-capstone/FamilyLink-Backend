@@ -10,10 +10,10 @@ import lombok.Getter;
 @Getter
 public class SocialInputDto {
     @NotBlank(message = "코드를 입력해주세요.")
-    @Schema()
+    @Schema(description = "네이버 응답 code")
     private String code;
 
     @NotBlank(message = "상태를 입력해주세요")
-    @Schema
+    @Schema(description = "네이버 api 응답 state")
     private String state;
 }
