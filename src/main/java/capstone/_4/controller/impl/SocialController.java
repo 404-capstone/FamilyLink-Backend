@@ -30,7 +30,9 @@ public class SocialController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<?> naverLoginController(@RequestBody @Valid SocialInputDto socialInputDto, HttpServletResponse response){
+    public ResponseEntity<?> naverLoginController(@RequestParam("code")String code,
+                                                  @RequestParam("state")String state, HttpServletResponse response){
+        SocialInputDto socialInputDto=new SocialInputDto(code,state);
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
         response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
         response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());

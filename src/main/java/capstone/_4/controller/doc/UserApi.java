@@ -46,8 +46,12 @@ public interface UserApi {
                             """
             )
     ))
-    @PostMapping(value = "/login/naver")
-    public ResponseEntity<?> naverLoginController(@RequestBody @Valid SocialInputDto socialInputDto, HttpServletResponse response);
+    @GetMapping(value = "/login/naver")
+    public ResponseEntity<?> naverLoginController(
+            @Parameter(description = "네이버 code로 자동으로 붙음")
+            @RequestParam("code")String code,
+            @Parameter(description = "프론트 임의의 state문자열")
+            @RequestParam("state")String state, HttpServletResponse response);
 
     @Operation(summary = "액세스토큰 재발급",description = "액세스토큰을 재발급합니다.리프레시 토큰도 함께 재발급합니다.")
     @ApiResponse(responseCode = "201",description = "발급이 성공되었습니다.",
