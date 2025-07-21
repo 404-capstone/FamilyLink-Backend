@@ -13,6 +13,7 @@ import capstone._4.repository.group.GroupsUserReponsitory;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.redis.RedisService;
 import capstone._4.util.ImageHandler;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.soundicly.jnanoidenhanced.jnanoid.NanoIdUtils;
 import io.lettuce.core.RedisException;
 import jakarta.persistence.EntityExistsException;
@@ -45,9 +46,17 @@ public class GroupService {
     @Transactional
     public GroupGenerateDto generateGroup(String name, int id,String role,MultipartFile image) {
         User user = getUserFromId(id);
-        S3PhotoInfoDto s3PhotoInfoDto =s3Service.uploadFile(image);
-        //String path = checkImage(image);
-        Groups groups=new Groups(name,s3PhotoInfoDto.getFileUrl(),s3PhotoInfoDto.getFileName());
+        Groups groups;
+        if(image!=null && !image.isEmpty()){
+            try {
+                S3PhotoInfoDto s3PhotoInfoDto = s3Service.uploadFile(image);
+                groups = new Groups(name, s3PhotoInfoDto.getFileUrl(), s3PhotoInfoDto.getFileName());
+            }catch (Exception e){
+                throw new AmazonS3Exception("s3저장 실패."+e.getMessage());
+            }
+        }else{
+            groups=new Groups(name);
+        }
         groupRepository.save(groups);
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
         groupsUserReponsitory.save(groupsuser);
@@ -126,11 +135,22 @@ public class GroupService {
     @Transactional
     public void updateGroup(Integer groupId, String name, MultipartFile image) {
         //String path = checkImage(image);
-        S3PhotoInfoDto s3PhotoInfoDto =s3Service.uploadFile(image);
+        Groups groups =groupRepository.findById(groupId).orElseThrow(()->new EntityNotFoundException("그룹이 존재하지 않음."));
+        Long count =0L;
+        if(image!=null && !image.isEmpty()){ //null 아닐시.
+            try {
+                S3PhotoInfoDto s3PhotoInfoDto = s3Service.uploadFile(image);
+                s3Service.deleteFile(groups.getImage_name());
+                count= groupRepository.updateGroup(groupId,name,s3PhotoInfoDto.getFileUrl(),s3PhotoInfoDto.getFileName());
+            }catch (Exception e){
+                throw new AmazonS3Exception("s3 저장및 삭제 실패."+e.getMessage());
+            }
+        }else{
+            count=groupRepository.updateGroup(groupId,name,null,null);
+        }
 
-        Groups group =groupRepository.findById(groupId).get();
-        s3Service.deleteFile(group.getImage_name());
-        Long count= groupRepository.updateGroup(groupId,name,s3PhotoInfoDto.getFileUrl(),s3PhotoInfoDto.getFileName());
+//        s3Service.deleteFile(group.getImage_name());
+//        Long count= groupRepository.updateGroup(groupId,name,s3PhotoInfoDto.getFileUrl(),s3PhotoInfoDto.getFileName());
         if(count == 0){
             throw new EntityNotFoundException("그룹이 존재하지 않습니다.");
         }
