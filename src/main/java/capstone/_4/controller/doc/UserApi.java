@@ -6,6 +6,7 @@ import capstone._4.dto.user.input.SocialInputDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,6 +24,8 @@ public interface UserApi {
 
     @Operation(summary = "네이버 로그인",description = "네이버를 이용하여 앱에 로그인합니다.,참고로 accesstoken 필요x",security = {})
     @ApiResponse(responseCode = "200",description = "정상적으로 호출되었습니다.",
+    headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))
+    ,@Header(name="Refresh-Token",description = "jwt 리프레시 토큰",schema = @Schema(type="String"))},
     content = @Content(mediaType = "application/json",
     schema = @Schema(implementation = LoginApiResponse.class),
             examples =  @ExampleObject(
@@ -48,6 +51,8 @@ public interface UserApi {
 
     @Operation(summary = "액세스토큰 재발급",description = "액세스토큰을 재발급합니다.리프레시 토큰도 함께 재발급합니다.")
     @ApiResponse(responseCode = "201",description = "발급이 성공되었습니다.",
+            headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))
+                    ,@Header(name="Refresh-Token",description = "jwt 리프레시 토큰",schema = @Schema(type="String"))},
     content = @Content(mediaType = "application/json",
     schema = @Schema(implementation = TokenResponseDto.class),
             examples =  @ExampleObject(
