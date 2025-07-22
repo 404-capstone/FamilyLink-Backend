@@ -2,9 +2,9 @@ package capstone._4.service.user;
 
 import capstone._4.domain.User;
 import capstone._4.dto.user.SocialInfoDto;
-import capstone._4.dto.user.SocialInputDto;
-import capstone._4.dto.user.SocialResultDto;
-import capstone._4.repository.UserRepository;
+import capstone._4.dto.user.input.SocialInputDto;
+import capstone._4.dto.user.output.SocialResultDto;
+import capstone._4.repository.user.UserRepository;
 import capstone._4.service.token.JwtService;
 import capstone._4.util.AESUtil;
 import jakarta.transaction.Transactional;
@@ -35,15 +35,23 @@ public class UserService {
 
     @Transactional
     public SocialResultDto userSave(SocialInputDto socialInputDto) {
-        SocialInfoDto socialInfoDto = new SocialInfoDto("naver","z@naver.com","하22"); //socialService.naverLoginService(socialInputDto);
+        SocialInfoDto socialInfoDto =socialService.naverLoginService(socialInputDto); //new SocialInfoDto("naver","user2@naver.com","유저2");
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
+<<<<<<< HEAD
 
 
 
+=======
+        boolean newuser=false;
+>>>>>>> cc2d5996a4dfd7c7daa82f73d60063b1d0b176fb
 
         User user=userRepository.findByEmail(email).orElse(null);
         if(user==null) {
             user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname(),null);
+<<<<<<< HEAD
+=======
+            newuser=true;
+>>>>>>> cc2d5996a4dfd7c7daa82f73d60063b1d0b176fb
         }
 
         userRepository.save(user);
@@ -51,7 +59,7 @@ public class UserService {
         String refreshToken = jwtService.generateRefreshToken(user);
         //jwttoken edit 하는 로직 추가.
         SocialResultDto socialResultDto = new SocialResultDto(user.getId(),
-                socialInfoDto.getSocial(), accessToken, refreshToken);
+                socialInfoDto.getSocial(),newuser ,accessToken, refreshToken);
         return socialResultDto;
     }
 

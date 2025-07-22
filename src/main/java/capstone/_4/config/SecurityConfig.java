@@ -24,10 +24,9 @@ public class SecurityConfig {
                 csrf(csrf -> csrf.disable()) //사용자가 의도하지 않은것을 보내는것 막기.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //서버가 세션 생성하지 않게 방지 하기.
                 .authorizeHttpRequests(auth -> auth //http 인가 관련 설정.
-                        .requestMatchers("/user/login/naver").permitAll()
-                        .requestMatchers("/user/token/refresh").permitAll()
-                        .requestMatchers("/user/login/kakao").permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/user/login/naver","/user/token/refresh","/user/login/kakao").permitAll()
+                        .requestMatchers("/error","/favicon.ico","/").permitAll()
+                        .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)

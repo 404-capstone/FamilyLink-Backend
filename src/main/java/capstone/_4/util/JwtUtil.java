@@ -18,6 +18,15 @@ public class JwtUtil {
         this.aesUtil = aesUtil;
     }
 
+    /**
+     * jwt 액세스토큰을 생성하는 메소드
+     *
+     * @param ACCESS_SECRET 액세스 시크릿(yml에 존재)
+     * @param ACCESS_EXPIRATION 토큰 사용가능시간
+     * @param user 도메인 유저정보
+     * @return
+     */
+
     public String generateAccessToken(final Key ACCESS_SECRET, final long ACCESS_EXPIRATION, User user) {
         Long now=System.currentTimeMillis();
         return Jwts.builder()
@@ -33,7 +42,14 @@ public class JwtUtil {
     }
 
 
-
+    /**
+     * jwt 리프레시토큰을 생성하는 메소드
+     *
+     * @param REFRESH_SECRET 리프레시 시크릿(yml에 존재)
+     * @param REFRESH_EXPIRATION 토큰 사용가능시간
+     * @param user 도메인 유저정보
+     * @return
+     */
     public String generateRefreshToken(final Key REFRESH_SECRET, long REFRESH_EXPIRATION, User user) {
         Long now=System.currentTimeMillis();
         return Jwts.builder()
@@ -61,17 +77,31 @@ public class JwtUtil {
         }
     }
 
+    /**
+     * 토큰 시크릿키를 base64로 인코딩.
+     * @param signingKey
+     * @return
+     */
     public Key generateSigningKey(String signingKey){
         String encodeKey = Base64.getEncoder().encodeToString(signingKey.getBytes());
         return Keys.hmacShaKeyFor(encodeKey.getBytes(StandardCharsets.UTF_8));
     }
 
 
-
+    /**
+     * user정보안에 dbid를 암호화하는 메소드
+     * @param user
+     * @return
+     */
     private String createAesSubject(User user) {
         return aesUtil.encrypt(String.valueOf(user.getId()));
     }
 
+    /**
+     * 액세스토큰안에 claims를 생성하는 메소드
+     * @param user
+     * @return
+     */
     private Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
         String name= user.getUsername();
