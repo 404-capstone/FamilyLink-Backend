@@ -58,6 +58,7 @@ public class SocialController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
     }
+    
 
 
 }
