@@ -1,6 +1,7 @@
 package capstone._4.controller.doc;
 
 import capstone._4.dto.docs.user.LoginApiResponse;
+import capstone._4.dto.docs.user.LoginTokenResponse;
 import capstone._4.dto.docs.user.TokenResponseDto;
 import capstone._4.dto.user.input.SocialInputDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URISyntaxException;
 
 @Tag(name="유저",description = "유저 기능 관련 api") //이걸로 크게 목록별로 구분가능.
 @RequestMapping("/user")
@@ -52,7 +55,7 @@ public interface UserApi {
             @Parameter(description = "네이버 code로 자동으로 붙음")
             @RequestParam("code")String code,
             @Parameter(description = "프론트 임의의 state문자열")
-            @RequestParam("state")String state, HttpServletResponse response);
+            @RequestParam("state")String state, HttpServletResponse response) throws URISyntaxException;
 
     @Operation(summary = "액세스토큰 재발급",description = "액세스토큰을 재발급합니다.리프레시 토큰도 함께 재발급합니다.")
     @ApiResponse(responseCode = "201",description = "발급이 성공되었습니다.",
@@ -80,6 +83,12 @@ public interface UserApi {
             @Parameter(description = "재발급 토큰,액세스토큰 대신 이거 작성.",required = true,in= ParameterIn.HEADER)
             @RequestHeader(name = "Refresh-Token")String refreshToken, HttpServletResponse response);
 
+    @Operation(summary = "jwt토큰 조회 api",description = "해당 api를 통해 세션값을 이용하여 토큰을 조회합니다.")
+    @ApiResponse(responseCode = "200",description = "정상처리",
+    content = @Content(mediaType = "application/json",
+    schema = @Schema(implementation = LoginTokenResponse.class)))
     @PostMapping("/login/naver")
-    public ResponseEntity<?> naverLoginController(@RequestParam String session);
+    public ResponseEntity<?> naverLoginController(
+            @Parameter(description = "리다이렉트로 전송한 세션 id값.")
+            @RequestParam String session);
 }
