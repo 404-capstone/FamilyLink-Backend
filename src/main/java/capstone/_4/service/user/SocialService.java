@@ -80,6 +80,7 @@ public class SocialService {
                     .bodyToMono(KakaoUserInfoResponseDto.class)
                     .block();
 
+
             // 3. 필요한 정보 SocialInfoDto로 변환
             return SocialInfoDto.builder()
                     .social("kakao")
@@ -115,6 +116,8 @@ public class SocialService {
         }
 
     }
+
+    //우리 토큰으로 바꾸기
     @Value("${kakao.client-id}")
     private String kakaoClientId;
     @Value("${kakao.redirect-uri}")
