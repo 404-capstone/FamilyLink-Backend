@@ -40,16 +40,10 @@ public class GroupRepository {
                 .executeUpdate();
     }
 
-<<<<<<< HEAD:src/main/java/capstone/_4/repository/GroupRepository.java
 
-    public Long updateGroup(Integer groupId,String name ,String imagePath) {
-       QGroups qGroups = QGroups.groups;
-       JPAUpdateClause update = jpaQueryFactory.update(qGroups);
-=======
     public Long updateGroup(Integer groupId,String name ,String imagePath,String imageName) {
         QGroups qGroups = QGroups.groups;
         JPAUpdateClause update = jpaQueryFactory.update(qGroups);
->>>>>>> cc2d5996a4dfd7c7daa82f73d60063b1d0b176fb:src/main/java/capstone/_4/repository/group/GroupRepository.java
 
         if(StringUtils.hasText(name)){
             update.set(qGroups.group_name,name);

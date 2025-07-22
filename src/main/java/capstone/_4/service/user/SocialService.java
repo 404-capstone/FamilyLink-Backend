@@ -1,6 +1,7 @@
 package capstone._4.service.user;
 
 import capstone._4.dto.user.naver.NaverInfoDto;
+import capstone._4.dto.KakaoUserInfoResponseDto;
 import capstone._4.dto.user.SocialInfoDto;
 import capstone._4.dto.user.input.SocialInputDto;
 import capstone._4.dto.user.naver.NaverLoginInfoDto;
@@ -14,7 +15,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Slf4j
@@ -64,7 +66,31 @@ public class SocialService {
             throw new SocialLoginException("네이버 api 호출 실패" + e.getMessage());
         }
     }
+    public SocialInfoDto kakaoLoginService(SocialInputDto socialInputDto) {
+        try {
 
+            String accessToken = getKakaoAccessToken(socialInputDto.getCode());
+
+            // Access Token으로 카카오 유저 정보 조회
+            KakaoUserInfoResponseDto kakaoUserInfo = WebClient.create("https://kapi.kakao.com")
+                    .get()
+                    .uri("/v2/user/me")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .retrieve()
+                    .bodyToMono(KakaoUserInfoResponseDto.class)
+                    .block();
+
+            // 3. 필요한 정보 SocialInfoDto로 변환
+            return SocialInfoDto.builder()
+                    .social("kakao")
+                    .email(kakaoUserInfo.getKakaoAccount().getEmail())
+                    .nickname(kakaoUserInfo.getKakaoAccount().getProfile().getNickname())
+                    .build();
+
+        } catch (WebClientException e) {
+            throw new SocialLoginException("카카오 API 호출 실패: " + e.getMessage());
+        }
+    }
     //네이버로부터 accestoken을 얻어오는 메소드.
     private String getAccessToken(SocialInputDto socialInputDto) {
         try {
@@ -89,10 +115,35 @@ public class SocialService {
         }
 
     }
-    // 카카오 로그인 테스트용 하드코딩 메서드
-    public SocialInfoDto kakaoLoginService(String token) {
-        // token 무시하고 고정된 사용자 정보 리턴 (하드코딩)
-        log.info("카카오 로그인 테스트용 하드코딩 메서드 호출, 전달받은 token: {}", token);
-        return new SocialInfoDto("kakao", "wngur3032@naver.com", "테스트카카오");
+    @Value("${kakao.client-id}")
+    private String kakaoClientId;
+    @Value("${kakao.redirect-uri}")
+    private String kakaoRedirectUri;
+    private String getKakaoAccessToken(String code) {
+        try {
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.add("grant_type", "authorization_code");
+            formData.add("client_id", kakaoClientId);        // application.properties에 등록된 카카오 앱 키
+            formData.add("redirect_uri", kakaoRedirectUri);  // 카카오 개발자센터에 등록된 Redirect URI
+            formData.add("code", code);
+
+            String tokenResponse = WebClient.create("https://kauth.kakao.com")
+                    .post()
+                    .uri("/oauth/token")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8")
+                    .bodyValue(formData)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            // 토큰 응답(JSON)을 파싱해 액세스 토큰 반환
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(tokenResponse);
+            return jsonNode.get("access_token").asText();
+
+        } catch (Exception e) {
+            throw new SocialLoginException("카카오 토큰 발급 실패: " + e.getMessage());
+        }
     }
+
 }

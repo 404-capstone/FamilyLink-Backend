@@ -32,18 +32,23 @@ public class SocialController implements UserApi {
     @Override
     public ResponseEntity<?> naverLoginController(@RequestParam("code")String code,
                                                   @RequestParam("state")String state, HttpServletResponse response){
-        SocialInputDto socialInputDto=new SocialInputDto(code,state);
+        SocialInputDto socialInputDto=new SocialInputDto(code,state, "naver");
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
         response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
         response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), socialResultDto));
     }
-    @PostMapping("/login/kakao")
-    public ResponseEntity<?> kakaoLoginController(@RequestBody @Valid SocialInputDto socialInputDto, HttpServletResponse response){
-        SocialResultDto socialResultDto = userService.userSave(socialInputDto); // 카카오도 네이버처럼 처리
+//리다이렉트 주소연결 할때 쓰면됨
+    public ResponseEntity<?> kakaoLoginController(@RequestParam("code") String code,
+                                                  @RequestParam(value = "state", required = false) String state, //required 는 state를 안적었을 때 null값
+                                                  HttpServletResponse response) {
+        SocialInputDto socialInputDto = new SocialInputDto(code, state,"kakao");
+        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
+
         response.setHeader("Authorization", "Bearer " + socialResultDto.getAccessToken());
         response.setHeader("Refresh-Token", "Bearer " + socialResultDto.getRefreshToken());
+
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),

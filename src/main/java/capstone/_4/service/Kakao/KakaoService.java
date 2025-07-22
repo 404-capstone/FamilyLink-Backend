@@ -86,7 +86,7 @@ public class KakaoService {
                 .block();
 
         log.info("[ Kakao Service ] Auth ID ---> {} ", userInfo.getId());
-        log.info("[ Kakao Service ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickName());
+        log.info("[ Kakao Service ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickname());
         log.info("[ Kakao Service ] ProfileImageUrl ---> {} ", userInfo.getKakaoAccount().getProfile().getProfileImageUrl());
 
         try {
@@ -100,7 +100,7 @@ public class KakaoService {
                 User user = new User(
                         "kakao",
                         encryptedEmail,
-                        userInfo.getKakaoAccount().getProfile().getNickName(),
+                        userInfo.getKakaoAccount().getProfile().getNickname(),
                         userInfo.getKakaoAccount().getProfile().getThumbnailImageUrl()
                 );
                 userRepository.save(user);

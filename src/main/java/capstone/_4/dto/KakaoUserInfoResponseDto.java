@@ -155,7 +155,7 @@ public class KakaoUserInfoResponseDto {
 
             //닉네임
             @JsonProperty("nickname")
-            public String nickName;
+            public String nickname;
 
             //프로필 미리보기 이미지 URL
             @JsonProperty("thumbnail_image_url")

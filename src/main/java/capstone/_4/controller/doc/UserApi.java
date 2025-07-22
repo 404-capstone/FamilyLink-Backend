@@ -21,7 +21,41 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name="유저",description = "유저 기능 관련 api") //이걸로 크게 목록별로 구분가능.
 @RequestMapping("/user")
 public interface UserApi {
-
+    @Operation(summary = "카카오 로그인", description = "카카오를 이용하여 앱에 로그인합니다. (accessToken 필요 없음)", security = {})
+    @ApiResponse(responseCode = "200", description = "정상적으로 호출되었습니다.",
+            headers = {
+                    @Header(name = "Authorization", description = "JWT 액세스 토큰", schema = @Schema(type = "String")),
+                    @Header(name = "Refresh-Token", description = "JWT 리프레시 토큰", schema = @Schema(type = "String"))
+            },
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = LoginApiResponse.class),
+                    examples = @ExampleObject(
+                            name = "성공 응답",
+                            summary = "카카오 로그인 성공",
+                            value = """
+                                {
+                                  "code": 200,
+                                  "message": "정상적으로 호출되었습니다",
+                                  "data": {
+                                    "id": 1,
+                                    "social": "kakao",
+                                    "newUser": false,
+                                    "accessToken": "access",
+                                    "refreshToken": "refresh"
+                                  }
+                                }
+                                """
+                    )
+            )
+    )
+    @GetMapping(value = "/login/kakao")
+    public ResponseEntity<?> kakaoLoginController(
+            @Parameter(description = "카카오 인가코드. 프론트에서 자동으로 붙음", required = true)
+            @RequestParam("code") String code,
+            @Parameter(description = "프론트에서 전달한 state 문자열", required = true)
+            @RequestParam("state") String state,
+            HttpServletResponse response);
+    
     @Operation(summary = "네이버 로그인",description = "네이버를 이용하여 앱에 로그인합니다.,참고로 accesstoken 필요x",security = {})
     @ApiResponse(responseCode = "200",description = "정상적으로 호출되었습니다.",
     headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))

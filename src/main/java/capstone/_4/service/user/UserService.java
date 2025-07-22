@@ -35,23 +35,27 @@ public class UserService {
 
     @Transactional
     public SocialResultDto userSave(SocialInputDto socialInputDto) {
-        SocialInfoDto socialInfoDto =socialService.naverLoginService(socialInputDto); //new SocialInfoDto("naver","user2@naver.com","유저2");
+        SocialInfoDto socialInfoDto;
+
+        if ("kakao".equalsIgnoreCase(socialInputDto.getProvider())) {
+            socialInfoDto = socialService.kakaoLoginService(socialInputDto);  // SocialInputDto 전체 전달
+        } else if ("naver".equalsIgnoreCase(socialInputDto.getProvider())) {
+            socialInfoDto = socialService.naverLoginService(socialInputDto);  // SocialInputDto 전체 전달
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 소셜 로그인입니다.");
+        }
+
+
         String email=aesUtil.encrypt(socialInfoDto.getEmail());
-<<<<<<< HEAD
 
-
-
-=======
         boolean newuser=false;
->>>>>>> cc2d5996a4dfd7c7daa82f73d60063b1d0b176fb
+
 
         User user=userRepository.findByEmail(email).orElse(null);
         if(user==null) {
             user = new User(socialInfoDto.getSocial(), email, socialInfoDto.getNickname(),null);
-<<<<<<< HEAD
-=======
             newuser=true;
->>>>>>> cc2d5996a4dfd7c7daa82f73d60063b1d0b176fb
+
         }
 
         userRepository.save(user);
