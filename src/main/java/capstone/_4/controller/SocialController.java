@@ -37,6 +37,17 @@ public class SocialController {
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), socialResultDto));
     }
+    @PostMapping("/login/kakao")
+    public ResponseEntity<?> kakaoLoginController(@RequestBody @Valid SocialInputDto socialInputDto, HttpServletResponse response){
+        SocialResultDto socialResultDto = userService.userSave(socialInputDto); // 카카오도 네이버처럼 처리
+        response.setHeader("Authorization", "Bearer " + socialResultDto.getAccessToken());
+        response.setHeader("Refresh-Token", "Bearer " + socialResultDto.getRefreshToken());
+        return ResponseEntity.ok().body(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                socialResultDto
+        ));
+    }
 
     @GetMapping("/token/refresh")
     public ResponseEntity<?> reAccessContoller(@RequestHeader(name = "Refresh-Token")String refreshToken,HttpServletResponse response){
@@ -47,4 +58,6 @@ public class SocialController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
     }
+
+
 }
