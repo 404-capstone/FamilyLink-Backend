@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +47,8 @@ public interface UserApi {
                             """
             )
     ))
-    @GetMapping(value = "/login/naver")
-    public ResponseEntity<?> naverLoginController(
+    @GetMapping(value = "/login/oauth2/code/naver")
+    public ResponseEntity<?> naverConnectController(
             @Parameter(description = "네이버 code로 자동으로 붙음")
             @RequestParam("code")String code,
             @Parameter(description = "프론트 임의의 state문자열")
@@ -78,4 +79,7 @@ public interface UserApi {
     public ResponseEntity<?> reAccessController(
             @Parameter(description = "재발급 토큰,액세스토큰 대신 이거 작성.",required = true,in= ParameterIn.HEADER)
             @RequestHeader(name = "Refresh-Token")String refreshToken, HttpServletResponse response);
+
+    @PostMapping("/login/naver")
+    public ResponseEntity<?> naverLoginController(@RequestParam String session);
 }

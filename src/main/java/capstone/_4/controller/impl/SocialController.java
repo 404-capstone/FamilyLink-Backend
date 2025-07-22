@@ -9,12 +9,16 @@ import capstone._4.enums.ResponseEnum;
 import capstone._4.service.token.JwtService;
 import capstone._4.service.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @Slf4j
@@ -22,21 +26,33 @@ public class SocialController implements UserApi {
 
     private final UserService userService;
     private final JwtService jwtService;
+    //private final URI deeplink;
+    private final Map<String,GenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
 
     @Autowired
     public SocialController(UserService userService,JwtService jwtService) {
         this.userService = userService;
         this.jwtService = jwtService;
+        //this.deeplink=new URI(deeplink);
+
     }
 
     @Override
-    public ResponseEntity<?> naverLoginController(@RequestParam("code")String code,
-                                                  @RequestParam("state")String state, HttpServletResponse response){
+    public ResponseEntity<?> naverConnectController(@RequestParam("code")String code,
+                                                    @RequestParam("state")String state,
+                                                    HttpServletResponse response){
         SocialInputDto socialInputDto=new SocialInputDto(code,state);
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
         response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
         response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+        String uuid = UUID.randomUUID().toString().substring(0,10);
+        tokenSave.put(uuid,GenerateTokenDto.builder().
+                        accessToken(socialResultDto.getAccessToken()).
+                refreshToken(socialResultDto.getRefreshToken()).
+                build());
+        //response.setHeader("location",deeplink);
+        //return ResponseEntity.status(HttpStatus.FOUND).location(deeplink).build();
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), //여기르 다시 작성.
                 ResponseEnum.SUCCESS.getMessage(), socialResultDto));
     }
 
@@ -48,5 +64,15 @@ public class SocialController implements UserApi {
         response.setHeader("Refresh-Token","Bearer "+ generateTokenDto.getRefreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
+    }
+
+    @Override
+    public ResponseEntity<?> naverLoginController(String session) {
+        if(!tokenSave.containsKey(session)){
+            throw new RuntimeException("해당 세션은 존재하지 않습니다.");
+        }
+
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
+                tokenSave.get(session)));
     }
 }
