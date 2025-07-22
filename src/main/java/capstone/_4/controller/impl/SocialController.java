@@ -39,13 +39,12 @@ public class SocialController implements UserApi {
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), socialResultDto));
     }
-//리다이렉트 주소연결 할때 쓰면됨
-    public ResponseEntity<?> kakaoLoginController(@RequestParam("code") String code,
-                                                  @RequestParam(value = "state", required = false) String state, //required 는 state를 안적었을 때 null값
-                                                  HttpServletResponse response) {
-        SocialInputDto socialInputDto = new SocialInputDto(code, state,"kakao");
-        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
 
+    @Override
+    public ResponseEntity<?> kakaoLoginController(@Valid @RequestBody SocialInputDto socialInputDto,
+                                                  HttpServletResponse response) {
+
+        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
         response.setHeader("Authorization", "Bearer " + socialResultDto.getAccessToken());
         response.setHeader("Refresh-Token", "Bearer " + socialResultDto.getRefreshToken());
 

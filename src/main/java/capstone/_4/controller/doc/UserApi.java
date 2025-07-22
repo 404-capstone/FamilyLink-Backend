@@ -48,12 +48,11 @@ public interface UserApi {
                     )
             )
     )
-    @GetMapping(value = "/login/kakao")
+    //카카오 POST방식
+    @PostMapping(value = "/login/kakao")
     public ResponseEntity<?> kakaoLoginController(
-            @Parameter(description = "카카오 인가코드. 프론트에서 자동으로 붙음", required = true)
-            @RequestParam("code") String code,
-            @Parameter(description = "프론트에서 전달한 state 문자열", required = true)
-            @RequestParam("state") String state,
+            @Parameter(description = "카카오 로그인 요청 데이터", required = true)
+            @Valid @RequestBody SocialInputDto socialInputDto,
             HttpServletResponse response);
     
     @Operation(summary = "네이버 로그인",description = "네이버를 이용하여 앱에 로그인합니다.,참고로 accesstoken 필요x",security = {})
@@ -80,6 +79,8 @@ public interface UserApi {
                             """
             )
     ))
+    
+    //네이버 GET방식
     @GetMapping(value = "/login/naver")
     public ResponseEntity<?> naverLoginController(
             @Parameter(description = "네이버 code로 자동으로 붙음")
@@ -87,6 +88,8 @@ public interface UserApi {
             @Parameter(description = "프론트 임의의 state문자열")
             @RequestParam("state")String state, HttpServletResponse response);
 
+    
+    //리프래쉬 토큰
     @Operation(summary = "액세스토큰 재발급",description = "액세스토큰을 재발급합니다.리프레시 토큰도 함께 재발급합니다.")
     @ApiResponse(responseCode = "201",description = "발급이 성공되었습니다.",
             headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))
