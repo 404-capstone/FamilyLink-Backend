@@ -1,5 +1,6 @@
 package capstone._4.repository.user;
 
+import capstone._4.domain.Groups;
 import capstone._4.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -44,5 +45,11 @@ public class UserJpaRepository implements UserRepository {
                 .stream().findFirst();
     }
 
-
+    @Override
+    public Optional<Groups> findGroupById(int userId) {
+        return em.createQuery("select gu.group from GroupsUser gu " +
+                "where gu.user.id=:userId",Groups.class)
+                .setParameter("userId", userId)
+                .getResultList().stream().findFirst();
+    }
 }

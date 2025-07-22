@@ -59,4 +59,8 @@ public class GroupsUser {
         this.percent=percent;
         this.level=level;
     }
+
+    public void changeLeader(boolean b) {
+        this.leader=b;
+    }
 }

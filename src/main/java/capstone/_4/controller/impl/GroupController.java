@@ -135,6 +135,30 @@ public class GroupController implements GroupApi {
                 ResponseEnum.SUCCESS.getMessage(),responseDto));
     }
 
+    @Override
+    public ResponseEntity<?> groupLeaderQuit(Integer groupId, Integer userId,HttpServletRequest request) {
+        int leaderId=tokenTakeUserId(request);
+        groupService.quitLeader(groupId,leaderId,userId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.QUIT_SUCCESS.getCode(),
+                ResponseEnum.QUIT_SUCCESS.getMessage(),"그룹장 탈퇴가 완료되었습니다."));
+    }
+
+    @Override
+    public ResponseEntity<?> leaderChange(Integer groupId, Integer userId,HttpServletRequest request) {
+        int leaderId=tokenTakeUserId(request);
+        groupService.updateLeader(groupId,leaderId,userId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.EDIT.getCode(),
+                ResponseEnum.EDIT.getMessage(),"새로운 그룹장을 등록했습니다."));
+    }
+
+    @Override
+    public ResponseEntity<?> idSearch(HttpServletRequest request) {
+        int userId=tokenTakeUserId(request);
+        int groupId=groupService.findGroupId(userId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),groupId));
+    }
+
     private int tokenTakeUserId(HttpServletRequest request) {
         String token= request.getHeader("Authorization");
         return jwtService.returnToken(token);
