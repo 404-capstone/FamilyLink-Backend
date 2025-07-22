@@ -1,9 +1,8 @@
 package capstone._4.exception.handler;
 
-import capstone._4.controller.SocialController;
+import capstone._4.controller.impl.SocialController;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.enums.ErrorCode;
-import capstone._4.exception.EncryptionException;
 import capstone._4.exception.TokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

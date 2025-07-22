@@ -2,7 +2,6 @@ package capstone._4.repository.album;
 
 import capstone._4.domain.Album;
 import capstone._4.domain.QAlbum;
-import capstone._4.dto.album.AlbumInfoDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

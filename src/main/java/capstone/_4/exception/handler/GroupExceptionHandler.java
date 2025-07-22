@@ -1,9 +1,8 @@
 package capstone._4.exception.handler;
 
-import capstone._4.controller.GroupController;
+import capstone._4.controller.impl.GroupController;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.enums.ErrorCode;
-import capstone._4.exception.DecryptionException;
 import io.lettuce.core.RedisException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;

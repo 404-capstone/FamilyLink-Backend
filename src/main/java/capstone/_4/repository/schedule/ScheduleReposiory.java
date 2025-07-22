@@ -5,7 +5,7 @@ import capstone._4.domain.QGroupsSchedule;
 import capstone._4.domain.QSchedule;
 import capstone._4.domain.QUser;
 import capstone._4.domain.Schedule;
-import capstone._4.dto.schedule.GroupScheduleDto;
+import capstone._4.dto.schedule.output.GroupScheduleDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;

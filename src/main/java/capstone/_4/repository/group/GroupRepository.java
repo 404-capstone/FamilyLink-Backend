@@ -40,7 +40,7 @@ public class GroupRepository {
                 .executeUpdate();
     }
 
-    public Long updateGroup(Integer groupId,String name ,String imagePath) {
+    public Long updateGroup(Integer groupId,String name ,String imagePath,String imageName) {
         QGroups qGroups = QGroups.groups;
         JPAUpdateClause update = jpaQueryFactory.update(qGroups);
 
@@ -49,6 +49,7 @@ public class GroupRepository {
         }
         if (imagePath != null) {
             update.set(qGroups.image,imagePath);
+            update.set(qGroups.image_name, imageName);
         }
         return update.where(qGroups.gup_id.eq(groupId))
                 .execute();

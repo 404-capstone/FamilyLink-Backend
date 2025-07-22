@@ -1,11 +1,11 @@
 package capstone._4.service.schedule;
 
 import capstone._4.domain.Schedule;
-import capstone._4.dto.group.GroupUserInfoDto;
-import capstone._4.dto.schedule.GroupScheduleDto;
-import capstone._4.dto.schedule.PersonalSchedule;
-import capstone._4.dto.schedule.ScheduleInfoDto;
-import capstone._4.dto.schedule.ScheduleResponseDto;
+import capstone._4.dto.group.output.GroupUserInfoDto;
+import capstone._4.dto.schedule.output.GroupScheduleDto;
+import capstone._4.dto.schedule.output.PersonalSchedule;
+import capstone._4.dto.schedule.output.ScheduleInfoDto;
+import capstone._4.dto.schedule.output.ScheduleResponseDto;
 import capstone._4.repository.group.GroupsUserReponsitory;
 import capstone._4.repository.schedule.ScheduleReposiory;
 import lombok.RequiredArgsConstructor;
