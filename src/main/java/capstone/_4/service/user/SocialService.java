@@ -89,4 +89,10 @@ public class SocialService {
         }
 
     }
+    // 카카오 로그인 테스트용 하드코딩 메서드
+    public SocialInfoDto kakaoLoginService(String token) {
+        // token 무시하고 고정된 사용자 정보 리턴 (하드코딩)
+        log.info("카카오 로그인 테스트용 하드코딩 메서드 호출, 전달받은 token: {}", token);
+        return new SocialInfoDto("kakao", "wngur3032@naver.com", "테스트카카오");
+    }
 }
