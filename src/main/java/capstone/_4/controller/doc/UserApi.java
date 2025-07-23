@@ -26,7 +26,7 @@ import java.net.URISyntaxException;
 @RequestMapping("/user")
 public interface UserApi {
 
-    @Operation(summary = "네이버 로그인",description = "네이버를 이용하여 앱에 로그인합니다.,참고로 accesstoken 필요x",security = {})
+    @Operation(summary = "네이버 리다이렉트 api",description = "네이버 리다이렉트 api입니다.,참고로 accesstoken 필요x",security = {})
     @ApiResponse(responseCode = "200",description = "정상적으로 호출되었습니다.",
     headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))
     ,@Header(name="Refresh-Token",description = "jwt 리프레시 토큰",schema = @Schema(type="String"))},

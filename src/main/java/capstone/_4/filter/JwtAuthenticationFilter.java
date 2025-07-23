@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserService userService;
     private static final List<String> ignoredUrls = List.of("/user/login/naver","/user/login/kakao","/user/token/refresh",
-            "/swagger-ui.html","/v3/api-docs","/swagger-ui", "/webjars","/favicon.ico","/");
+            "/swagger-ui.html","/v3/api-docs","/swagger-ui", "/webjars","/favicon.ico","/","/user/login/oauth2/code/naver");
 
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, JwtService jwtService,UserService userService) {
