@@ -48,6 +48,24 @@ public interface UserApi {
                     )
             )
     )
+    //파라미터 바디
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "카카오 로그인 요청 데이터(바디)",
+            required = true,
+            content = @Content(
+                    schema = @Schema(implementation = SocialInputDto.class),
+                    examples = @ExampleObject(
+                            name = "카카오 로그인 요청 예시",
+                            summary = "카카오 액세스 토큰 포함 요청 예시",
+                            value = """
+                    {
+                      "providerAccessToken": "kakao_access_token",
+                      "fcmToken": "fcm_token_value"
+                    }
+                    """
+                    )
+            )
+    )
     //카카오 POST방식
     @PostMapping(value = "/login/kakao")
     public ResponseEntity<?> kakaoLoginController(
@@ -116,4 +134,6 @@ public interface UserApi {
     public ResponseEntity<?> reAccessController(
             @Parameter(description = "재발급 토큰,액세스토큰 대신 이거 작성.",required = true,in= ParameterIn.HEADER)
             @RequestHeader(name = "Refresh-Token")String refreshToken, HttpServletResponse response);
+
+
 }
