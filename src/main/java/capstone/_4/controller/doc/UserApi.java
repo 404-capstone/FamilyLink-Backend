@@ -56,16 +56,18 @@ public interface UserApi {
                     schema = @Schema(implementation = SocialInputDto.class),
                     examples = @ExampleObject(
                             name = "카카오 로그인 요청 예시",
-                            summary = "카카오 액세스 토큰 포함 요청 예시",
+                            summary = "카카오 로그인 요청 예시 (code, state, provider 포함)",
                             value = """
-                    {
-                      "providerAccessToken": "kakao_access_token",
-                      "fcmToken": "fcm_token_value"
-                    }
-                    """
+            {
+              "code": "authorization_code_from_kakao",
+              "state": "optional_state_or_empty_for_kakao",
+              "provider": "kakao"
+            }
+            """
                     )
             )
     )
+
     //카카오 POST방식
     @PostMapping(value = "/login/kakao")
     public ResponseEntity<?> kakaoLoginController(
