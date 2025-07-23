@@ -34,6 +34,7 @@ public class AESUtil {
             cipher.init(Cipher.ENCRYPT_MODE, keySpec);
             byte[] encrypted = cipher.doFinal(input.getBytes());  //문자열 바이트 변환하고 암호화 처리.
             return Base64.getEncoder().encodeToString(encrypted); //암호화된 문자 반환
+
         }
         catch (Exception e) {
             throw new EncryptionException("암호화 실패.");

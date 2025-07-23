@@ -9,6 +9,7 @@ import capstone._4.enums.ResponseEnum;
 import capstone._4.service.token.JwtService;
 import capstone._4.service.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,9 +43,8 @@ public class SocialController implements UserApi {
 
     @Override
     public ResponseEntity<?> naverConnectController(@RequestParam("code")String code,
-                                                    @RequestParam("state")String state,
-                                                    HttpServletResponse response) throws URISyntaxException {
-        SocialInputDto socialInputDto=new SocialInputDto(code,state);
+                                                  @RequestParam("state")String state, HttpServletResponse response) throws URISyntaxException{
+        SocialInputDto socialInputDto=new SocialInputDto(code,state, "naver");
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
         response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
         response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());
@@ -72,6 +72,21 @@ public class SocialController implements UserApi {
     }
 
     @Override
+    public ResponseEntity<?> kakaoLoginController(@Valid @RequestBody SocialInputDto socialInputDto,
+                                                  HttpServletResponse response) {
+
+        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
+        response.setHeader("Authorization", "Bearer " + socialResultDto.getAccessToken());
+        response.setHeader("Refresh-Token", "Bearer " + socialResultDto.getRefreshToken());
+
+        return ResponseEntity.ok().body(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                socialResultDto
+        ));
+    }
+
+    @Override
     public ResponseEntity<?> reAccessController(@RequestHeader(name = "Refresh-Token")String refreshToken,HttpServletResponse response){
         log.info("Refresh-Token:"+refreshToken);
         GenerateTokenDto generateTokenDto=jwtService.generateToken(refreshToken);
@@ -80,6 +95,7 @@ public class SocialController implements UserApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
     }
+
 
 
 }

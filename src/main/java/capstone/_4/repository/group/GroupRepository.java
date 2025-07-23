@@ -27,18 +27,19 @@ public class GroupRepository {
         return true;
     }
 
-    public Optional<Groups> findById(int groupid){
-        Optional<Groups> groups=Optional.ofNullable(em.find(Groups.class, groupid));
+    public Optional<Groups> findById(int groupid) {
+        Optional<Groups> groups = Optional.ofNullable(em.find(Groups.class, groupid));
         return groups;
     }
 
 
     public int deleteGroupe(Integer groupId) {
         return em.createQuery("delete from Groups g " +
-                "where g.gup_id = :groupId")
+                        "where g.gup_id = :groupId")
                 .setParameter("groupId", groupId)
                 .executeUpdate();
     }
+
 
     public Long updateGroup(Integer groupId,String name ,String imagePath,String imageName) {
         QGroups qGroups = QGroups.groups;

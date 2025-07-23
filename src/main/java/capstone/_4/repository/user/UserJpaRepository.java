@@ -31,6 +31,7 @@ public class UserJpaRepository implements UserRepository {
                 .stream().findFirst();
     }
 
+
     @Override
     public Optional<User> findById(int id) {
         return Optional.ofNullable(em.find(User.class, id));
