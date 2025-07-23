@@ -32,12 +32,27 @@ public class SocialController implements UserApi {
     @Override
     public ResponseEntity<?> naverLoginController(@RequestParam("code")String code,
                                                   @RequestParam("state")String state, HttpServletResponse response){
-        SocialInputDto socialInputDto=new SocialInputDto(code,state);
+        SocialInputDto socialInputDto=new SocialInputDto(code,state, "naver");
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
         response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
         response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), socialResultDto));
+    }
+
+    @Override
+    public ResponseEntity<?> kakaoLoginController(@Valid @RequestBody SocialInputDto socialInputDto,
+                                                  HttpServletResponse response) {
+
+        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
+        response.setHeader("Authorization", "Bearer " + socialResultDto.getAccessToken());
+        response.setHeader("Refresh-Token", "Bearer " + socialResultDto.getRefreshToken());
+
+        return ResponseEntity.ok().body(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                socialResultDto
+        ));
     }
 
     @Override
@@ -49,4 +64,7 @@ public class SocialController implements UserApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
     }
+    
+
+
 }

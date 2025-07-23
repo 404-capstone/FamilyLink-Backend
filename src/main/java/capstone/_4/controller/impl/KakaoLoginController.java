@@ -28,4 +28,9 @@ public class KakaoLoginController {
         // User 로그인, 또는 회원가입 로직 추가
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @GetMapping("/test-kakao-login")
+    public ResponseEntity<?> testKakaoLogin(@RequestParam("code") String token) {
+        var userInfo = kakaoService.getUserInfo(token);
+        return ResponseEntity.ok(userInfo);
+    }
 }

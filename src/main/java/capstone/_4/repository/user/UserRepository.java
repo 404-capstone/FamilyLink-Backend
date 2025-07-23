@@ -7,6 +7,7 @@ import java.util.Optional;
 public interface UserRepository {
     boolean save(User user);
     Optional<User> findByUsername(String username);
+
     //암호화된 이메일로 유저 찾기
     Optional<User> findById(int id);
     Optional<User> findByEmail(String email);
