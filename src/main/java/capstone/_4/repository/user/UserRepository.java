@@ -1,5 +1,6 @@
 package capstone._4.repository.user;
 
+import capstone._4.domain.Groups;
 import capstone._4.domain.User;
 
 import java.util.Optional;
@@ -11,4 +12,6 @@ public interface UserRepository {
     //암호화된 이메일로 유저 찾기
     Optional<User> findById(int id);
     Optional<User> findByEmail(String email);
+
+    Optional<Groups> findGroupById(int userId);
 }

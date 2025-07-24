@@ -3,7 +3,9 @@ package capstone._4.repository.group;
 import capstone._4.domain.GroupsUser;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,7 +32,7 @@ public class GroupsUserReponsitory {
     }
 
     public List<GroupUserInfoDto> findBygroupId(int groupId) {
-        return em.createQuery("select new capstone._4.dto.group.GroupUserInfoDto(u.id,u.username,gu.role,u.age,u.image,gu.leader) " +
+        return em.createQuery("select new capstone._4.dto.group.output.GroupUserInfoDto(u.id,u.username,gu.role,u.age,u.image,gu.leader) " +
                 "from GroupsUser gu " +
                 "join gu.group g " +
                 "join gu.user u " +
@@ -58,4 +60,54 @@ public class GroupsUserReponsitory {
                 .executeUpdate();
 
     }
+
+    public void deleteUserWithEm(GroupsUser groupUser){
+        em.remove(groupUser);
+
+    }
+
+//    @Transactional
+//    public void updateUser(Integer groupId ,Integer leaderId,Integer userId) {
+//
+//        int updateQuery=em.createQuery("update GroupsUser gu set gu.leader=true " +
+//                        "where gu.group.gup_id=:groupId and gu.user.id=:userId")
+//                .setParameter("groupId",groupId)
+//                .setParameter("userId",userId)
+//                .executeUpdate();
+//
+//        int deleteQuery=em.createQuery("delete from GroupsUser gu " +
+//                "where gu.group.gup_id=:groupId " +
+//                        "and gu.user.id=:leaderId")
+//                .setParameter("groupId",groupId)
+//                .setParameter("leaderId",leaderId)
+//                .executeUpdate();
+//
+//        if(updateQuery<1){
+//            throw new EntityNotFoundException("새 그룹장을 찾지못했습니다");
+//        }
+//        if(deleteQuery<1){
+//            throw new EntityNotFoundException("기존 그룹장을 삭제하지 못했습니다.");
+//        }
+//
+//    }
+
+//    @Transactional
+//    public void updateLeader(Integer groupId,Integer leaderId, Integer userId) {
+//        em.createQuery("update GroupsUser gu " +
+//                "set gu.leader=false " +
+//                "where gu.group.gup_id=:groupId " +
+//                        "and gu.user.id=:leaderId")
+//                .setParameter("groupId",groupId)
+//                .setParameter("leaderId",leaderId)
+//                .executeUpdate();
+//
+//        em.createQuery("update GroupsUser gu " +
+//                "set gu.leader=true " +
+//                "where gu.group.gup_id=:groupId " +
+//                "and gu.user.id=:userid")
+//        .setParameter("groupId",groupId)
+//        .setParameter("userid",userId)
+//                .executeUpdate();
+//
+//    }
 }

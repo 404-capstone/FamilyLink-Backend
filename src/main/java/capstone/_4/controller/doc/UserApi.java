@@ -1,6 +1,7 @@
 package capstone._4.controller.doc;
 
 import capstone._4.dto.docs.user.LoginApiResponse;
+import capstone._4.dto.docs.user.LoginTokenResponse;
 import capstone._4.dto.docs.user.TokenResponseDto;
 import capstone._4.dto.user.input.SocialInputDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,9 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URISyntaxException;
 
 @Tag(name="유저",description = "유저 기능 관련 api") //이걸로 크게 목록별로 구분가능.
 @RequestMapping("/user")
@@ -68,6 +72,7 @@ public interface UserApi {
             )
     )
 
+
     //카카오 POST방식
     @PostMapping(value = "/login/kakao")
     public ResponseEntity<?> kakaoLoginController(
@@ -75,7 +80,8 @@ public interface UserApi {
             @Valid @RequestBody SocialInputDto socialInputDto,
             HttpServletResponse response);
     
-    @Operation(summary = "네이버 로그인",description = "네이버를 이용하여 앱에 로그인합니다.,참고로 accesstoken 필요x",security = {})
+
+    @Operation(summary = "네이버 리다이렉트 api",description = "네이버 리다이렉트 api입니다.,참고로 accesstoken 필요x",security = {})
     @ApiResponse(responseCode = "200",description = "정상적으로 호출되었습니다.",
     headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))
     ,@Header(name="Refresh-Token",description = "jwt 리프레시 토큰",schema = @Schema(type="String"))},
@@ -99,14 +105,13 @@ public interface UserApi {
                             """
             )
     ))
-    
-    //네이버 GET방식
-    @GetMapping(value = "/login/naver")
-    public ResponseEntity<?> naverLoginController(
+
+    @GetMapping(value = "/login/oauth2/code/naver")
+    public ResponseEntity<?> naverConnectController(
             @Parameter(description = "네이버 code로 자동으로 붙음")
             @RequestParam("code")String code,
             @Parameter(description = "프론트 임의의 state문자열")
-            @RequestParam("state")String state, HttpServletResponse response);
+            @RequestParam("state")String state, HttpServletResponse response) throws URISyntaxException;
 
     
     //리프래쉬 토큰
@@ -138,4 +143,12 @@ public interface UserApi {
             @RequestHeader(name = "Refresh-Token")String refreshToken, HttpServletResponse response);
 
 
+    @Operation(summary = "jwt토큰 조회 api",description = "해당 api를 통해 세션값을 이용하여 토큰을 조회합니다.")
+    @ApiResponse(responseCode = "200",description = "정상처리",
+    content = @Content(mediaType = "application/json",
+    schema = @Schema(implementation = LoginTokenResponse.class)))
+    @PostMapping("/login/naver")
+    public ResponseEntity<?> naverLoginController(
+            @Parameter(description = "리다이렉트로 전송한 세션 id값.")
+            @RequestParam String session);
 }

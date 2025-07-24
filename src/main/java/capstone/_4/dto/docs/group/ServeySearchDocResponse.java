@@ -7,6 +7,10 @@ import capstone._4.enums.ResponseEnum;
 public class ServeySearchDocResponse extends ApiResponseDto<ServeyDto> {
     public ServeySearchDocResponse() {
         super(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
-                new ServeyDto());
+                ServeyDto.builder()
+                        .level("중")
+                        .score(85)
+                        .percent(90)
+                        .build());
     }
 }

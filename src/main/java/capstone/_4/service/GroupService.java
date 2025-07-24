@@ -190,6 +190,31 @@ public class GroupService {
                 .build();
     }
 
+    @Transactional
+    public void quitLeader(Integer groupId,Integer leaderId ,Integer userId) {
+        GroupsUser oldLeader=getGroupsUser(groupId,leaderId);
+        GroupsUser newLeader=getGroupsUser(groupId,userId);
+        newLeader.changeLeader(true);
+        groupsUserReponsitory.deleteUserWithEm(oldLeader);
+        //groupsUserReponsitory.updateUser(groupId,leaderId,userId);
+    }
+
+    @Transactional
+    public void updateLeader(Integer groupId,Integer leaderId ,Integer userId) {
+        GroupsUser oldLeader=getGroupsUser(groupId,leaderId);
+        GroupsUser newLeader=getGroupsUser(groupId,userId);
+        oldLeader.changeLeader(false);
+        newLeader.changeLeader(true);
+        //return true;
+        //groupsUserReponsitory.updateLeader(groupId,leaderId,userId);
+    }
+
+    public int findGroupId(int userId) {
+        Groups groups = userRepository.findGroupById(userId)
+                .orElseThrow(()-> new EntityNotFoundException("유저가 가입한 그룹이 존재하지 않습니다"));
+        return groups.getGup_id();
+
+    }
 
 
     private Groups getGroupFromId(Integer groupid) {
@@ -227,7 +252,6 @@ public class GroupService {
                 () -> new EntityNotFoundException("그룹 유저가 존재하지 않습니다.")
         );
     }
-
 
 
 }

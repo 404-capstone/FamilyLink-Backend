@@ -1,15 +1,13 @@
 package capstone._4.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class GenerateTokenDto {
     @Schema(name = "액세스 토큰")
     private String accessToken;
