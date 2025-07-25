@@ -4,8 +4,10 @@ import capstone._4.dto.gpt.MessageRequestDto;
 import capstone._4.dto.gpt.OpenAiRequestDto;
 import capstone._4.dto.gpt.ResponseFormatDto;
 import capstone._4.dto.gpt.recommendResponseDto;
+import capstone._4.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -14,11 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class OpenAiService {
 
     private final WebClient webClient;
+
+    public OpenAiService(@Qualifier("OpenAiWebClient") WebClient webClient){
+        this.webClient = webClient;
+    }
 
     public String createMessage() {//MessageRequestDto messageRequestDto
         log.info("start createMessage");
