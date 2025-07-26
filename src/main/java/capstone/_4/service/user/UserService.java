@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -34,14 +35,12 @@ public class UserService {
     }
 
     @Transactional
-    public SocialResultDto userSave(SocialInputDto socialInputDto) {
+    public SocialResultDto userSave(SocialInputDto socialInputDto) {  //이거 메소드 카카오 로그인 수정하고, 없애기.
         SocialInfoDto socialInfoDto;
 
         if ("kakao".equalsIgnoreCase(socialInputDto.getProvider())) {
             socialInfoDto = socialService.kakaoLoginService(socialInputDto);  // SocialInputDto 전체 전달
-        } else if ("naver".equalsIgnoreCase(socialInputDto.getProvider())) {
-            socialInfoDto = socialService.naverLoginService(socialInputDto);  // SocialInputDto 전체 전달
-        } else {
+        }  else {
             throw new IllegalArgumentException("지원하지 않는 소셜 로그인입니다.");
         }
 
@@ -68,8 +67,19 @@ public class UserService {
     }
 
     @Transactional
+    public User saveUserV2(User user){
+        userRepository.save(user);
+        return user;
+    }
+
+    @Transactional
     public User findById(int id){
         Optional<User> user=userRepository.findById(id);
         return user.orElse(null); //여기 나중에 리팩토링.
+    }
+
+    public User findByEmail(String email) {
+        Optional<User> user= userRepository.findByEmail(email);
+        return user.orElse(null);
     }
 }

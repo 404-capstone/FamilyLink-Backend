@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class GenerateTokenDto {
+public class ReGenerateTokenDto {
     @Schema(name = "액세스 토큰")
     private String accessToken;
 

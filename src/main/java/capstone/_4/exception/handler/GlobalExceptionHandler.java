@@ -15,6 +15,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> allException(DecryptionException e){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto<>(ErrorCode.EXCEPTION.getStatus(),
+                ErrorCode.EXCEPTION.getMessage(),e.getMessage()));
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DecryptionException.class)
     public ResponseEntity<?> decryptionException(DecryptionException e){
