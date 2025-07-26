@@ -36,7 +36,7 @@ public class SocialController implements UserApi {
     @Autowired
     public SocialController(UserService userService, JwtService jwtService,
                             @Value("${app.naver.deeplink}") String naverDeeplink,
-                            @Value("${kakao.deeplink}") String kakaoDeeplink) {
+                            @Value("${kakao.deeplink.prod}") String kakaoDeeplink) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.naverDeeplink = naverDeeplink;
@@ -116,7 +116,4 @@ public class SocialController implements UserApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
     }
-
-
-
 }

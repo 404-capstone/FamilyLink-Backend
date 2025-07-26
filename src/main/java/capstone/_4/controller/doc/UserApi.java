@@ -74,12 +74,21 @@ public interface UserApi {
 
 
 
+    // 기존 카카오 로그인 POST 메서드 선언
     @PostMapping(value = "/login/kakao")
     public ResponseEntity<?> kakaoLoginController(
             @Parameter(description = "카카오 로그인 요청 데이터", required = true)
             @Valid @RequestBody SocialInputDto socialInputDto,
             HttpServletResponse response);
-    
+
+    // 새로 추가한 카카오 로그인 콜백 GET 메서드 선언
+    @Operation(summary = "카카오 로그인 콜백", description = "카카오 인가 코드를 받아 처리합니다.")
+    @GetMapping("/login/kakao")
+    public ResponseEntity<?> kakaoConnectController(
+            @RequestParam("code") String code,
+            @RequestParam(value = "state", required = false) String state,
+            HttpServletResponse response) throws URISyntaxException;
+
 
     @Operation(summary = "네이버 리다이렉트 api",description = "네이버 리다이렉트 api입니다.,참고로 accesstoken 필요x",security = {})
     @ApiResponse(responseCode = "200",description = "정상적으로 호출되었습니다.",
