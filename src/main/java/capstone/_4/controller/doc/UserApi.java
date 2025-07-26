@@ -73,7 +73,7 @@ public interface UserApi {
     )
 
 
-    //카카오 POST방식
+
     @PostMapping(value = "/login/kakao")
     public ResponseEntity<?> kakaoLoginController(
             @Parameter(description = "카카오 로그인 요청 데이터", required = true)
