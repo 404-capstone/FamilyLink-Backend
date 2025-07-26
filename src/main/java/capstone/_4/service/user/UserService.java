@@ -35,14 +35,12 @@ public class UserService {
     }
 
     @Transactional
-    public SocialResultDto userSave(SocialInputDto socialInputDto) {
+    public SocialResultDto userSave(SocialInputDto socialInputDto) {  //이거 메소드 카카오 로그인 수정하고, 없애기.
         SocialInfoDto socialInfoDto;
 
         if ("kakao".equalsIgnoreCase(socialInputDto.getProvider())) {
             socialInfoDto = socialService.kakaoLoginService(socialInputDto);  // SocialInputDto 전체 전달
-        } else if ("naver".equalsIgnoreCase(socialInputDto.getProvider())) {
-            socialInfoDto = socialService.naverLoginService(socialInputDto);  // SocialInputDto 전체 전달
-        } else {
+        }  else {
             throw new IllegalArgumentException("지원하지 않는 소셜 로그인입니다.");
         }
 

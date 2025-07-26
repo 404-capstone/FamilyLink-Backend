@@ -30,7 +30,6 @@ public class SocialController implements UserApi {
     private final UserService userService;
     private final JwtService jwtService;
     private final String deeplink;
-    private final Map<String,GenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
 
     @Autowired
     public SocialController(UserService userService, JwtService jwtService
@@ -41,35 +40,7 @@ public class SocialController implements UserApi {
 
     }
 
-    @Override
-    public ResponseEntity<?> naverConnectController(@RequestParam("code")String code,
-                                                  @RequestParam("state")String state, HttpServletResponse response) throws URISyntaxException{
-        SocialInputDto socialInputDto=new SocialInputDto(code,state, "naver");
-        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
-        response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
-        response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());
-        String uuid = UUID.randomUUID().toString().substring(0,10);
-        tokenSave.put(uuid,GenerateTokenDto.builder().
-                        accessToken(socialResultDto.getAccessToken()).
-                refreshToken(socialResultDto.getRefreshToken()).
-                build());
-        String url=deeplink+uuid;
-        log.info("deeplink url:{}",url);
-        return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
-        //return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), //여기르 다시 작성.
-                //ResponseEnum.SUCCESS.getMessage(), socialResultDto));
-    }
 
-    @Override
-    public ResponseEntity<?> naverLoginController(String session) {
-        if(!tokenSave.containsKey(session)){
-            throw new RuntimeException("해당 세션은 존재하지 않습니다.");
-        }
-        GenerateTokenDto generateTokenDto=tokenSave.get(session);
-        tokenSave.remove(session);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
-                generateTokenDto));
-    }
 
     @Override
     public ResponseEntity<?> kakaoLoginController(@Valid @RequestBody SocialInputDto socialInputDto,
