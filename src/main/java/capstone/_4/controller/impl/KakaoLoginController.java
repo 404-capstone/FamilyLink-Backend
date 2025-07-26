@@ -1,36 +1,39 @@
 package capstone._4.controller.impl;
 
-import capstone._4.dto.KakaoUserInfoResponseDto;
-import capstone._4.service.Kakao.KakaoService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 @Slf4j
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("")
+@Controller
 public class KakaoLoginController {
 
-    private final KakaoService kakaoService;
+    private final String kakaoDeeplink;
+
+    public KakaoLoginController(@Value("${kakao.deeplink.test}") String testDeeplink, //로컬
+                                @Value("${kakao.deeplink.prod}") String prodDeeplink, //배포
+                                Environment env) {
+        String activeProfile = env.getActiveProfiles().length > 0 ? env.getActiveProfiles()[0] : "prod";
+        if ("dev".equals(activeProfile)) {
+            this.kakaoDeeplink = testDeeplink;
+        } else {
+            this.kakaoDeeplink = prodDeeplink;
+        }
+    }
 
     @GetMapping("/callback")
-    public ResponseEntity<?> callback(@RequestParam("code") String code) {
-        String accessToken = kakaoService.getAccessTokenFromKakao(code);
+    public void kakaoCallback(@RequestParam String code, @RequestParam(required = false) String hash, HttpServletResponse response) throws IOException {
+        // hash가 안 넘어올 수도 있으니 required = false로 받음
+        String redirectUri = kakaoDeeplink + "?code=" + code;
 
-        KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
+        if (hash != null && !hash.isEmpty()) {
+            redirectUri += "&hash=" + hash;
+        }
 
-        // User 로그인, 또는 회원가입 로직 추가
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    @GetMapping("/test-kakao-login")
-    public ResponseEntity<?> testKakaoLogin(@RequestParam("code") String token) {
-        var userInfo = kakaoService.getUserInfo(token);
-        return ResponseEntity.ok(userInfo);
+        response.sendRedirect(redirectUri);
     }
 }
