@@ -1,13 +1,15 @@
-package capstone._4.dto.user.naver;
+package capstone._4.dto.user;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class NaverLoginInfoDto {
+@Builder
+public class TokenDto {
     private String access_token;
     private String refresh_token;
-    private String token_type;
-    private Integer expires_in;
+    private Integer userId;
+    private boolean flag;
 }

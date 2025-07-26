@@ -1,7 +1,7 @@
 package capstone._4.service.token;
 
 import capstone._4.domain.User;
-import capstone._4.dto.user.GenerateTokenDto;
+import capstone._4.dto.user.ReGenerateTokenDto;
 import capstone._4.exception.TokenException;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.redis.RedisService;
@@ -57,9 +57,9 @@ public class JwtService {
      * @return
      */
 
-    public GenerateTokenDto generateToken(String refreshToken){
+    public ReGenerateTokenDto generateToken(String refreshToken){
         //로직이 먼저 refresh받고 안에 상태 검증후에,안에 claim꺼내서 id꺼내서 그걸로 user조회한다음에 재생성.
-        GenerateTokenDto generateTokenDto = new GenerateTokenDto();
+        ReGenerateTokenDto reGenerateTokenDto = new ReGenerateTokenDto();
         if(refreshToken != null && refreshToken.startsWith("Bearer ")){
             String token = refreshToken.substring(7);
             log.info("token: {}",token);
@@ -68,8 +68,8 @@ public class JwtService {
                     int id=getIdFromToken(token);
                     log.info("id: {}",id);
                     Optional<User> user=userRepository.findById(id);
-                    generateTokenDto.setAccessToken(generateAccessToken(user.orElse(null)));
-                    generateTokenDto.setRefreshToken(generateRefreshToken(user.orElse(null)));
+                    reGenerateTokenDto.setAccessToken(generateAccessToken(user.orElse(null)));
+                    reGenerateTokenDto.setRefreshToken(generateRefreshToken(user.orElse(null)));
                     redisService.delete(token);
                 }
             }catch(Exception e){
@@ -78,7 +78,7 @@ public class JwtService {
         }else{
             throw new TokenException("토큰이없거나 Bearer이 존재하지않습니다.");
         }
-        return generateTokenDto;
+        return reGenerateTokenDto;
     }
 
     /**

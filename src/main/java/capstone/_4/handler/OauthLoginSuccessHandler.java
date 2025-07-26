@@ -2,8 +2,10 @@ package capstone._4.handler;
 
 import capstone._4.domain.User;
 import capstone._4.dto.user.OAuth2UserInfo;
+import capstone._4.dto.user.TokenDto;
 import capstone._4.dto.user.naver.NaverUserInfo;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.service.CacheService;
 import capstone._4.service.token.JwtService;
 import capstone._4.service.user.UserService;
 import capstone._4.util.AESUtil;
@@ -25,6 +27,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +38,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     private OAuth2UserInfo oAuth2UserInfo=null;
 
-
+    private final CacheService cacheService;
     private final JwtService jwtService;
     private final UserService userService;
     private final AESUtil aesUtil;
@@ -77,12 +80,20 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
+        String key=UUID.randomUUID().toString().substring(7);
 
+        cacheService.store(key, TokenDto.builder()
+                .access_token(accessToken)
+                .refresh_token(refreshToken)
+                .userId(user.getId())
+                .flag(flag).build());
         String deeplink=link
-                +"?accessToken="+ URLEncoder.encode(accessToken, StandardCharsets.UTF_8)
-                +"&refreshToken="+ URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
-                +"&userId="+user.getId()
-                +"&flag="+flag;
+                +"?session="+URLEncoder.encode(key,StandardCharsets.UTF_8);
+//        String deeplink=link
+//                +"?accessToken="+ URLEncoder.encode(accessToken, StandardCharsets.UTF_8)
+//                +"&refreshToken="+ URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
+//                +"&userId="+user.getId()
+//                +"&flag="+flag;
         response.sendRedirect(deeplink);
 
     }

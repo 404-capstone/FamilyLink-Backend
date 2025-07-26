@@ -90,6 +90,30 @@ public interface UserApi {
             HttpServletResponse response) throws URISyntaxException;
 
 
+    @Operation(summary = "유저 토큰 정보 조회",description = "로그인을 통해 저장한 토큰을 조회합니다.")
+    @ApiResponse(responseCode = "200",description = "조회 성공",
+    content = @Content(mediaType = "application/json",
+    examples = @ExampleObject(
+      name = "성공 응답"
+      ,summary = "조회 성공",
+      value = """
+                            {
+                              "code": 200,
+                              "message": "요청을 성공했습니다.",
+                              "data": {
+                                "accessToken": "access",
+                                "refreshToken": "refresh",
+                                "userId":"id",
+                                "flag":"boolean"
+                              }
+                            }
+                            """
+    )
+    ))
+    @GetMapping("/login/code")
+    public ResponseEntity<?> codeController(
+            @Parameter(description = "로그인시 딥링크로 전해준 세션값.",example="ds21es")
+            @RequestParam String session);
 
     
     //리프래쉬 토큰

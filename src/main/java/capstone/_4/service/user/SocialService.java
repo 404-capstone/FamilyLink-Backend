@@ -1,13 +1,13 @@
 package capstone._4.service.user;
 
-import capstone._4.dto.user.naver.NaverInfoDto;
+
 import capstone._4.dto.KakaoUserInfoResponseDto;
 import capstone._4.dto.user.SocialInfoDto;
 import capstone._4.dto.user.input.SocialInputDto;
-import capstone._4.dto.user.naver.NaverLoginInfoDto;
+
 import capstone._4.exception.SocialLoginException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
