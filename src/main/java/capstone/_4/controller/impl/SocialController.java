@@ -29,16 +29,18 @@ public class SocialController implements UserApi {
 
     private final UserService userService;
     private final JwtService jwtService;
-    private final String deeplink;
+    private final String naverDeeplink;
+    private final String kakaoDeeplink;
     private final Map<String,GenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
 
     @Autowired
-    public SocialController(UserService userService, JwtService jwtService
-    , @Value("${app.naver.deeplink}") String deeplink) {
+    public SocialController(UserService userService, JwtService jwtService,
+                            @Value("${app.naver.deeplink}") String naverDeeplink,
+                            @Value("${kakao.deeplink.prod}") String kakaoDeeplink) {
         this.userService = userService;
         this.jwtService = jwtService;
-        this.deeplink=deeplink;
-
+        this.naverDeeplink = naverDeeplink;
+        this.kakaoDeeplink = kakaoDeeplink;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class SocialController implements UserApi {
                         accessToken(socialResultDto.getAccessToken()).
                 refreshToken(socialResultDto.getRefreshToken()).
                 build());
-        String url=deeplink+uuid;
+        String url=naverDeeplink+uuid;
         log.info("deeplink url:{}",url);
         return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
         //return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), //여기르 다시 작성.
@@ -85,6 +87,25 @@ public class SocialController implements UserApi {
                 socialResultDto
         ));
     }
+    @GetMapping("/login/kakao")
+    public ResponseEntity<?> kakaoConnectController(
+            @RequestParam("code") String code,
+            @RequestParam(value = "state", required = false) String state,
+            HttpServletResponse response) throws URISyntaxException {
+
+        SocialInputDto socialInputDto = new SocialInputDto(code, state, "kakao");
+        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
+
+        String uuid = UUID.randomUUID().toString().substring(0, 10);
+        tokenSave.put(uuid, GenerateTokenDto.builder()
+                .accessToken(socialResultDto.getAccessToken())
+                .refreshToken(socialResultDto.getRefreshToken())
+                .build());
+
+        String url = kakaoDeeplink + uuid; // kakaoapp://login/{uuid}
+        log.info("카카오 딥링크 리다이렉트: {}", url);
+        return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
+    }
 
     @Override
     public ResponseEntity<?> reAccessController(@RequestHeader(name = "Refresh-Token")String refreshToken,HttpServletResponse response){
@@ -95,7 +116,4 @@ public class SocialController implements UserApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
     }
-
-
-
 }

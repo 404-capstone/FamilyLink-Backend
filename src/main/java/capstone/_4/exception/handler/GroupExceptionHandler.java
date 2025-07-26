@@ -20,21 +20,21 @@ public class GroupExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> entityNotFoundException(EntityNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ErrorCode.ENTITY_NOT_FOUND.getStaus(),
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ErrorCode.ENTITY_NOT_FOUND.getStatus(),
                 ErrorCode.ENTITY_NOT_FOUND.getMessage(),e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RedisException.class)
     public ResponseEntity<?> redisNotFoundException(RedisException e){
-        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ErrorCode.REDIS_NOT_FOUND.getStaus(),
+        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ErrorCode.REDIS_NOT_FOUND.getStatus(),
                 ErrorCode.REDIS_NOT_FOUND.getMessage(),e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<?> entityExistsException(EntityExistsException e){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ErrorCode.ENTITY_EXISTS.getStaus(),
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ErrorCode.ENTITY_EXISTS.getStatus(),
                 ErrorCode.ENTITY_EXISTS.getMessage(),e.getMessage()
         ));
     }

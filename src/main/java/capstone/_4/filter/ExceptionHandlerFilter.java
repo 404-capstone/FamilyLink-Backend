@@ -40,10 +40,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     private void setErrorResponse(HttpServletResponse httpServletResponse,ErrorCode error ,String message){
         ObjectMapper objectMapper = new ObjectMapper();
-        httpServletResponse.setStatus(error.getStaus());
+        httpServletResponse.setStatus(error.getStatus());
         httpServletResponse.setContentType("application/json; charset=UTF-8");
         httpServletResponse.setCharacterEncoding("UTF-8");
-        ErrorResponse errorResponse = new ErrorResponse(error.getStaus(),error.getMessage(),message);
+        ErrorResponse errorResponse = new ErrorResponse(error.getStatus(),error.getMessage(),message);
         try{
             httpServletResponse.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }catch (Exception e){
