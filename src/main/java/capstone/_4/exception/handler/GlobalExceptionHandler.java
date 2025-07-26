@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> allException(DecryptionException e){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto<>(ErrorCode.EXCEPTION.getStaus(),
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto<>(ErrorCode.EXCEPTION.getStatus(),
                 ErrorCode.EXCEPTION.getMessage(),e.getMessage()));
     }
 
