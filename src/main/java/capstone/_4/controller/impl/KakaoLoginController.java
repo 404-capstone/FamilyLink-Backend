@@ -1,5 +1,5 @@
 package capstone._4.controller.impl;
-
+//딥링크 리다이렉트 컨트롤러
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -28,6 +28,7 @@ public class KakaoLoginController {
     @GetMapping("/callback")
     public void kakaoCallback(@RequestParam String code, @RequestParam(required = false) String hash, HttpServletResponse response) throws IOException {
         // hash가 안 넘어올 수도 있으니 required = false로 받음
+        log.info("callback 호출됨, code = {}, hash = {}", code, hash);
         String redirectUri = kakaoDeeplink + "?code=" + code;
 
         if (hash != null && !hash.isEmpty()) {

@@ -18,6 +18,6 @@ public enum ErrorCode {
     REDIS_NOT_FOUND(400,"레디스에서 정보를 찾지 못했습니다");
 
 
-    private final Integer staus;
+    private final Integer status;
     private final String message;
 }
