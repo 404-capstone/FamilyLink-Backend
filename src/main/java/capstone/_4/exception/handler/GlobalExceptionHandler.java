@@ -18,21 +18,21 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DecryptionException.class)
     public ResponseEntity<?> decryptionException(DecryptionException e){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto<>(ErrorCode.DECRYPT_FAILED.getStaus(),
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto<>(ErrorCode.DECRYPT_FAILED.getStatus(),
                 ErrorCode.DECRYPT_FAILED.getMessage(),e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(EncryptionException.class)
     public ResponseEntity<?> encryptionException(EncryptionException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto<>(ErrorCode.ENCRYPT_FAILED.getStaus(),
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto<>(ErrorCode.ENCRYPT_FAILED.getStatus(),
                 ErrorCode.ENCRYPT_FAILED.getMessage(), e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(RedisConnectionException.class)
     public ResponseEntity<?> redisConnectionException(RedisConnectionException e){
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponseDto<>(ErrorCode.CONNECT_FAILED.getStaus(),
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponseDto<>(ErrorCode.CONNECT_FAILED.getStatus(),
                 ErrorCode.CONNECT_FAILED.getMessage(), e.getMessage()));
     }
 }

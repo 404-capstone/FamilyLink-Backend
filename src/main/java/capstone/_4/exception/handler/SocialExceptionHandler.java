@@ -26,7 +26,7 @@ public class SocialExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> methodArgumentNotValidException(MethodArgumentNotValidException e) {
-        ApiResponseDto<String> apiResponseDto = new ApiResponseDto<String>(ErrorCode.SOCIAL_LOGIN_FAILED.getStaus(),
+        ApiResponseDto<String> apiResponseDto = new ApiResponseDto<String>(ErrorCode.SOCIAL_LOGIN_FAILED.getStatus(),
                 ErrorCode.SOCIAL_LOGIN_FAILED.getMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(apiResponseDto);
@@ -35,7 +35,7 @@ public class SocialExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<?> tokenException(TokenException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponseDto<>(ErrorCode.TOKEN_INVALID.getStaus(),
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponseDto<>(ErrorCode.TOKEN_INVALID.getStatus(),
                 ErrorCode.TOKEN_INVALID.getMessage(), e.getMessage()
                 ));
     }
