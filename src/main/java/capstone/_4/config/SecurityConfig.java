@@ -29,7 +29,7 @@ public class SecurityConfig {
 
         http.
                 csrf(csrf -> csrf.disable()) //사용자가 의도하지 않은것을 보내는것 막기.
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //서버가 세션 생성하지 않게 방지 하기.
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) //서버가 세션 생성하지 않게 방지 하기.그런데 여기서 OAUTH2세션을 거부해서 일시적 허용으로 변경.
                 .authorizeHttpRequests(auth -> auth //http 인가 관련 설정.
                         .requestMatchers("/user/login/naver",
                                 "/user/token/refresh",
@@ -40,7 +40,8 @@ public class SecurityConfig {
 //                                "/user/logout",
 //                                "/user/search",
                                 "/user/custom/kakao",
-                                "/custom/kakao"
+                                "/custom/kakao",
+                                "/user/login/code"
                         ).permitAll()
                         .requestMatchers("/error","/favicon.ico","/").permitAll()
                         .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/webjars/**").permitAll()
