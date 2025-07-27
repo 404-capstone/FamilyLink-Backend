@@ -38,7 +38,7 @@ public class SocialController implements UserApi {
     private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
 
     // 카카오 REST API 키 필드 추가
-    @Value("${kakao.client_id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;
 
     @Autowired
@@ -69,7 +69,7 @@ public class SocialController implements UserApi {
                 socialResultDto
         ));
     }
-    @GetMapping("/login/kakao")
+    @GetMapping("user/login/kakao")
     public ResponseEntity<?> kakaoConnectController(
             @RequestParam("code") String code,
             @RequestParam(value = "state", required = false) String state,
@@ -88,7 +88,7 @@ public class SocialController implements UserApi {
         log.info("카카오 딥링크 리다이렉트: {}", url);
         return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
     }
-    @GetMapping("/custom/kakao")
+    @GetMapping("user/custom/kakao")
     public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
         String redirectUri = "https://familycomm.store/custom/kakao"; // 콜백 URL 주소변경했음
         String state = "login"; // CSRF 방지용 임의 문자열
