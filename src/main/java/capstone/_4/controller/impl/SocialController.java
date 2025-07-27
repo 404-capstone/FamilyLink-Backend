@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -36,6 +36,10 @@ public class SocialController implements UserApi {
     private final String naverDeeplink;
     private final String kakaoDeeplink;
     private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
+
+    // 카카오 REST API 키 필드 추가
+    @Value("${kakao.client_id}")
+    private String kakaoClientId;
 
     @Autowired
     public SocialController(UserService userService, JwtService jwtService,
@@ -83,6 +87,19 @@ public class SocialController implements UserApi {
         String url = kakaoDeeplink + uuid; // kakaoapp://login/{uuid}
         log.info("카카오 딥링크 리다이렉트: {}", url);
         return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
+    }
+    @GetMapping("/auth/kakao")
+    public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
+        String redirectUri = "https://familycomm.store/login/kakao"; // 콜백 URL
+        String state = "login"; // CSRF 방지용 임의 문자열
+
+        String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
+                "?client_id=" + kakaoClientId +
+                "&redirect_uri=" + redirectUri +
+                "&response_type=code" +
+                "&state=" + state;
+
+        response.sendRedirect(kakaoAuthUrl);
     }
 
     @Override
