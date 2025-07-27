@@ -2,10 +2,12 @@ package capstone._4.controller.impl;
 
 import capstone._4.controller.doc.UserApi;
 import capstone._4.dto.ApiResponseDto;
-import capstone._4.dto.user.GenerateTokenDto;
+import capstone._4.dto.user.ReGenerateTokenDto;
+import capstone._4.dto.user.TokenDto;
 import capstone._4.dto.user.input.SocialInputDto;
 import capstone._4.dto.user.output.SocialResultDto;
 import capstone._4.enums.ResponseEnum;
+import capstone._4.service.CacheService;
 import capstone._4.service.token.JwtService;
 import capstone._4.service.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,49 +31,25 @@ public class SocialController implements UserApi {
 
     private final UserService userService;
     private final JwtService jwtService;
+
+    private final CacheService cacheService;
     private final String naverDeeplink;
     private final String kakaoDeeplink;
-    private final Map<String,GenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
+    private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
 
     @Autowired
     public SocialController(UserService userService, JwtService jwtService,
                             @Value("${app.naver.deeplink}") String naverDeeplink,
-                            @Value("${kakao.deeplink.prod}") String kakaoDeeplink) {
+                            @Value("${kakao.deeplink.prod}") String kakaoDeeplink,
+                            CacheService cacheService) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.naverDeeplink = naverDeeplink;
         this.kakaoDeeplink = kakaoDeeplink;
+        this.cacheService = cacheService;
     }
 
-    @Override
-    public ResponseEntity<?> naverConnectController(@RequestParam("code")String code,
-                                                  @RequestParam("state")String state, HttpServletResponse response) throws URISyntaxException{
-        SocialInputDto socialInputDto=new SocialInputDto(code,state, "naver");
-        SocialResultDto socialResultDto = userService.userSave(socialInputDto);
-        response.setHeader("Authorization", "Bearer "+socialResultDto.getAccessToken());
-        response.setHeader("Refresh-Token","Bearer "+ socialResultDto.getRefreshToken());
-        String uuid = UUID.randomUUID().toString().substring(0,10);
-        tokenSave.put(uuid,GenerateTokenDto.builder().
-                        accessToken(socialResultDto.getAccessToken()).
-                refreshToken(socialResultDto.getRefreshToken()).
-                build());
-        String url=naverDeeplink+uuid;
-        log.info("deeplink url:{}",url);
-        return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
-        //return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), //여기르 다시 작성.
-                //ResponseEnum.SUCCESS.getMessage(), socialResultDto));
-    }
 
-    @Override
-    public ResponseEntity<?> naverLoginController(String session) {
-        if(!tokenSave.containsKey(session)){
-            throw new RuntimeException("해당 세션은 존재하지 않습니다.");
-        }
-        GenerateTokenDto generateTokenDto=tokenSave.get(session);
-        tokenSave.remove(session);
-        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
-                generateTokenDto));
-    }
 
     @Override
     public ResponseEntity<?> kakaoLoginController(@Valid @RequestBody SocialInputDto socialInputDto,
@@ -97,7 +75,7 @@ public class SocialController implements UserApi {
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
 
         String uuid = UUID.randomUUID().toString().substring(0, 10);
-        tokenSave.put(uuid, GenerateTokenDto.builder()
+        tokenSave.put(uuid, ReGenerateTokenDto.builder()
                 .accessToken(socialResultDto.getAccessToken())
                 .refreshToken(socialResultDto.getRefreshToken())
                 .build());
@@ -108,12 +86,19 @@ public class SocialController implements UserApi {
     }
 
     @Override
+    public ResponseEntity<?> codeController(String session) {
+        TokenDto result =cacheService.retrieveToken(session);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(), result));
+    }
+
+    @Override
     public ResponseEntity<?> reAccessController(@RequestHeader(name = "Refresh-Token")String refreshToken,HttpServletResponse response){
         log.info("Refresh-Token:"+refreshToken);
-        GenerateTokenDto generateTokenDto=jwtService.generateToken(refreshToken);
-        response.setHeader("Authorization", "Bearer "+generateTokenDto.getAccessToken());
-        response.setHeader("Refresh-Token","Bearer "+ generateTokenDto.getRefreshToken());
+        ReGenerateTokenDto reGenerateTokenDto =jwtService.generateToken(refreshToken);
+        response.setHeader("Authorization", "Bearer "+ reGenerateTokenDto.getAccessToken());
+        response.setHeader("Refresh-Token","Bearer "+ reGenerateTokenDto.getRefreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
-                ResponseEnum.GENERATE_COMPLETED.getMessage(),generateTokenDto));
+                ResponseEnum.GENERATE_COMPLETED.getMessage(), reGenerateTokenDto));
     }
 }

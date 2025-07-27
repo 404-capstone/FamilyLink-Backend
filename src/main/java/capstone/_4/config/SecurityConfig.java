@@ -2,6 +2,8 @@ package capstone._4.config;
 
 import capstone._4.filter.ExceptionHandlerFilter;
 import capstone._4.filter.JwtAuthenticationFilter;
+import capstone._4.handler.OAuthLoginFailureHandler;
+import capstone._4.handler.OauthLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
 
+    private final OauthLoginSuccessHandler oauthLoginSuccessHandler;
+    private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
     @Bean
     public SecurityFilterChain springFilterChain(HttpSecurity http) throws Exception {
         http.
@@ -37,6 +41,10 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth->
+                        oauth
+                                .successHandler(oauthLoginSuccessHandler)
+                                .failureHandler(oAuthLoginFailureHandler))
                 .addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

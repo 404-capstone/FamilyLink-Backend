@@ -90,37 +90,30 @@ public interface UserApi {
             HttpServletResponse response) throws URISyntaxException;
 
 
-    @Operation(summary = "네이버 리다이렉트 api",description = "네이버 리다이렉트 api입니다.,참고로 accesstoken 필요x",security = {})
-    @ApiResponse(responseCode = "200",description = "정상적으로 호출되었습니다.",
-    headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))
-    ,@Header(name="Refresh-Token",description = "jwt 리프레시 토큰",schema = @Schema(type="String"))},
+    @Operation(summary = "유저 토큰 정보 조회",description = "로그인을 통해 저장한 토큰을 조회합니다.")
+    @ApiResponse(responseCode = "200",description = "조회 성공",
     content = @Content(mediaType = "application/json",
-    schema = @Schema(implementation = LoginApiResponse.class),
-            examples =  @ExampleObject(
-                    name="성공 응답",
-                    summary = "네이버 로그인 성공",
-                    value= """
+    examples = @ExampleObject(
+      name = "성공 응답"
+      ,summary = "조회 성공",
+      value = """
                             {
                               "code": 200,
-                              "message": "정상적으로 호출되었습니다",
+                              "message": "요청을 성공했습니다.",
                               "data": {
-                                "id": 1,
-                                "social": "naver",
-                                "newUser": true,
                                 "accessToken": "access",
-                                "refreshToken": "refresh"
+                                "refreshToken": "refresh",
+                                "userId":"id",
+                                "flag":"boolean"
                               }
                             }
                             """
-            )
+    )
     ))
-
-    @GetMapping(value = "/login/oauth2/code/naver")
-    public ResponseEntity<?> naverConnectController(
-            @Parameter(description = "네이버 code로 자동으로 붙음")
-            @RequestParam("code")String code,
-            @Parameter(description = "프론트 임의의 state문자열")
-            @RequestParam("state")String state, HttpServletResponse response) throws URISyntaxException;
+    @GetMapping("/login/code")
+    public ResponseEntity<?> codeController(
+            @Parameter(description = "로그인시 딥링크로 전해준 세션값.",example="ds21es")
+            @RequestParam String session);
 
     
     //리프래쉬 토큰
@@ -152,12 +145,5 @@ public interface UserApi {
             @RequestHeader(name = "Refresh-Token")String refreshToken, HttpServletResponse response);
 
 
-    @Operation(summary = "jwt토큰 조회 api",description = "해당 api를 통해 세션값을 이용하여 토큰을 조회합니다.")
-    @ApiResponse(responseCode = "200",description = "정상처리",
-    content = @Content(mediaType = "application/json",
-    schema = @Schema(implementation = LoginTokenResponse.class)))
-    @PostMapping("/login/naver")
-    public ResponseEntity<?> naverLoginController(
-            @Parameter(description = "리다이렉트로 전송한 세션 id값.")
-            @RequestParam String session);
+
 }
