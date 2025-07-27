@@ -1,7 +1,7 @@
 package capstone._4.service.Kakao;
 
-import capstone._4.dto.KakaoTokenResponseDto;
-import capstone._4.dto.KakaoUserInfoResponseDto;
+import capstone._4.dto.user.kakao.KakaoTokenResponseDto;
+import capstone._4.dto.user.kakao.KakaoUserInfoResponseDto;
 import capstone._4.repository.user.UserRepository;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;

@@ -11,4 +11,7 @@ public class SocialInfoDto {
     private String social;
     private String email;
     private String nickname;
+    private String image;
+    private String gender;
+    private int age;
 }
