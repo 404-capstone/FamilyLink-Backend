@@ -39,8 +39,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/user/login/oauth2/code/naver",
             "/callback",
             "auth2/authorization/naver",
-            "/user/logout",
-            "/user/search",
+//            "/user/logout",
+//            "/user/search",
             "/auth/kakao"
     );
 
