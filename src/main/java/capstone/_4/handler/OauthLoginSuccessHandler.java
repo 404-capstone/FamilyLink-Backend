@@ -83,8 +83,8 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String key=UUID.randomUUID().toString().substring(7);
 
         cacheService.store(key, TokenDto.builder()
-                .access_token(accessToken)
-                .refresh_token(refreshToken)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .userId(user.getId())
                 .flag(flag).build());
         String deeplink=link

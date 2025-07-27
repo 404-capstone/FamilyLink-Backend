@@ -106,7 +106,7 @@ public class SocialController implements UserApi {
     public ResponseEntity<?> codeController(String session) {
         log.info("session: {}", session);
         TokenDto result =cacheService.retrieveToken(session);
-        log.info("token:{}",result.getAccess_token());
+        log.info("token:{}",result.getAccessToken());
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), result));
     }

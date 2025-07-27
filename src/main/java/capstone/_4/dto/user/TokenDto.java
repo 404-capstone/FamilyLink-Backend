@@ -8,8 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class TokenDto {
-    private String access_token;
-    private String refresh_token;
+    private String accessToken;
+    private String refreshToken;
     private Integer userId;
     private boolean flag;
 }
