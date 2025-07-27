@@ -88,9 +88,9 @@ public class SocialController implements UserApi {
         log.info("카카오 딥링크 리다이렉트: {}", url);
         return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
     }
-    @GetMapping("/auth/kakao")
+    @GetMapping("/custom/kakao")
     public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
-        String redirectUri = "https://familycomm.store/login/kakao"; // 콜백 URL
+        String redirectUri = "https://familycomm.store/custom/kakao"; // 콜백 URL 주소변경했음
         String state = "login"; // CSRF 방지용 임의 문자열
 
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +

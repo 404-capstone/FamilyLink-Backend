@@ -36,7 +36,7 @@ public class SecurityConfig {
                                 "/callback",
 //                                "/user/logout",
 //                                "/user/search",
-                                "/auth/kakao"
+                                "/custom/kakao"
                         ).permitAll()
                         .requestMatchers("/error","/favicon.ico","/").permitAll()
                         .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/webjars/**").permitAll()
