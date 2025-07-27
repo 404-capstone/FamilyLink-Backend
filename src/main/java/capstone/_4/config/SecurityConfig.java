@@ -34,7 +34,9 @@ public class SecurityConfig {
                                 "/page",
                                 "/user/login/oauth2/code/naver",
                                 "/callback",
-                                "/user/logout"
+//                                "/user/logout",
+//                                "/user/search",
+                                "/auth/kakao"
                         ).permitAll()
                         .requestMatchers("/error","/favicon.ico","/").permitAll()
                         .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/webjars/**").permitAll()

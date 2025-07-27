@@ -1,4 +1,4 @@
-package capstone._4.dto;
+package capstone._4.dto.user.kakao;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

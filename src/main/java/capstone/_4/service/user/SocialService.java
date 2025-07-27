@@ -1,7 +1,9 @@
 package capstone._4.service.user;
 
+import capstone._4.dto.user.naver.NaverInfoDto;
+import capstone._4.dto.user.kakao.KakaoUserInfoResponseDto;
 
-import capstone._4.dto.KakaoUserInfoResponseDto;
+
 import capstone._4.dto.user.SocialInfoDto;
 import capstone._4.dto.user.input.SocialInputDto;
 
