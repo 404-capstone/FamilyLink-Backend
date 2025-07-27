@@ -1,5 +1,6 @@
 package capstone._4.config;
 
+import capstone._4.filter.CustomAuthenticationEntryPoint;
 import capstone._4.filter.ExceptionHandlerFilter;
 import capstone._4.filter.JwtAuthenticationFilter;
 import capstone._4.handler.OAuthLoginFailureHandler;
@@ -22,8 +23,10 @@ public class SecurityConfig {
 
     private final OauthLoginSuccessHandler oauthLoginSuccessHandler;
     private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public SecurityFilterChain springFilterChain(HttpSecurity http) throws Exception {
+
         http.
                 csrf(csrf -> csrf.disable()) //사용자가 의도하지 않은것을 보내는것 막기.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //서버가 세션 생성하지 않게 방지 하기.
@@ -32,16 +35,18 @@ public class SecurityConfig {
                                 "/user/token/refresh",
                                 "/user/login/kakao",
                                 "/page",
-                                "/user/login/oauth2/code/naver",
+                                "/oauth2/authorization/naver",
                                 "/callback",
 //                                "/user/logout",
 //                                "/user/search",
+                                "/user/custom/kakao",
                                 "/custom/kakao"
                         ).permitAll()
                         .requestMatchers("/error","/favicon.ico","/").permitAll()
                         .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex->ex.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .oauth2Login(oauth->
                         oauth
                                 .successHandler(oauthLoginSuccessHandler)
