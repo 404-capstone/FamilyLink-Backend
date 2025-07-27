@@ -90,7 +90,7 @@ public class SocialController implements UserApi {
     }
     @GetMapping("/auth/kakao")
     public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
-        String redirectUri = "https://familycomm.store/login/kakao"; // 콜백 URL
+        String redirectUri = "https://familycomm.store/auth/kakao"; // 콜백 URL
         String state = "login"; // CSRF 방지용 임의 문자열
 
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
