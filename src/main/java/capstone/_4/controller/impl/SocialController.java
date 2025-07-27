@@ -93,7 +93,7 @@ public class SocialController implements UserApi {
         String redirectUri = "https://familycomm.store/auth/kakao"; // 콜백 URL
         String state = "login"; // CSRF 방지용 임의 문자열
 
-        String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
+        String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" + //리다이렉트로 변경
                 "?client_id=" + kakaoClientId +
                 "&redirect_uri=" + redirectUri +
                 "&response_type=code" +
