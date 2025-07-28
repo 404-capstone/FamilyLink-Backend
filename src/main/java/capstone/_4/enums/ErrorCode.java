@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-    TOKEN_EXPIRED(403,"토큰이 만료되었습니다."),
+    TOKEN_EXPIRED(401,"토큰이 만료되었습니다."),
     TOKEN_INVALID(403,"유효하지 않은 토큰입니다."),
     DECRYPT_FAILED(500,"복호화를 실패했습니다"),
     ENCRYPT_FAILED(500,"암호화를 실패했습니다."),
