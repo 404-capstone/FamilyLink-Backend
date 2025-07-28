@@ -31,7 +31,6 @@ public class SocialController implements UserApi {
 
     private final UserService userService;
     private final JwtService jwtService;
-
     private final CacheService cacheService;
     private final String kakaoDeeplink;
     private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
@@ -80,10 +79,13 @@ public class SocialController implements UserApi {
         String sessionId = null;
         if ("kakao".equalsIgnoreCase(provider)) {
             sessionId = UUID.randomUUID().toString().substring(0, 10);
-            tokenSave.put(sessionId, ReGenerateTokenDto.builder()
+            TokenDto tokens= TokenDto.builder()
                     .accessToken(socialResultDto.getAccessToken())
                     .refreshToken(socialResultDto.getRefreshToken())
-                    .build());
+                    .userId(socialResultDto.getId())
+                    .flag(socialResultDto.getNewUser()).build();
+            cacheService.store(sessionId,tokens);
+
 
             String url = kakaoDeeplink + sessionId; // kakaoapp://login/{uuid}
             log.info("카카오 딥링크 리다이렉트: {}", url);

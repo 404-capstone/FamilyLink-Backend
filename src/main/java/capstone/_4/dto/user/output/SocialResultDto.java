@@ -19,4 +19,8 @@ public class SocialResultDto {
     private String accessToken;
     @Schema(description = "리프레시 토큰 정보",example = "[토큰정보]")
     private String refreshToken;
+
+    public boolean getNewUser(){
+        return this.newUser;
+    }
 }
