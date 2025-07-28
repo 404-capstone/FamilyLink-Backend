@@ -21,7 +21,7 @@ public class UserController implements UserSearchApi {
     @Override
     public ResponseEntity<UserInfoResponse> getMyInfo(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-
+        //컨트롤러 private로 바꾸기
         if (token == null || token.isEmpty()) {
             log.warn("Authorization header is missing.");
             return ResponseEntity.status(401).body(null);

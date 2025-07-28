@@ -33,22 +33,19 @@ public class SocialController implements UserApi {
     private final JwtService jwtService;
 
     private final CacheService cacheService;
-    private final String naverDeeplink;
     private final String kakaoDeeplink;
     private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
 
     // 카카오 REST API 키 필드 추가
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    @Value("${kakao.client_id}")
     private String kakaoClientId;
 
     @Autowired
     public SocialController(UserService userService, JwtService jwtService,
-                            @Value("${app.naver.deeplink}") String naverDeeplink,
                             @Value("${kakao.deeplink.prod}") String kakaoDeeplink,
                             CacheService cacheService) {
         this.userService = userService;
         this.jwtService = jwtService;
-        this.naverDeeplink = naverDeeplink;
         this.kakaoDeeplink = kakaoDeeplink;
         this.cacheService = cacheService;
     }
@@ -70,7 +67,7 @@ public class SocialController implements UserApi {
         ));
     }
     @Override
-    @GetMapping("user/login/kakao")
+    @GetMapping("/login/kakao")
     public ResponseEntity<?> kakaoConnectController(
             @RequestParam("code") String code,
             @RequestParam(value = "state", required = false) String state,
@@ -95,7 +92,7 @@ public class SocialController implements UserApi {
         // provider가 kakao가 아닐 때 처리 필요 (예: 400 Bad Request 등)
         return ResponseEntity.badRequest().body("Unsupported provider");
     }
-    @GetMapping("user/custom/kakao")
+    @GetMapping("/custom/kakao")
     public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
         String redirectUri = "https://familycomm.store/custom/kakao"; // 콜백 URL 주소변경했음
         String state = "login"; // CSRF 방지용 임의 문자열
