@@ -25,9 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SocialService {
 
     //우리 토큰으로 바꾸기
-    @Value("${kakao.client-id}")
+    @Value("${kakao.client_id}")
     private String kakaoClientId;
-    @Value("${kakao.redirect-uri}")
+    @Value("${kakao.redirect_uri}")
     private String kakaoRedirectUri;
 
     public SocialInfoDto kakaoLoginService(SocialInputDto socialInputDto) {
