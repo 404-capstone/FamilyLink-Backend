@@ -34,7 +34,8 @@ public class SocialController implements UserApi {
     private final CacheService cacheService;
     private final String kakaoDeeplink;
     private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
-
+    @Value("${kakao.link}")
+    private String kakaoLink;
     // 카카오 REST API 키 필드 추가
     @Value("${kakao.client_id}")
     private String kakaoClientId;
@@ -96,12 +97,12 @@ public class SocialController implements UserApi {
     }
     @GetMapping("/custom/kakao")
     public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
-        String redirectUri = "https://familycomm.store/custom/kakao"; // 콜백 URL 주소변경했음
+
         String state = "login"; // CSRF 방지용 임의 문자열
 
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
                 "?client_id=" + kakaoClientId +
-                "&redirect_uri=" + redirectUri +
+                "&redirect_uri=" + kakaoLink +
                 "&response_type=code" +
                 "&state=" + state;
 
