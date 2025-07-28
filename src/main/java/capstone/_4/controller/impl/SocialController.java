@@ -70,7 +70,7 @@ public class SocialController implements UserApi {
         ));
     }
     @Override
-    @GetMapping("/login/kakao")
+    @GetMapping("user/login/kakao")
     public ResponseEntity<?> kakaoConnectController(
             @RequestParam("code") String code,
             @RequestParam(value = "state", required = false) String state,
