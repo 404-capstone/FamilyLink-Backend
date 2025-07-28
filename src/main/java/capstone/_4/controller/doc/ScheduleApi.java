@@ -1,6 +1,7 @@
 package capstone._4.controller.doc;
 
 import capstone._4.dto.docs.schedule.ScheduleSearchResponse;
+import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,9 +10,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "일정",description = "일정관련 api")
 @RequestMapping("/schedule")
@@ -92,5 +93,10 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
     public ResponseEntity<?> searchSchedule(
             @Parameter(description = "그룹 dbid")
             @RequestParam Integer groupId);
+
+    @Operation(summary = "그룹 활동 추천",description = "그룹 활동을 추천하는 api입니다.")
+    @ApiResponse(responseCode = "200")
+    @PostMapping("/group/recom")
+    public ResponseEntity<?> recomSchedule(@RequestBody GroupScheduleInfoDto groupScheduleInfoDtos);
 
 }
