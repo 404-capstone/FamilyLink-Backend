@@ -1,5 +1,5 @@
 package capstone._4.controller.impl;
-
+import capstone._4.dto.user.kakao.SocialLoginResponseDto;
 import capstone._4.controller.doc.UserApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.user.ReGenerateTokenDto;
@@ -69,24 +69,31 @@ public class SocialController implements UserApi {
                 socialResultDto
         ));
     }
-    @GetMapping("user/login/kakao")
+    @Override
+    @GetMapping("/login/kakao")
     public ResponseEntity<?> kakaoConnectController(
             @RequestParam("code") String code,
             @RequestParam(value = "state", required = false) String state,
+            @RequestParam("provider") String provider,
             HttpServletResponse response) throws URISyntaxException {
 
-        SocialInputDto socialInputDto = new SocialInputDto(code, state, "kakao");
+        SocialInputDto socialInputDto = new SocialInputDto(code, state, provider);
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
 
-        String uuid = UUID.randomUUID().toString().substring(0, 10);
-        tokenSave.put(uuid, ReGenerateTokenDto.builder()
-                .accessToken(socialResultDto.getAccessToken())
-                .refreshToken(socialResultDto.getRefreshToken())
-                .build());
+        String sessionId = null;
+        if ("kakao".equalsIgnoreCase(provider)) {
+            sessionId = UUID.randomUUID().toString().substring(0, 10);
+            tokenSave.put(sessionId, ReGenerateTokenDto.builder()
+                    .accessToken(socialResultDto.getAccessToken())
+                    .refreshToken(socialResultDto.getRefreshToken())
+                    .build());
 
-        String url = kakaoDeeplink + uuid; // kakaoapp://login/{uuid}
-        log.info("카카오 딥링크 리다이렉트: {}", url);
-        return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
+            String url = kakaoDeeplink + sessionId; // kakaoapp://login/{uuid}
+            log.info("카카오 딥링크 리다이렉트: {}", url);
+            return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
+        }
+        // provider가 kakao가 아닐 때 처리 필요 (예: 400 Bad Request 등)
+        return ResponseEntity.badRequest().body("Unsupported provider");
     }
     @GetMapping("user/custom/kakao")
     public void redirectToKakaoAuth(HttpServletResponse response) throws IOException {
@@ -101,6 +108,7 @@ public class SocialController implements UserApi {
 
         response.sendRedirect(kakaoAuthUrl);
     }
+
 
     @Override
     public ResponseEntity<?> codeController(String session) {
