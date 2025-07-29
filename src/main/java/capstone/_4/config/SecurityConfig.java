@@ -33,14 +33,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth //http 인가 관련 설정.
                         .requestMatchers("/user/login/naver",
                                 "/user/token/refresh",
-                                "/user/login/kakao",
                                 "/page",
                                 "/oauth2/authorization/naver",
-                                "/callback",
-//                                "/user/logout",
-//                                "/user/search",
-                                "/user/custom/kakao",
-                                "/custom/kakao",
+                                "/oauth2/authorization/kakao",
                                 "/user/login/code"
                         ).permitAll()
                         .requestMatchers("/error","/favicon.ico","/").permitAll()

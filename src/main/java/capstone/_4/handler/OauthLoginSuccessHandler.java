@@ -2,6 +2,7 @@ package capstone._4.handler;
 
 import capstone._4.domain.User;
 import capstone._4.dto.user.OAuth2UserInfo;
+import capstone._4.dto.user.kakao.KakaoUserInfo;
 import capstone._4.dto.user.TokenDto;
 import capstone._4.dto.user.naver.NaverUserInfo;
 import capstone._4.repository.user.UserRepository;
@@ -35,6 +36,8 @@ import java.util.UUID;
 public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Value("${app.naver.deeplink}")
     private String naverDeeplink;
+    @Value("${kakao.deeplink.prod}")
+    private String kakaoDeeplink;
 
     private OAuth2UserInfo oAuth2UserInfo=null;
 
@@ -58,11 +61,17 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String link=null; //딥링크 주소.
 
         boolean flag=false;  //신규유저 여부.
+        log.info("로그인 성공.");
         switch (provider){
             case "naver" ->{
                 log.info("네이버 로그인");
                 oAuth2UserInfo=new NaverUserInfo((Map<String,Object>)token.getPrincipal().getAttributes().get("response"));
                 link=naverDeeplink;
+            }
+            case "kakao" -> {
+                log.info("카카오 로그인 요청");
+                oAuth2UserInfo = new KakaoUserInfo(token.getPrincipal().getAttributes());
+                link=kakaoDeeplink;
             }
         }
 
@@ -87,6 +96,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
                 .refreshToken(refreshToken)
                 .userId(user.getId())
                 .flag(flag).build());
+        log.info("딥링크 이동수행.");
         String deeplink=link
                 +"?session="+URLEncoder.encode(key,StandardCharsets.UTF_8);
 //        String deeplink=link
