@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/login/naver",
                                 "/user/token/refresh",
                                 "/user/login/kakao",
+                                "/login/kakao",
                                 "/page",
                                 "/oauth2/authorization/naver",
                                 "/callback",

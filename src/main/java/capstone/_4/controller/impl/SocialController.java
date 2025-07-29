@@ -73,7 +73,7 @@ public class SocialController implements UserApi {
             @RequestParam(value = "state", required = false) String state,
             @RequestParam(value = "provider", required = false,defaultValue = "kakao") String provider,
             HttpServletResponse response) throws URISyntaxException {
-
+        log.info("kakaoConnectController called with code: {}, state: {}, provider: {}", code, state, provider);
         SocialInputDto socialInputDto = new SocialInputDto(code, state, provider);
         SocialResultDto socialResultDto = userService.userSave(socialInputDto);
 

@@ -43,7 +43,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //            "/user/search",
             "/custom/kakao",
             "/user/custom/kakao",
-            "/user/login/code"
+            "/user/login/code",
+            "/login/kakao"
     );
 
 
