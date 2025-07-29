@@ -16,13 +16,18 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final LoginUrlAuthenticationEntryPoint naverEntryPoint =
             new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/naver");
+    private final LoginUrlAuthenticationEntryPoint kakaoEntryPoint=
+            new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/kakao");
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String uri = request.getRequestURI();
         log.error("🔐 Authentication Entry Point triggered. URI: {}, Exception: {}", uri, authException.getMessage(), authException);
         if(uri.startsWith("/oauth2/authorization/naver")){
             naverEntryPoint.commence(request, response, authException);
-        } else{
+        }else if(uri.startsWith("/oauth2/authorization/kakao")){
+            kakaoEntryPoint.commence(request, response, authException);
+        }
+        else{
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"인증이 필요.");
         }
     }

@@ -1,6 +1,6 @@
 package capstone._4.exception.handler;
 
-import capstone._4.controller.impl.SocialController;
+
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.enums.ErrorCode;
 import capstone._4.exception.TokenException;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = {SocialController.class})
+
 @Slf4j
 public class SocialExceptionHandler {
 
