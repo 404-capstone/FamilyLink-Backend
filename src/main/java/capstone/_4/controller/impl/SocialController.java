@@ -33,11 +33,7 @@ public class SocialController implements UserApi {
     private final CacheService cacheService;
     private final String kakaoDeeplink;
     private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
-    @Value("${kakao.link}")
-    private String kakaoLink;
-    // 카카오 REST API 키 필드 추가
-    @Value("${kakao.client_id}")
-    private String kakaoClientId;
+
 
     @Autowired
     public SocialController(UserService userService, JwtService jwtService,
