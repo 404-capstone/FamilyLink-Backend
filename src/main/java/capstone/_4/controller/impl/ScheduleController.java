@@ -1,6 +1,7 @@
 package capstone._4.controller.impl;
 
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.schedule.OpenAiRecommendResponse;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
 import capstone._4.dto.schedule.output.ScheduleResponseDto;
@@ -30,7 +31,7 @@ public class ScheduleController {
 
     @PostMapping("/group/recom")
     public ResponseEntity<?> recommendSchedule(@RequestBody GroupScheduleInfoDto groupScheduleInfoDto){
-        OpenAiRecommendResponse openAiResponse =scheduleService.createRecommend(groupScheduleInfoDto);
+        OpenAiRecommendComment openAiResponse =scheduleService.createRecommend(groupScheduleInfoDto);
         //String response= openAiService.createRecommend();
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),openAiResponse));

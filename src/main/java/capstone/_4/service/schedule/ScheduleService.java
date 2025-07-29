@@ -2,6 +2,7 @@ package capstone._4.service.schedule;
 
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
+import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.dto.schedule.OpenAiRecommendResponse;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
@@ -56,7 +57,7 @@ public class ScheduleService {
      * 4. 반환된 api 결과를 프론트에게 제공
      * @param groupScheduleInfoDto
      */
-    public OpenAiRecommendResponse createRecommend(GroupScheduleInfoDto groupScheduleInfoDto) {
+    public OpenAiRecommendComment createRecommend(GroupScheduleInfoDto groupScheduleInfoDto) {
         List<Integer> usersId=groupScheduleInfoDto.getMemberIds();
         List<User> users =userRepository.findByIds(usersId);
         return openAiService.createRecommend(groupScheduleInfoDto,users);
