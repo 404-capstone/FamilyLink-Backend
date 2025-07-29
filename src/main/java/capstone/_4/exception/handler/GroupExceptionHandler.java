@@ -38,6 +38,4 @@ public class GroupExceptionHandler {
                 ErrorCode.ENTITY_EXISTS.getMessage(),e.getMessage()
         ));
     }
-
-
 }
