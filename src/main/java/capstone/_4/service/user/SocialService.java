@@ -27,7 +27,7 @@ public class SocialService {
     //우리 토큰으로 바꾸기
     @Value("${kakao.client_id}")
     private String kakaoClientId;
-    @Value("${kakao.redirect_uri}")
+    @Value("${kakao.link}")
     private String kakaoRedirectUri;
 
     public SocialInfoDto kakaoLoginService(SocialInputDto socialInputDto) {

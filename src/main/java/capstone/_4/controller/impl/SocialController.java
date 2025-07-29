@@ -88,7 +88,7 @@ public class SocialController implements UserApi {
             cacheService.store(sessionId,tokens);
 
 
-            String url = kakaoDeeplink + sessionId; // kakaoapp://login/{uuid}
+            String url = kakaoDeeplink + sessionId; //
             log.info("카카오 딥링크 리다이렉트: {}", url);
             return ResponseEntity.status(HttpStatus.FOUND).location(new URI(url)).build();
         }
