@@ -4,11 +4,15 @@ import capstone._4.domain.Groups;
 import capstone._4.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Slf4j
 public class UserJpaRepository implements UserRepository {
 
     @PersistenceContext
@@ -52,5 +56,14 @@ public class UserJpaRepository implements UserRepository {
                 "where gu.user.id=:userId",Groups.class)
                 .setParameter("userId", userId)
                 .getResultList().stream().findFirst();
+    }
+
+    @Override
+    public List<User> findByIds(List<Integer> usersId) {
+        List<User> users=new ArrayList<>();
+        for(Integer userId : usersId){
+            users.add(em.find(User.class,userId));
+        }
+        return users;
     }
 }
