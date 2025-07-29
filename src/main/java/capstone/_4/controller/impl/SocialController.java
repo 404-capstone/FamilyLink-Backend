@@ -71,7 +71,7 @@ public class SocialController implements UserApi {
     public ResponseEntity<?> kakaoConnectController(
             @RequestParam("code") String code,
             @RequestParam(value = "state", required = false) String state,
-            @RequestParam("provider") String provider,
+            @RequestParam(value = "provider", required = false,defaultValue = "kakao") String provider,
             HttpServletResponse response) throws URISyntaxException {
 
         SocialInputDto socialInputDto = new SocialInputDto(code, state, provider);
