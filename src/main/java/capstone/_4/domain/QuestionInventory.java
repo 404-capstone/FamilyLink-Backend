@@ -2,6 +2,7 @@ package capstone._4.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Entity
 @Table(name="question_inventory")
 @NoArgsConstructor
+@Getter
 public class QuestionInventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

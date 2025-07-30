@@ -1,16 +1,22 @@
 package capstone._4.dto.diary;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class GroupQuestionResponseDto {  //문제들.
+    @Schema(description = "질문 기본키")
     private Integer questionId;
+
+    @Schema(description = "질문 텍스트.")
     private String question;
-    private List<QuestionAnswerResponse> questionAnswerResponse;
+
+    @Schema(description = "질문 응답데이터")
+    private List<QuestionAnswerResponse> answerInfo;
 
 }
