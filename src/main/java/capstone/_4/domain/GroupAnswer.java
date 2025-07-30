@@ -2,31 +2,31 @@ package capstone._4.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "diary")
-@NoArgsConstructor
-public class Diary {
-
+@Table(name = "group_answer")
+public class GroupAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "di_id")
+    @Column(name = "answer_id")
     private Integer id;
 
-    @Column(name = "di_title")
+    @Column(name = "gup_title")
     private String title;
 
-    @Column(name = "di_content")
-    private String content;
+    @Column(name = "user_answer")
+    private String answer;
 
-    @Column(name = "diary_at")
-    private LocalDateTime time;
+    @Column
+    private boolean flag;
 
     @ManyToOne
     @JoinColumn(name = "u_id")
     @JsonManagedReference
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "gq_id")
+    @JsonManagedReference
+    private GroupQuestion groupQuestion;
 }

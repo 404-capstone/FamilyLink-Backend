@@ -1,5 +1,6 @@
 package capstone._4.service;
 
+import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.repository.DiaryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -21,5 +22,10 @@ public class DiaryService {
         }catch (EntityNotFoundException e){
             throw new EntityNotFoundException("다이어리 삭제를 실패했습니다: "+e.getMessage());
         }
+    }
+
+    public GroupQuestionResponseDto searchQuestion() {
+        GroupQuestionResponseDto QuestionResponseDto=diaryRepository.findAllQuestion();
+        return new GroupQuestionResponseDto();
     }
 }
