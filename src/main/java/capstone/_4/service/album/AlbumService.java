@@ -14,7 +14,7 @@ import capstone._4.repository.album.PhotoImageRepository;
 import capstone._4.repository.album.PhotoRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
-import capstone._4.service.S3Service;
+import capstone._4.service.other.S3Service;
 import com.querydsl.core.Tuple;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
