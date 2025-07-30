@@ -87,6 +87,7 @@ public class GroupService {
         return GroupInfoResponseDto.builder()
                 .group_name(group.getGroup_name())
                 .group_id(groupid)
+                .group_image(group.getImage())
                 .userinfo(users)
                 .build();
     }
