@@ -4,6 +4,7 @@ import capstone._4.dto.docs.user.LoginApiResponse;
 import capstone._4.dto.docs.user.LoginTokenResponse;
 import capstone._4.dto.docs.user.TokenResponseDto;
 import capstone._4.dto.user.input.SocialInputDto;
+import capstone._4.dto.user.output.ProfileEditResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -51,7 +52,9 @@ public interface UserApi {
             @Parameter(description = "로그인시 딥링크로 전해준 세션값.",example="ds21es")
             @RequestParam String session);
 
-    
+
+
+
     //리프래쉬 토큰
     @Operation(summary = "액세스토큰 재발급",description = "액세스토큰을 재발급합니다.리프레시 토큰도 함께 재발급합니다.")
     @ApiResponse(responseCode = "201",description = "발급이 성공되었습니다.",
