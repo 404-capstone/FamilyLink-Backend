@@ -1,5 +1,6 @@
 package capstone._4.controller.impl;
 
+import capstone._4.controller.doc.ScheduleApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.schedule.OpenAiRecommendResponse;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/schedule")
-public class ScheduleController {
+public class ScheduleController implements ScheduleApi {
 
     private final ScheduleService scheduleService;
     private final OpenAiService openAiService;

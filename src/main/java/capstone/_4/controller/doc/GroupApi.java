@@ -64,6 +64,7 @@ public interface GroupApi {
                                                       "data": {
                                                         "group_id": 1,
                                                         "group_name": "가족1",
+                                                        "group_image" : "이미지url",
                                                         "userinfo": [
                                                           {
                                                             "userId": 1,
