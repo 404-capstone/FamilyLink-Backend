@@ -109,23 +109,12 @@ public class JwtUtil {
         claims.put("name",name);
         return claims;
     }
+    //토큰을 꺼내는 메서드
     public String resolveToken(HttpServletRequest request) {
-        String bearer = request.getHeader("Authorization");
-        if (bearer != null && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
         }
         return null;
     }
-
-    public long getExpiration(String token, Key secretKey) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        Date expiration = claims.getExpiration();
-        return expiration.getTime() - System.currentTimeMillis();
-    }
-
 }

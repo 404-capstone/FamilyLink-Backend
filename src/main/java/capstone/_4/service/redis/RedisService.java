@@ -49,4 +49,5 @@ public class RedisService {
             throw new RedisConnectionFailureException("redis 연결문제: "+ e.getMessage());
         }
     }
+
 }
