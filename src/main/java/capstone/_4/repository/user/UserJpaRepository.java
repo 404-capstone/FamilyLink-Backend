@@ -66,4 +66,18 @@ public class UserJpaRepository implements UserRepository {
         }
         return users;
     }
+
+    @Override
+    public boolean deleteById(int id) {
+        log.info("deleteById 호출 - 삭제 대상 유저 id={}", id);
+        User user = em.find(User.class, id);
+        if (user == null) {
+            log.warn("deleteById 실패 - 유저를 찾을 수 없음, id={}", id);
+            return false;
+        }
+        em.remove(user);
+        log.info("deleteById 성공 - 유저 삭제 완료, id={}", id);
+        return true;
+    }
+
 }
