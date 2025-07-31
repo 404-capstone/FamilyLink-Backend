@@ -3,6 +3,7 @@ package capstone._4.repository.user;
 import capstone._4.domain.Groups;
 import capstone._4.domain.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -14,4 +15,6 @@ public interface UserRepository {
     Optional<User> findByEmail(String email);
 
     Optional<Groups> findGroupById(int userId);
+
+    List<User> findByIds(List<Integer> usersId);
 }

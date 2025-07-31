@@ -55,6 +55,10 @@ public class Groups {
     @JsonBackReference
     private List<Album> albums = new ArrayList<>();
 
+    @OneToMany(mappedBy = "groups",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    private List<GroupQuestion> groupQuestions = new ArrayList<>();
+
     public void addUser(GroupsUser groupsuser){
         this.groupsuser.add(groupsuser);
     }

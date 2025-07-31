@@ -97,6 +97,6 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
     @Operation(summary = "그룹 활동 추천",description = "그룹 활동을 추천하는 api입니다.")
     @ApiResponse(responseCode = "200")
     @PostMapping("/group/recom")
-    public ResponseEntity<?> recomSchedule(@RequestBody GroupScheduleInfoDto groupScheduleInfoDtos);
+    public ResponseEntity<?> recommendSchedule(@RequestBody GroupScheduleInfoDto groupScheduleInfoDtos);
 
 }
