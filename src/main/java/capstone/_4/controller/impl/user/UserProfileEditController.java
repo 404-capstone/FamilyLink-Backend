@@ -12,17 +12,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/user/info")
 @Slf4j
 public class UserProfileEditController implements UserEditApi {
 
     private final UserProfileEditService userEditService;
     private final JwtService jwtService;
 
+    @Operation(summary = "프로필 수정", description = "사용자 프로필을 수정합니다.")
     @PutMapping("/edit")
-    public ResponseEntity<ApiResponseDto<?>> editProfile(
+    public ResponseEntity<ApiResponseDto<ProfileEditDto>> editProfile(
             @RequestBody ProfileEditDto dto,
             HttpServletRequest request
     ) {
@@ -31,8 +34,8 @@ public class UserProfileEditController implements UserEditApi {
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 log.warn("Authorization 헤더가 유효하지 않습니다.");
-                return ResponseEntity.badRequest().body(new ApiResponseDto<>(
-                        HttpStatus.BAD_REQUEST.value(),
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto<>(
+                        HttpStatus.UNAUTHORIZED.value(),
                         "Authorization 헤더가 없거나 유효하지 않습니다.",
                         null
                 ));
@@ -42,8 +45,8 @@ public class UserProfileEditController implements UserEditApi {
             Integer idFromToken = jwtService.returnToken(token);
             if (idFromToken == null) {
                 log.warn("토큰에서 사용자 ID를 추출할 수 없습니다.");
-                return ResponseEntity.badRequest().body(new ApiResponseDto<>(
-                        HttpStatus.BAD_REQUEST.value(),
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto<>(
+                        HttpStatus.UNAUTHORIZED.value(),
                         "유효하지 않은 토큰입니다.",
                         null
                 ));
@@ -59,7 +62,7 @@ public class UserProfileEditController implements UserEditApi {
             return ResponseEntity.ok().body(new ApiResponseDto<>(
                     HttpStatus.OK.value(),
                     "프로필이 성공적으로 수정되었습니다.",
-                    null
+                    dto // 수정된 프로필 데이터를 반환
             ));
         } catch (IllegalArgumentException e) {
             log.error("[프로필 수정 실패 - 토큰 오류] 에러: {}", e.getMessage());
