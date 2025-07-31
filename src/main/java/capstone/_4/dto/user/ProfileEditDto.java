@@ -16,6 +16,7 @@ public class ProfileEditDto {
     private String username;
     private String gender;
     private int age;
+    private String image;     // 프로필
 
 
 }

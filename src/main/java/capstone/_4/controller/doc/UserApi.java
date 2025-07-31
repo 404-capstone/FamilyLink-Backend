@@ -4,7 +4,6 @@ import capstone._4.dto.docs.user.LoginApiResponse;
 import capstone._4.dto.docs.user.LoginTokenResponse;
 import capstone._4.dto.docs.user.TokenResponseDto;
 import capstone._4.dto.user.input.SocialInputDto;
-import capstone._4.dto.user.output.ProfileEditResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
