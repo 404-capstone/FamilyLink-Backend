@@ -23,7 +23,7 @@ public class FcmService {
 
     private void send(Message message)  {
         try {
-            String response= firebtaseMessaging.send(message);
+            String response= firebaseMessaging.send(message);
         }catch (FirebaseMessagingException e){
             log.error(e.getMessage());
             try {
