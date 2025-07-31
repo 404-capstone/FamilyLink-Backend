@@ -3,16 +3,14 @@ package capstone._4.repository.group;
 import capstone._4.domain.GroupsUser;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class GroupsUserReponsitory {
+public class GroupsUserRepository {
     @PersistenceContext
     EntityManager em;
 

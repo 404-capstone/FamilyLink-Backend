@@ -9,7 +9,7 @@ import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupGenerateDto;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.repository.group.GroupRepository;
-import capstone._4.repository.group.GroupsUserReponsitory;
+import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.S3Service;
 import capstone._4.service.redis.RedisService;
@@ -34,7 +34,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-    private final GroupsUserReponsitory groupsUserReponsitory;
+    private final GroupsUserRepository groupsUserRepository;
     private final RedisService redisService;
     private final ImageHandler imageHandler;
     private final S3Service s3Service;
@@ -60,7 +60,7 @@ public class GroupService {
         }
         groupRepository.save(groups);
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
-        groupsUserReponsitory.save(groupsuser);
+        groupsUserRepository.save(groupsuser);
         return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
     }
 
@@ -84,10 +84,11 @@ public class GroupService {
     //그룹 정보 조회 그룹원까지
     public GroupInfoResponseDto searchGroup(Integer groupid) {
         Groups group= getGroupFromId(groupid);
-        List<GroupUserInfoDto> users=groupsUserReponsitory.findBygroupId(groupid);
+        List<GroupUserInfoDto> users= groupsUserRepository.findBygroupId(groupid);
         return GroupInfoResponseDto.builder()
                 .group_name(group.getGroup_name())
                 .group_id(groupid)
+                .group_image(group.getImage())
                 .userinfo(users)
                 .build();
     }
@@ -104,13 +105,13 @@ public class GroupService {
     public GroupGenerateDto accessGroupWithCode(String code,int id,String role) {
         Integer groupid = getGroupIdFromRedis(code);
         Groups group= getGroupFromId(groupid);
-        boolean flag = groupsUserReponsitory.existsByGroupIdAndUserid(groupid,id);
+        boolean flag = groupsUserRepository.existsByGroupIdAndUserid(groupid,id);
         if(flag){
             throw new EntityExistsException("이미 그룹에 가입했습니다");
         }
         User user = getUserFromId(id);
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
-        groupsUserReponsitory.save(groupsUser);
+        groupsUserRepository.save(groupsUser);
         return GroupGenerateDto.builder()
                 .groupName(group.getGroup_name())
                 .groupId(group.getGup_id())
@@ -119,7 +120,7 @@ public class GroupService {
 
     @Transactional
     public void quitGroup(Integer groupId,Integer userid) {
-        int count = groupsUserReponsitory.deleteUser(groupId,userid);
+        int count = groupsUserRepository.deleteUser(groupId,userid);
         if(count == 0){
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -159,7 +160,7 @@ public class GroupService {
 
     @Transactional
     public void deleteUserWithGroup(Integer groupId,Integer userid) {
-        int count = groupsUserReponsitory.deleteUser(groupId,userid);
+        int count = groupsUserRepository.deleteUser(groupId,userid);
         if(count == 0){
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -196,7 +197,7 @@ public class GroupService {
         GroupsUser oldLeader=getGroupsUser(groupId,leaderId);
         GroupsUser newLeader=getGroupsUser(groupId,userId);
         newLeader.changeLeader(true);
-        groupsUserReponsitory.deleteUserWithEm(oldLeader);
+        groupsUserRepository.deleteUserWithEm(oldLeader);
         //groupsUserReponsitory.updateUser(groupId,leaderId,userId);
     }
 
@@ -249,7 +250,7 @@ public class GroupService {
     }
 
     private GroupsUser getGroupsUser(Integer groupId, int id) {
-        return groupsUserReponsitory.findByIds(groupId, id).orElseThrow(
+        return groupsUserRepository.findByIds(groupId, id).orElseThrow(
                 () -> new EntityNotFoundException("그룹 유저가 존재하지 않습니다.")
         );
     }

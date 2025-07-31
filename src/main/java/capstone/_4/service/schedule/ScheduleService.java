@@ -9,7 +9,7 @@ import capstone._4.dto.schedule.output.GroupScheduleDto;
 import capstone._4.dto.schedule.output.PersonalSchedule;
 import capstone._4.dto.schedule.output.ScheduleInfoDto;
 import capstone._4.dto.schedule.output.ScheduleResponseDto;
-import capstone._4.repository.group.GroupsUserReponsitory;
+import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.schedule.ScheduleReposiory;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.OpenAiService;
@@ -26,11 +26,11 @@ public class ScheduleService {
 
     private final UserRepository userRepository;
     private final ScheduleReposiory scheduleReposiory;
-    private final GroupsUserReponsitory groupsUserReponsitory;
+    private final GroupsUserRepository groupsUserRepository;
     private final OpenAiService openAiService;
 
     public ScheduleResponseDto getSchedule(Integer groupId) {  //그룹에 해당하는 유저를 찾고, 그룹 전체 가족 일정과,개인 일정들을 조회
-        List<GroupUserInfoDto> groupUserInfo=groupsUserReponsitory.findBygroupId(groupId);
+        List<GroupUserInfoDto> groupUserInfo= groupsUserRepository.findBygroupId(groupId);
         List<Integer> member=groupUserInfo.stream().map(GroupUserInfoDto::getUserId).toList(); //멤버 찾고
 
         List<ScheduleInfoDto> scheduleInfoDtos=member.stream()
