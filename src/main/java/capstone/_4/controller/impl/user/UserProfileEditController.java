@@ -5,7 +5,7 @@ import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.user.ProfileEditDto;
 import capstone._4.enums.ErrorCode;
 import capstone._4.service.user.UserProfileEditService;
-import capstone._4.service.token.JwtService; // JwtService 임포트 필요
+import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,22 +21,41 @@ public class UserProfileEditController implements UserEditApi {
     private final UserProfileEditService userEditService;
     private final JwtService jwtService;
 
-    @PutMapping("/user/profile")
+    @PutMapping("/edit")
     public ResponseEntity<ApiResponseDto<?>> editProfile(
             @RequestBody ProfileEditDto dto,
             HttpServletRequest request
     ) {
         int userId = 0;
         try {
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                log.warn("Authorization 헤더가 유효하지 않습니다.");
+                return ResponseEntity.badRequest().body(new ApiResponseDto<>(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Authorization 헤더가 없거나 유효하지 않습니다.",
+                        null
+                ));
+            }
 
-            userId = tokenTakeUserId(request);
+            String token = authorizationHeader.substring(7);
+            Integer idFromToken = jwtService.returnToken(token);
+            if (idFromToken == null) {
+                log.warn("토큰에서 사용자 ID를 추출할 수 없습니다.");
+                return ResponseEntity.badRequest().body(new ApiResponseDto<>(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "유효하지 않은 토큰입니다.",
+                        null
+                ));
+            }
+            userId = idFromToken;
 
             log.info("[프로필 수정 요청 시작] userId: {}", userId);
             log.info("수정할 정보 - username: {}, gender: {}, age: {}", dto.getUsername(), dto.getGender(), dto.getAge());
 
             userEditService.updateProfile(userId, dto);
-            log.info("[프로필 수정 성공] userId: {}", userId);
 
+            log.info("[프로필 수정 성공] userId: {}", userId);
             return ResponseEntity.ok().body(new ApiResponseDto<>(
                     HttpStatus.OK.value(),
                     "프로필이 성공적으로 수정되었습니다.",
@@ -63,15 +82,5 @@ public class UserProfileEditController implements UserEditApi {
                     null
             ));
         }
-    }
-
-    private int tokenTakeUserId(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            // jwtService는 이 클래스의 멤버 변수로 주입되어 있어야 합니다.
-            return jwtService.returnToken(token.substring(7)); // "Bearer " 접두사 제거
-        }
-        log.warn("Authorization 헤더에 유효한 JWT 토큰이 없습니다.");
-        throw new IllegalArgumentException("유효한 JWT 토큰이 필요합니다.");
     }
 }

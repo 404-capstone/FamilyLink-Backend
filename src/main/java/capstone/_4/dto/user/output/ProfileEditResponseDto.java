@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfileEditResponseDto {
-    private int code;
-    private String message;
+    private String username;  // 이름
+    private Integer age;      // 나이대
+    private String gender;    // 성별
 }

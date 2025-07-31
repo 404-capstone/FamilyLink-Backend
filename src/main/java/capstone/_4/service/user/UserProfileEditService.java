@@ -18,7 +18,7 @@ public class UserProfileEditService {
 
     @Transactional
     public User updateProfile(int userId, ProfileEditDto dto) {
-        log.info("[서비스 호출] updateProfile userId: {}", userId);
+        log.info("[프로필 수정 서비스 호출] updateProfile userId: {}", userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
