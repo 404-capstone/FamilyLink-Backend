@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestHeader;
 import java.security.Key;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AuthController implements LogoutApi {
@@ -37,10 +40,23 @@ public class AuthController implements LogoutApi {
         }
 
         if (token != null) {
+            // 삭제 전 존재 여부 체크
+            boolean existsBefore = redisService.exists(token);
+            log.info("토큰 삭제 전 Redis 존재 여부: {}", existsBefore);
+
             boolean deleted = redisService.delete(token);
+
+            // 삭제 후 존재 여부 체크
+            boolean existsAfter = redisService.exists(token);
+            log.info("토큰 삭제 후 Redis 존재 여부: {}", existsAfter);
+
             if (!deleted) {
-                // 토큰이 이미 삭제되었거나 없음
+                log.warn("Redis에서 토큰이 삭제되지 않았습니다. 이미 삭제되었거나 존재하지 않습니다.");
+            } else {
+                log.info("토큰 삭제 성공");
             }
+        } else {
+            log.warn("Authorization 헤더가 없거나 Bearer 토큰 형식이 아닙니다.");
         }
 
         return ResponseEntity.ok("로그아웃 성공");
