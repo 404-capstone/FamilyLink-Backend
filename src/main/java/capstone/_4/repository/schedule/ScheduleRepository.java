@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,14 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class ScheduleReposiory {
+public class ScheduleRepository {
 
     @PersistenceContext
     private EntityManager em;
 
     JPAQueryFactory queryFactory;
 
-    public ScheduleReposiory(JPAQueryFactory queryFactory,EntityManager em) {
+    public ScheduleRepository(JPAQueryFactory queryFactory, EntityManager em) {
         this.queryFactory = queryFactory;
         this.em = em;
     }
@@ -102,6 +103,21 @@ public class ScheduleReposiory {
         }
         return new ArrayList<>(dto.values());
 
+    }
+    /**
+     * 일정 저장 (신규 혹은 수정)
+     * @param schedule 저장할 Schedule 엔티티
+     * @return 저장된 Schedule 엔티티
+     */
+    //스케줄이 없으면 추가 있으면 수정
+    @Transactional
+    public Schedule save(Schedule schedule) {
+        if (schedule.getId() == null) {
+            em.persist(schedule);
+            return schedule;
+        } else {
+            return em.merge(schedule);
+        }
     }
 
 //    private List<Integer> findUserWithSchedule(Integer scheduleid){ //이 부분은 필요없음. 이유는 이미 이너조인하면서, 조건에 충족하는 컬럼도 생성해서 반환해주기 때문이다.

@@ -1,14 +1,17 @@
 package capstone._4.controller.impl;
 
 import capstone._4.controller.doc.ScheduleApi;
+import capstone._4.domain.Schedule;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.schedule.OpenAiRecommendResponse;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
+import capstone._4.dto.schedule.input.ScheduleCreateRequest;
 import capstone._4.dto.schedule.output.ScheduleResponseDto;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.OpenAiService;
 import capstone._4.service.schedule.ScheduleService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,7 @@ public class ScheduleController implements ScheduleApi {
 
     private final ScheduleService scheduleService;
     private final OpenAiService openAiService;
+
 
     @GetMapping("/all/search")
     public ResponseEntity<?> searchSchedule(@RequestParam Integer groupId){
