@@ -21,4 +21,12 @@ public class GroupsSchedule {
     @JoinColumn(name="sch_id")
     @JsonManagedReference
     private Schedule schedule;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
 }
