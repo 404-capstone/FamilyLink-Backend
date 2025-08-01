@@ -17,4 +17,6 @@ public interface UserRepository {
     Optional<Groups> findGroupById(int userId);
 
     List<User> findByIds(List<Integer> usersId);
+
+    boolean deleteById(int id);  // 삭제 메서드 추가
 }

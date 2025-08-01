@@ -30,7 +30,11 @@ public class User {
         this.username = username;
         this.image = image;
     }
-
+    public void updateProfile(String username, Integer age, String gender) {
+        this.username = username;
+        this.age = age;
+        this.gender = gender;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "u_id")

@@ -62,4 +62,18 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
+
+    @Transactional
+    public boolean deleteUserById(int id) {
+        // 먼저 해당 유저가 존재하는지 확인
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            return false;  // 유저가 없으면 false 반환
+        }
+
+        // 유저가 있으면 삭제
+        userRepository.deleteById(id);
+        return true;
+    }
+
 }

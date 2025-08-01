@@ -1,5 +1,5 @@
 package capstone._4.controller.doc;
-import capstone._4.dto.user.LogoutResultDto;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -12,15 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "유저", description = "로그아웃 API")
 @RequestMapping("/user")
 public interface LogoutApi {
 
     @Operation(
-            summary = "사용자 로그아웃",
-            description = "Authorization 헤더에 액세스 토큰을 넣고 provider 쿼리 파라미터로 로그아웃할 소셜 제공자를 전달한다.",
+            summary = "로그아웃",
+            description = "Authorization 헤더에 토큰을 담아 로그아웃을 수행합니다.",
             parameters = {
                     @Parameter(
                             name = "Authorization",
@@ -28,32 +27,14 @@ public interface LogoutApi {
                             required = true,
                             in = ParameterIn.HEADER,
                             example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    ),
-                    @Parameter(
-                            name = "provider",
-                            description = "로그아웃할 소셜 로그인 제공자 (kakao, naver 등)",
-                            required = true,
-                            in = ParameterIn.QUERY,
-                            example = "kakao"
                     )
             },
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상적으로 호출되었습니다",
-                            content = @Content(
-                                    schema = @Schema(implementation = LogoutResultDto.class)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "403", description = "토큰이 만료되었습니다."),
-                    @ApiResponse(responseCode = "403", description = "유효하지 않은 토큰입니다."),
-                    @ApiResponse(responseCode = "401", description = "소셜 로그인에 실패하였습니다"),
-                    @ApiResponse(responseCode = "500", description = "오류가 발생되었습니다.")
+                    @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(schema = @Schema(implementation = String.class))),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+                    @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰")
             }
     )
     @PostMapping("/logout")
-    ResponseEntity<LogoutResultDto> logout(
-            @RequestHeader("Authorization") String token,
-            @RequestParam("provider") String provider
-    );
+    ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader);
 }
