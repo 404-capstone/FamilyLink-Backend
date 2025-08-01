@@ -5,7 +5,7 @@ import capstone._4.exception.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-
+import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
@@ -108,5 +108,13 @@ public class JwtUtil {
         claims.put("email",user.getEmail());
         claims.put("name",name);
         return claims;
+    }
+    //토큰을 꺼내는 메서드
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

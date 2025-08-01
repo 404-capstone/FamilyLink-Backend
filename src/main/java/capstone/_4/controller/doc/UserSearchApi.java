@@ -1,6 +1,6 @@
 package capstone._4.controller.doc;
 
-import capstone._4.dto.user.output.UserInfoResponse;
+import capstone._4.dto.user.output.UserSearchOutputDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -33,7 +33,7 @@ public interface UserSearchApi {
                     @ApiResponse(
                             responseCode = "200",
                             description = "성공적으로 사용자 정보를 반환함",
-                            content = @Content(schema = @Schema(implementation = UserInfoResponse.class))
+                            content = @Content(schema = @Schema(implementation = UserSearchOutputDto.class))
                     ),
                     @ApiResponse(responseCode = "401", description = "인증 실패 - 토큰이 없거나 유효하지 않음"),
                     @ApiResponse(responseCode = "404", description = "사용자 정보 없음"),
@@ -41,6 +41,6 @@ public interface UserSearchApi {
             }
     )
     @GetMapping("/search")
-    ResponseEntity<UserInfoResponse> getMyInfo(HttpServletRequest request);
+    ResponseEntity<UserSearchOutputDto> getMyInfo(HttpServletRequest request);
 
 }

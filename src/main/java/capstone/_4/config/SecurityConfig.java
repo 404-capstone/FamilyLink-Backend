@@ -36,7 +36,8 @@ public class SecurityConfig {
                                 "/page",
                                 "/oauth2/authorization/naver",
                                 "/oauth2/authorization/kakao",
-                                "/user/login/code"
+                                "/user/login/code",
+                                "/user/search"
                         ).permitAll()
                         .requestMatchers("/error","/favicon.ico","/").permitAll()
                         .requestMatchers("/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**","/webjars/**").permitAll()

@@ -49,4 +49,12 @@ public class RedisService {
             throw new RedisConnectionFailureException("redis 연결문제: "+ e.getMessage());
         }
     }
+    public boolean exists(String key) {
+        try {
+            return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+        } catch (RedisConnectionFailureException e) {
+            throw new RedisConnectionFailureException("redis 연결문제: " + e.getMessage());
+        }
+    }
+
 }
