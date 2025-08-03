@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -16,9 +20,45 @@ public class FcmService {
 
     private final FirebaseMessaging firebaseMessaging;
 
-    public void sendNotification(String title,String message,String type,String status,String token){
-        log.info("전송 시작(title:{},message:{},type:{},status:{},token:{})",title,message,type,status,token);
-        send(createMessage(title,message,type,status,token));
+    public String createTopic(Integer groupId, List<String> tokens){
+        String topicName="group"+groupId;
+        try {
+            FirebaseMessaging.getInstance()
+                    .subscribeToTopic(tokens, (topicName));
+        }catch (FirebaseMessagingException e){
+            throw new RuntimeException("토픽 생성중에 문제발생:"+e.getMessage());
+        }
+        return topicName;
+
+    }
+
+    public String deleteTopic(Integer groupId,List<String> tokens){
+        String topicName="group"+groupId;
+        try {
+            FirebaseMessaging.getInstance()
+                    .unsubscribeFromTopic(tokens, (topicName));
+        }catch (FirebaseMessagingException e){
+            throw new RuntimeException("토픽 생성중에 문제발생:"+e.getMessage());
+        }
+        return topicName;
+    }
+
+    public String deleteOneTopic(Integer groupId,String tokens){
+        String topicName="group"+groupId;
+        try {
+            FirebaseMessaging.getInstance()
+                    .unsubscribeFromTopic(Collections.singletonList(tokens), (topicName));
+        }catch (FirebaseMessagingException e){
+            throw new RuntimeException("토픽 생성중에 문제발생:"+e.getMessage());
+        }
+        return topicName;
+    }
+
+
+
+    public void sendNotification(String title,String message,String type,String status,String topic){
+        log.info("전송 시작(title:{},message:{},type:{},status:{},token:{})",title,message,type,status,topic);
+        send(createMessage(title,message,type,status,topic));
     }
 
     private void send(Message message)  {
@@ -38,13 +78,13 @@ public class FcmService {
         }
     }
 
-    private Message createMessage(String title, String message, String type, String status, String token) {
+    private Message createMessage(String title, String message, String type, String status, String topic) {
         return Message.builder()
                 .putData("title", title)
                 .putData("message", message)
                 .putData("type", type)
                 .putData("status", status)
-                .setToken(token)
+                .setTopic(topic)
                 .build();
 
     }

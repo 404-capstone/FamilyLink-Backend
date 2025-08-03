@@ -43,6 +43,9 @@ public class Groups {
     @Column
     private String image_name;
 
+    @Column
+    private String topic_name;
+
     @OneToMany(mappedBy = "group",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JsonBackReference
     private List<GroupsUser> groupsuser = new ArrayList<>();
