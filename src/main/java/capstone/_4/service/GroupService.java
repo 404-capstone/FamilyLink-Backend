@@ -11,6 +11,7 @@ import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.service.other.S3Service;
 import capstone._4.service.redis.RedisService;
 import capstone._4.util.ImageHandler;
 import com.amazonaws.services.s3.model.AmazonS3Exception;

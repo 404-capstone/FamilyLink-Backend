@@ -3,25 +3,19 @@ import capstone._4.controller.doc.UserApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.user.ReGenerateTokenDto;
 import capstone._4.dto.user.TokenDto;
-import capstone._4.dto.user.input.SocialInputDto;
-import capstone._4.dto.user.output.SocialResultDto;
 import capstone._4.enums.ResponseEnum;
-import capstone._4.service.CacheService;
+import capstone._4.service.other.CacheService;
 import capstone._4.service.token.JwtService;
 import capstone._4.service.user.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RestController

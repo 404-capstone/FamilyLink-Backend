@@ -1,4 +1,4 @@
-package capstone._4.service;
+package capstone._4.service.other;
 
 import capstone._4.domain.User;
 import capstone._4.dto.gpt.*;

@@ -12,7 +12,7 @@ import capstone._4.dto.schedule.output.ScheduleResponseDto;
 import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.schedule.ScheduleReposiory;
 import capstone._4.repository.user.UserRepository;
-import capstone._4.service.OpenAiService;
+import capstone._4.service.other.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

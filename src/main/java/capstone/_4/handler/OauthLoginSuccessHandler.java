@@ -5,13 +5,10 @@ import capstone._4.dto.user.OAuth2UserInfo;
 import capstone._4.dto.user.kakao.KakaoUserInfo;
 import capstone._4.dto.user.TokenDto;
 import capstone._4.dto.user.naver.NaverUserInfo;
-import capstone._4.repository.user.UserRepository;
-import capstone._4.service.CacheService;
+import capstone._4.service.other.CacheService;
 import capstone._4.service.token.JwtService;
 import capstone._4.service.user.UserService;
 import capstone._4.util.AESUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +24,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
