@@ -1,7 +1,10 @@
 package capstone._4.controller.doc;
 
+import capstone._4.domain.Schedule;
+import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.docs.schedule.ScheduleSearchResponse;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
+import capstone._4.dto.schedule.input.ScheduleCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,10 +12,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @Tag(name = "일정",description = "일정관련 api")
 @RequestMapping("/schedule")
@@ -89,6 +93,8 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
                     )
 
             ))
+
+
     @GetMapping("/all/search")
     public ResponseEntity<?> searchSchedule(
             @Parameter(description = "그룹 dbid")
