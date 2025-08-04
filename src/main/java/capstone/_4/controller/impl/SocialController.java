@@ -4,9 +4,11 @@ import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.user.ReGenerateTokenDto;
 import capstone._4.dto.user.TokenDto;
 import capstone._4.enums.ResponseEnum;
+import capstone._4.service.other.AlarmService;
 import capstone._4.service.other.CacheService;
 import capstone._4.service.token.JwtService;
 import capstone._4.service.user.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,28 +24,30 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SocialController implements UserApi {
 
-    private final UserService userService;
     private final JwtService jwtService;
     private final CacheService cacheService;
-    private final String kakaoDeeplink;
-    private final Map<String, ReGenerateTokenDto> tokenSave=new ConcurrentHashMap<>();
+    private final AlarmService alarmService;
+
+
 
 
     @Autowired
-    public SocialController(UserService userService, JwtService jwtService,
-                            @Value("${kakao.deeplink.prod}") String kakaoDeeplink,
-                            CacheService cacheService) {
-        this.userService = userService;
+    public SocialController( JwtService jwtService,
+                            CacheService cacheService,
+                             AlarmService alarmService) {
+
         this.jwtService = jwtService;
-        this.kakaoDeeplink = kakaoDeeplink;
         this.cacheService = cacheService;
+        this.alarmService = alarmService;
     }
 
 
     @Override
-    public ResponseEntity<?> codeController(String session) {
+    public ResponseEntity<?> codeController(String session,String fcmToken,HttpServletRequest request) {
         log.info("session: {}", session);
         TokenDto result =cacheService.retrieveToken(session);
+        int id=tokenTakeUserId(request);
+        alarmService.tokenSave(fcmToken,id);
         log.info("token:{}",result.getAccessToken());
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), result));
@@ -57,5 +61,10 @@ public class SocialController implements UserApi {
         response.setHeader("Refresh-Token","Bearer "+ reGenerateTokenDto.getRefreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(ResponseEnum.GENERATE_COMPLETED.getCode(),
                 ResponseEnum.GENERATE_COMPLETED.getMessage(), reGenerateTokenDto));
+    }
+
+    private int tokenTakeUserId(HttpServletRequest request) {
+        String token= request.getHeader("Authorization");
+        return jwtService.returnToken(token);
     }
 }

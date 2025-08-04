@@ -1,28 +1,37 @@
 package capstone._4.service.other;
 
 import capstone._4.domain.Alarm;
+import capstone._4.domain.Groups;
+import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
+import capstone._4.exception.TokenException;
 import capstone._4.repository.AlarmRepository;
 import capstone._4.repository.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
+    private final FcmService fcmService;
 
     public void tokenSave(String androidToken,Integer userId) {
         Alarm alarm=alarmRepository.findByUserId(userId)
                 .get();
         if(alarm==null){
+            log.info("알람 새로 생성");
             User user=userRepository.findById(userId).get();
             alarm=new Alarm(androidToken,user);
         }else{
+            log.info("알람 토큰 변경.");
             alarm.changeToken(androidToken);
         }
 
@@ -33,5 +42,37 @@ public class AlarmService {
                .orElseThrow(()-> new EntityNotFoundException("알람 세팅을 찾을수 없습니다."));
 
        alarm.chageState(flag);
+    }
+
+    public void createTopic(Groups groups,User user) {
+        if(user.getAlarm().isEnabled()) {
+            log.info("fcm 토큰 존재. 토픽생성.");
+            String topicName = "group" + groups.getGup_id();
+            Alarm alarm = user.getAlarm();
+            fcmService.createTopicOne(topicName, alarm.getDevice_token());
+            groups.changeTopic(topicName);
+        }
+
+    }
+
+    public void quitTopic(User user,Groups groups) {
+        if(user.getAlarm().isEnabled()) {
+            log.info("토픽에서 제거.");
+            String token = user.getAlarm().getDevice_token();
+            fcmService.deleteOneTopic(groups.getGup_id(), token);
+        }
+
+    }
+
+    public void deleteTopic(Groups groups) {
+        List<GroupsUser>groupsUsers= groups.getGroupsuser();
+        List<String> tokens=groupsUsers.stream().map(groupsUser -> {
+            return groupsUser.getUser().getAlarm().getDevice_token();
+        }).toList();
+        if(tokens.size()>0){
+            log.info("토픽 삭제.");
+            fcmService.deleteTopic(groups.getGup_id(), tokens);
+        }
+
     }
 }

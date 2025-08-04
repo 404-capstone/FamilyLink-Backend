@@ -66,9 +66,9 @@ public class User {
     @JsonBackReference
     private List<PhotoUser> photouser = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<Alarm> alarm;
+    private Alarm alarm;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @JsonBackReference
@@ -82,5 +82,9 @@ public class User {
 
     public void addPhotoUser(PhotoUser photoUser) {
         this.photouser.add(photoUser);
+    }
+
+    public void chageAlarm(Alarm alarm) {
+        this.alarm = alarm;
     }
 }

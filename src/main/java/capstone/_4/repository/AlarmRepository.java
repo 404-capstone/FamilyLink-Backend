@@ -29,5 +29,5 @@ public class AlarmRepository {
                 .getResultList().stream().findFirst();
     }
 
-    public Optional<Alarm> findByUse
+
 }

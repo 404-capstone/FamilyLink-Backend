@@ -20,11 +20,23 @@ public class FcmService {
 
     private final FirebaseMessaging firebaseMessaging;
 
-    public String createTopic(Integer groupId, List<String> tokens){
-        String topicName="group"+groupId;
+    public String createTopic(String topicName, List<String> tokens){
+        //String topicName="group"+groupId;
         try {
             FirebaseMessaging.getInstance()
                     .subscribeToTopic(tokens, (topicName));
+        }catch (FirebaseMessagingException e){
+            throw new RuntimeException("토픽 생성중에 문제발생:"+e.getMessage());
+        }
+        return topicName;
+
+    }
+
+    public String createTopicOne(String topicName, String tokens){
+        //String topicName="group"+groupId;
+        try {
+            FirebaseMessaging.getInstance()
+                    .subscribeToTopic(Collections.singletonList(tokens), (topicName));
         }catch (FirebaseMessagingException e){
             throw new RuntimeException("토픽 생성중에 문제발생:"+e.getMessage());
         }
@@ -64,17 +76,15 @@ public class FcmService {
     private void send(Message message)  {
         try {
             String response= firebaseMessaging.send(message);
-        }catch (FirebaseMessagingException e){
-            log.error(e.getMessage());
-            try {
-                throw new FirebaseException(ErrorCode.CANCELLED, "파이어베이스 문자발생중 문제 발생:"+e.getMessage(), e);
-            } catch (FirebaseException ex) {
-                throw new RuntimeException(ex);
-            }
-        }catch (FirebaseException e){
-            log.error(e.getMessage());
-            throw new RuntimeException("파이어베이스에서 문제발생:"+e.getMessage());
-
+        }catch (FirebaseMessagingException e) {
+            log.error("Firebase 메시지 전송 실패", e);
+            throw new RuntimeException(
+                    new FirebaseException(
+                            ErrorCode.CANCELLED,
+                            "파이어베이스 문자발생중 문제 발생: " + e.getMessage(),
+                            e
+                    )
+            );
         }
     }
 

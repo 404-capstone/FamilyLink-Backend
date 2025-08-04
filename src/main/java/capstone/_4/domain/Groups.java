@@ -67,4 +67,7 @@ public class Groups {
     }
     public void setCode(String code){this.code=code;}
 
+    public void changeTopic(String topicName) {
+        this.topic_name=topicName;
+    }
 }

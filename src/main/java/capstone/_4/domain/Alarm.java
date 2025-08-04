@@ -16,6 +16,7 @@ public class Alarm {
     public Alarm(String androidToken,User user) {
         this.device_token=androidToken;
         this.user=user;
+        user.chageAlarm(this);
     }
 
     @Id
@@ -32,7 +33,7 @@ public class Alarm {
     @Column
     private LocalDateTime last_active;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     @JsonManagedReference
     private User user;
