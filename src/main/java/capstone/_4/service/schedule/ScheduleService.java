@@ -10,7 +10,7 @@ import capstone._4.dto.schedule.output.PersonalSchedule;
 import capstone._4.dto.schedule.output.ScheduleInfoDto;
 import capstone._4.dto.schedule.output.ScheduleResponseDto;
 import capstone._4.repository.group.GroupsUserRepository;
-import capstone._4.repository.schedule.ScheduleReposiory;
+import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.OpenAiService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.List;
 public class ScheduleService {
 
     private final UserRepository userRepository;
-    private final ScheduleReposiory scheduleReposiory;
+    private final ScheduleRepository scheduleRepository;
     private final GroupsUserRepository groupsUserRepository;
     private final OpenAiService openAiService;
 
@@ -35,13 +35,13 @@ public class ScheduleService {
 
         List<ScheduleInfoDto> scheduleInfoDtos=member.stream()
                 .map(id->{
-                        List<Schedule> userScuedule =scheduleReposiory.getUserSchedules(id);
+                        List<Schedule> userScuedule = scheduleRepository.getUserSchedules(id);
                         List<PersonalSchedule> personalSchedules=userScuedule.stream()
                                 .map(PersonalSchedule::new)
                                 .toList(); //여기까지 personal스케쥴 만들고
                     return new ScheduleInfoDto(id,personalSchedules);
                 }).toList();
-        List<GroupScheduleDto> groupScheduleDto =scheduleReposiory.getGroupSchedulesV2(groupId);
+        List<GroupScheduleDto> groupScheduleDto = scheduleRepository.getGroupSchedulesV2(groupId);
 
         return ScheduleResponseDto.builder()
                 .groupId(groupId)
