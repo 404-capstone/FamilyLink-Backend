@@ -22,6 +22,7 @@ public class FcmService {
 
     public String createTopic(String topicName, List<String> tokens){
         //String topicName="group"+groupId;
+        log.info("토픽으로 인원");
         try {
             FirebaseMessaging.getInstance()
                     .subscribeToTopic(tokens, (topicName));
@@ -34,6 +35,7 @@ public class FcmService {
 
     public String createTopicOne(String topicName, String tokens){
         //String topicName="group"+groupId;
+        log.info("토픽 추가.");
         try {
             FirebaseMessaging.getInstance()
                     .subscribeToTopic(Collections.singletonList(tokens), (topicName));

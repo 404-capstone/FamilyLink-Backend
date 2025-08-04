@@ -61,7 +61,7 @@ public class GroupService {
             groups=new Groups(name);
         }
         groupRepository.save(groups);
-        alarmService.createTopic(groups,user); //토픽 생성.
+        alarmService.createAndAccessTopic(groups,user); //토픽 생성.
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
         groupsUserRepository.save(groupsuser);
         return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
@@ -115,6 +115,7 @@ public class GroupService {
         User user = getUserFromId(id);
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
         groupsUserRepository.save(groupsUser);
+        alarmService.createAndAccessTopic(group,user);
         return GroupGenerateDto.builder()
                 .groupName(group.getGroup_name())
                 .groupId(group.getGup_id())

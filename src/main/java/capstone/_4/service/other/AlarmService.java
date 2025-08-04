@@ -44,13 +44,18 @@ public class AlarmService {
        alarm.chageState(flag);
     }
 
-    public void createTopic(Groups groups,User user) {
+    public void createAndAccessTopic(Groups groups,User user) {
         if(user.getAlarm().isEnabled()) {
             log.info("fcm 토큰 존재. 토픽생성.");
-            String topicName = "group" + groups.getGup_id();
-            Alarm alarm = user.getAlarm();
-            fcmService.createTopicOne(topicName, alarm.getDevice_token());
-            groups.changeTopic(topicName);
+            String topicname=groups.getGroup_name();
+            if(topicname==null||topicname.isBlank()){
+                topicname = "group" + groups.getGup_id();
+                groups.changeTopic(topicname);
+                log.info("토픽 생성:{}",topicname);
+            }
+                Alarm alarm = user.getAlarm();
+                fcmService.createTopicOne(topicname, alarm.getDevice_token());
+                log.info("정상 저장 완료.");
         }
 
     }
