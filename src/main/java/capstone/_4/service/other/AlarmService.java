@@ -6,6 +6,7 @@ import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
 import capstone._4.exception.TokenException;
 import capstone._4.repository.AlarmRepository;
+import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
     private final FcmService fcmService;
 
     public void tokenSave(String androidToken,Integer userId) {
@@ -42,6 +44,10 @@ public class AlarmService {
                .orElseThrow(()-> new EntityNotFoundException("알람 세팅을 찾을수 없습니다."));
 
        alarm.chageState(flag);
+       User user=userRepository.findById(userId).get();
+       Groups groups=userRepository.findGroupById(userId).get();
+       if(flag) createAndAccessTopic(groups,user); //플래그가 true 면. 토픽에 참여하기.
+       else quitTopic(user,groups);
     }
 
     public void createAndAccessTopic(Groups groups,User user) {
