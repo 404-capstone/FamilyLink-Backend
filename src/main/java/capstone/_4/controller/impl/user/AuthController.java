@@ -36,6 +36,7 @@ public class AuthController implements LogoutApi {
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
         String token = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            log.warn("Authorization 헤더가 없거나 Bearer 토큰 형식이 아닙니다. 로그아웃을 진행합니다.");
             token = authorizationHeader.substring(7);
         }
 

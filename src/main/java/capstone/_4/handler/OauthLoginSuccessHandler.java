@@ -76,6 +76,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         }
 
         String email = aesUtil.encrypt(oAuth2UserInfo.getEmail());
+        log.info("토큰정보{}", email);
         User user = userService.findByEmail(email);
 
         if(user==null){ //유저 없을시.

@@ -4,12 +4,15 @@ import capstone._4.dto.user.output.UserSearchOutputDto;
 import capstone._4.service.token.JwtService;
 import capstone._4.controller.doc.UserSearchApi;
 import capstone._4.service.user.UserSearchService;
-
+import capstone._4.dto.ApiResponseDto;
+import capstone._4.enums.ResponseEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.persistence.EntityNotFoundException;
+
 import capstone._4.domain.User;
 
 @RestController
@@ -28,30 +31,43 @@ public class UserSearchController implements UserSearchApi {
      */
 
     @Override
-    public ResponseEntity<UserSearchOutputDto> getMyInfo(HttpServletRequest request) {
+    public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         try {
             String authorizationHeader = request.getHeader("Authorization");
 
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 log.warn("Authorization 헤더가 유효하지 않습니다.");
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().body(
+                        new ApiResponseDto<>(400, "Authorization 헤더가 유효하지 않습니다.", null)
+                );
             }
 
-            String token = authorizationHeader.substring(7);
-            Integer userId = jwtService.returnToken(token);  // 사용자 ID 추출
-
-            if (userId == null) {
-                log.warn("토큰에서 사용자 ID를 추출할 수 없습니다.");
-                return ResponseEntity.badRequest().build();
-            }
+            // Bearer 포함된 전체 토큰 그대로 전달
+            int userId = jwtService.returnToken(authorizationHeader);
 
             UserSearchOutputDto dto = userSearchService.findUserDtoById(userId);
             log.info("토큰을 이용한 사용자 조회 성공: ID = {}", userId);
-            return ResponseEntity.ok(dto);
+
+            return ResponseEntity.ok().body(
+                    new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(), dto)
+            );
+
+        } catch (EntityNotFoundException e) {
+            log.warn("사용자 정보를 찾을 수 없습니다: {}", e.getMessage());
+            return ResponseEntity.status(404).body(
+                    new ApiResponseDto<>(404, "사용자 정보를 찾을 수 없습니다.", null)
+            );
 
         } catch (Exception e) {
             log.error("토큰을 이용한 사용자 조회 중 오류 발생: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
+            if (e instanceof capstone._4.exception.TokenException) {
+                return ResponseEntity.status(401).body(
+                        new ApiResponseDto<>(401, "유효하지 않은 토큰입니다.", null)
+                );
+            }
+            return ResponseEntity.internalServerError().body(
+                    new ApiResponseDto<>(500, "서버 내부 오류가 발생했습니다.", null)
+            );
         }
     }
 }
