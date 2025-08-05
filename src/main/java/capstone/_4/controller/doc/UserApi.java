@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -49,7 +50,10 @@ public interface UserApi {
     @GetMapping("/login/code")
     public ResponseEntity<?> codeController(
             @Parameter(description = "로그인시 딥링크로 전해준 세션값.",example="ds21es")
-            @RequestParam String session);
+            @RequestParam String session,
+            @Parameter(description = "fcm에서 발행해서 사용가능한 기기토큰값. 지금은 필수로 안해놨음. 나중에는 필수로 변경할예정.")
+            @RequestParam(required = false) String fcmToken,
+            HttpServletRequest request);
 
 
 

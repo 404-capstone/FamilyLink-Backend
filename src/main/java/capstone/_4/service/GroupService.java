@@ -1,5 +1,6 @@
 package capstone._4.service;
 
+import capstone._4.domain.Alarm;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
@@ -11,6 +12,7 @@ import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.service.other.AlarmService;
 import capstone._4.service.other.S3Service;
 import capstone._4.service.redis.RedisService;
 import capstone._4.util.ImageHandler;
@@ -38,7 +40,7 @@ public class GroupService {
     private final RedisService redisService;
     private final ImageHandler imageHandler;
     private final S3Service s3Service;
-
+    private final AlarmService alarmService;
 
 /**
  * 그룹 생성과 리더 설정을 수행.
@@ -59,6 +61,7 @@ public class GroupService {
             groups=new Groups(name);
         }
         groupRepository.save(groups);
+        alarmService.createAndAccessTopic(groups,user); //토픽 생성.
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
         groupsUserRepository.save(groupsuser);
         return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
@@ -112,6 +115,8 @@ public class GroupService {
         User user = getUserFromId(id);
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
         groupsUserRepository.save(groupsUser);
+        alarmService.GroupAccess(group,user); //알람 전송.
+        alarmService.createAndAccessTopic(group,user); //d알람 토픽 저장.
         return GroupGenerateDto.builder()
                 .groupName(group.getGroup_name())
                 .groupId(group.getGup_id())
@@ -121,6 +126,9 @@ public class GroupService {
     @Transactional
     public void quitGroup(Integer groupId,Integer userid) {
         int count = groupsUserRepository.deleteUser(groupId,userid);
+        User user = getUserFromId(userid);
+        Groups groups = getGroupFromId(groupId);
+        alarmService.quitTopic(user,groups);
         if(count == 0){
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -129,6 +137,8 @@ public class GroupService {
     @Transactional
     public void deleteGroup(Integer groupId) {
         int count = groupRepository.deleteGroupe(groupId);
+        Groups groups=getGroupFromId(groupId);
+        alarmService.deleteTopic(groups);
         if(count == 0){
             throw new EntityNotFoundException("그룹 삭제 안됨");
         }
@@ -166,6 +176,9 @@ public class GroupService {
     @Transactional
     public void deleteUserWithGroup(Integer groupId,Integer userid) {
         int count = groupsUserRepository.deleteUser(groupId,userid);
+        User user = getUserFromId(userid);
+        Groups groups = getGroupFromId(groupId);
+        alarmService.quitTopic(user,groups);
         if(count == 0){
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -203,6 +216,9 @@ public class GroupService {
         GroupsUser newLeader=getGroupsUser(groupId,userId);
         newLeader.changeLeader(true);
         groupsUserRepository.deleteUserWithEm(oldLeader);
+        Groups groups=getGroupFromId(groupId);
+        User user=getUserFromId(userId);
+        alarmService.quitTopic(user,groups);
         //groupsUserReponsitory.updateUser(groupId,leaderId,userId);
     }
 
