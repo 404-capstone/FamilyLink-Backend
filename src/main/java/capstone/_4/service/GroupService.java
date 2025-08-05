@@ -149,22 +149,27 @@ public class GroupService {
         //String path = checkImage(image);
         Groups groups =groupRepository.findById(groupId).orElseThrow(()->new EntityNotFoundException("그룹이 존재하지 않음."));
         Long count =0L;
-        if(image!=null && !image.isEmpty()){ //null 아닐시.
+        if(image!=null && !image.isEmpty()){ //null 아닐시. 이미지가 존재할시.
             try {
                 S3PhotoInfoDto s3PhotoInfoDto = s3Service.uploadFile(image);
-                s3Service.deleteFile(groups.getImage_name());
+                checkGroupImage(groups);
                 count= groupRepository.updateGroup(groupId,name,s3PhotoInfoDto.getFileUrl(),s3PhotoInfoDto.getFileName());
             }catch (Exception e){
                 throw new AmazonS3Exception("s3 저장및 삭제 실패."+e.getMessage());
             }
         }else{
+            checkGroupImage(groups);
             count=groupRepository.updateGroup(groupId,name,null,null);
         }
-
-//        s3Service.deleteFile(group.getImage_name());
-//        Long count= groupRepository.updateGroup(groupId,name,s3PhotoInfoDto.getFileUrl(),s3PhotoInfoDto.getFileName());
         if(count == 0){
             throw new EntityNotFoundException("그룹이 존재하지 않습니다.");
+        }
+    }
+
+    private void checkGroupImage(Groups groups) {
+        String image = groups.getImage();
+        if(image!=null && !image.isEmpty()) {
+            s3Service.deleteFile(groups.getImage_name());
         }
     }
 
