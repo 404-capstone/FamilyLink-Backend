@@ -157,7 +157,8 @@ public class GroupService {
     }
 
     private void checkGroupImage(Groups groups) {
-        if(!groups.getImage().isEmpty()) {
+        String image = groups.getImage();
+        if(image!=null && !image.isEmpty()) {
             s3Service.deleteFile(groups.getImage_name());
         }
     }
