@@ -34,7 +34,7 @@ public interface UserEditApi {
                                                       "data": {
                                                         "username": "홍길동",
                                                         "age": 30,
-                                                        "gender": "남성",
+                                                        "gender": "M",
                                                         "image": "https://example.com/profile.jpg"
                                                       }
                                                     }
