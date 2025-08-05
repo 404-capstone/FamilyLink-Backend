@@ -70,9 +70,9 @@ public class FcmService {
 
 
 
-    public void sendNotification(String title,String message,String type,String status,String topic){
-        log.info("전송 시작(title:{},message:{},type:{},status:{},token:{})",title,message,type,status,topic);
-        send(createMessage(title,message,type,status,topic));
+    public void sendNotification(String title,String message,String type,String topic){
+        log.info("전송 시작(title:{},message:{},type:{},token:{})",title,message,type,topic);
+        send(createMessage(title,message,type,topic));
     }
 
     private void send(Message message)  {
@@ -90,12 +90,11 @@ public class FcmService {
         }
     }
 
-    private Message createMessage(String title, String message, String type, String status, String topic) {
+    private Message createMessage(String title, String message, String type, String topic) {
         return Message.builder()
                 .putData("title", title)
                 .putData("message", message)
                 .putData("type", type)
-                .putData("status", status)
                 .setTopic(topic)
                 .build();
 

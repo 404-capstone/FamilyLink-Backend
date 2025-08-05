@@ -80,4 +80,12 @@ public class AlarmService {
         }
 
     }
+
+    public void GroupAccess(Groups group,User user) {
+        if(group.getTopic_name()!=null){
+            fcmService.sendNotification("유저 그룹 가입",user.getUsername()+"유저가 그룹을 가입하였습니다.","groupAccess", group.getTopic_name());
+        }else {
+            throw new RuntimeException("토픽이 존재하지 않아 알람을 전송하지 못했습니다.");
+        }
+    }
 }

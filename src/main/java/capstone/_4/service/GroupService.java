@@ -115,7 +115,8 @@ public class GroupService {
         User user = getUserFromId(id);
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
         groupsUserRepository.save(groupsUser);
-        alarmService.createAndAccessTopic(group,user);
+        alarmService.GroupAccess(group,user); //알람 전송.
+        alarmService.createAndAccessTopic(group,user); //d알람 토픽 저장.
         return GroupGenerateDto.builder()
                 .groupName(group.getGroup_name())
                 .groupId(group.getGup_id())
