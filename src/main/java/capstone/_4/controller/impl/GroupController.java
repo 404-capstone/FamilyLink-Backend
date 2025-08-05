@@ -7,6 +7,7 @@ import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupGenerateDto;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.GroupService;
+import capstone._4.service.other.AlarmService;
 import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +24,13 @@ public class GroupController implements GroupApi {
 
     private final GroupService groupService;
     private final JwtService jwtService;
+    private final AlarmService alarmService;
 
     @Autowired
-    public GroupController(GroupService groupService,JwtService jwtService){
+    public GroupController(GroupService groupService,JwtService jwtService,AlarmService alarmService) {
         this.groupService = groupService;
         this.jwtService = jwtService;
+        this.alarmService = alarmService;
     }
 
     /**
@@ -43,6 +46,7 @@ public class GroupController implements GroupApi {
             ,HttpServletRequest request) {
         int id = tokenTakeUserId(request);
         GroupGenerateDto groupResponseDto = groupService.generateGroup(name,id,role,image);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
                 ResponseEnum.GENERATE_COMPLETED.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 groupResponseDto));
@@ -84,9 +88,6 @@ public class GroupController implements GroupApi {
                 ResponseEnum.SUCCESS.getMessage(),groupGenerateDto));
     }
 
-    /**
-     *여기 response부분 수정하기.
-     */
 
     @Override
     public ResponseEntity<?> groupQuit(@RequestParam Integer groupId,HttpServletRequest request) {
