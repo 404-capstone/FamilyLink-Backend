@@ -28,7 +28,6 @@ public class AlarmService {
 
     @Transactional
     public void tokenSave(String androidToken,Integer userId) {
-
         log.info("token:{}",androidToken);
         if(androidToken!=null) {
             Alarm alarm = alarmRepository.findByUserId(userId)
@@ -55,7 +54,7 @@ public class AlarmService {
     }
 
     public void createAndAccessTopic(Groups groups,User user) {
-        if(user.getAlarm().isEnabled()) {
+        if(user.getAlarm()!=null &&user.getAlarm().isEnabled()) {
             log.info("fcm 토큰 존재. 토픽생성.");
             String topicname=groups.getGroup_name();
             if(topicname==null||topicname.isBlank()){
@@ -71,7 +70,7 @@ public class AlarmService {
     }
 
     public void quitTopic(User user,Groups groups) {
-        if(user.getAlarm().isEnabled()) {
+        if(user.getAlarm()!=null && user.getAlarm().isEnabled()) {
             log.info("토픽에서 제거.");
             String token = user.getAlarm().getDevice_token();
             fcmService.deleteOneTopic(groups.getGup_id(), token);
