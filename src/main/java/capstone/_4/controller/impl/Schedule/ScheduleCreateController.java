@@ -1,9 +1,10 @@
 package capstone._4.controller.impl.Schedule;
 
 import capstone._4.controller.doc.ScheduleCreateApi;
-import capstone._4.domain.Schedule;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.schedule.input.ScheduleCreateRequest;
+import capstone._4.dto.schedule.output.ScheduleCreateInfoDto;
+import capstone._4.dto.schedule.output.ScheduleInfoDto;
 import capstone._4.enums.ErrorCode;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.schedule.ScheduleCreateService;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,9 +26,8 @@ public class ScheduleCreateController implements ScheduleCreateApi {
     private final JwtService jwtService;
 
     @Override
-    public ResponseEntity<ApiResponseDto<Schedule>> addUserSchedule(
-            ScheduleCreateRequest request,
-            Long calendarId,
+    public ResponseEntity<ApiResponseDto<ScheduleCreateInfoDto>> addUserSchedule(
+            @RequestBody ScheduleCreateRequest request,
             HttpServletRequest httpRequest) {
 
         try {
@@ -38,8 +39,8 @@ public class ScheduleCreateController implements ScheduleCreateApi {
                                 "Authorization 헤더가 없거나 유효하지 않습니다.", null));
             }
 
-            String token = authorizationHeader.substring(7);
-            Integer userId = jwtService.returnToken(token);
+            Integer userId = jwtService.returnToken(authorizationHeader);
+
             if (userId == null) {
                 log.warn("토큰에서 사용자 ID를 추출할 수 없습니다.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -47,12 +48,13 @@ public class ScheduleCreateController implements ScheduleCreateApi {
                                 "유효하지 않은 토큰입니다.", null));
             }
 
-            Schedule schedule = scheduleCreateService.createSchedule(request, userId, calendarId);
 
-            ApiResponseDto<Schedule> response = new ApiResponseDto<>(
+            ScheduleCreateInfoDto scheduleDto = scheduleCreateService.createSchedule(request, userId);
+
+            ApiResponseDto<ScheduleCreateInfoDto> response = new ApiResponseDto<>(
                     ResponseEnum.SUCCESS.getCode(),
                     ResponseEnum.SUCCESS.getMessage(),
-                    schedule);
+                    scheduleDto);
 
             return new ResponseEntity<>(response, HttpStatus.CREATED);
 

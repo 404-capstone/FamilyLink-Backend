@@ -2,6 +2,7 @@ package capstone._4.controller.doc;
 
 import capstone._4.domain.Schedule;
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.schedule.output.ScheduleCreateInfoDto;
 import capstone._4.dto.schedule.input.ScheduleCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,14 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "일정",description = "일정관련 api")
+@Tag(name = "일정", description = "일정관련 api")
 @RequestMapping("/schedule")
 public interface ScheduleCreateApi {
     @Operation(
             summary = "개인 일정 생성",
-            description = "캘린더 ID와 일정 생성 정보를 받아서 개인 일정을 생성합니다."
+            description = "Access Token에서 유저 ID 추출 후 개인 일정을 생성합니다."
     )
     @ApiResponse(responseCode = "201", description = "일정 생성 성공",
             content = @Content(mediaType = "application/json",
@@ -54,14 +54,10 @@ public interface ScheduleCreateApi {
                     )
             )
     )
-
     @PostMapping("/user/add")
-    ResponseEntity<ApiResponseDto<Schedule>> addUserSchedule(
+    ResponseEntity<ApiResponseDto<ScheduleCreateInfoDto>> addUserSchedule(
             @Parameter(description = "일정 생성 요청 정보", required = true)
             @RequestBody ScheduleCreateRequest request,
-
-            @Parameter(description = "캘린더 ID", required = true)
-            @RequestParam Long calendarId,
 
             @Parameter(hidden = true) HttpServletRequest requestContext
     );

@@ -1,6 +1,7 @@
 package capstone._4.repository.user;
 
 import capstone._4.domain.Groups;
+import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -79,5 +80,8 @@ public class UserJpaRepository implements UserRepository {
         log.info("deleteById 성공 - 유저 삭제 완료, id={}", id);
         return true;
     }
-
+    public Optional<Schedule> findById(Long id) {
+        Schedule schedule = em.find(Schedule.class, id);
+        return Optional.ofNullable(schedule);
+    }
 }

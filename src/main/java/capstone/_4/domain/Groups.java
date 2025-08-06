@@ -70,4 +70,8 @@ public class Groups {
     public void changeTopic(String topicName) {
         this.topic_name=topicName;
     }
+
+    public Integer getId() {
+        return gup_id;
+    }
 }
