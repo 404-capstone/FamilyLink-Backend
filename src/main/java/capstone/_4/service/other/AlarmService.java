@@ -9,6 +9,7 @@ import capstone._4.repository.AlarmRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,20 +26,22 @@ public class AlarmService {
     private final GroupRepository groupRepository;
     private final FcmService fcmService;
 
+    @Transactional
     public void tokenSave(String androidToken,Integer userId) {
-        Alarm alarm=alarmRepository.findByUserId(userId)
-                .get();
-        if(alarm==null){
-            log.info("알람 새로 생성");
-            User user=userRepository.findById(userId).get();
-            alarm=new Alarm(androidToken,user);
-        }else{
-            log.info("알람 토큰 변경.");
+        log.info("token:{}",androidToken);
+        if(androidToken!=null) {
+            Alarm alarm = alarmRepository.findByUserId(userId)
+                    .orElseGet(() -> {
+                        User user = userRepository.findById(userId).orElseThrow(() ->
+                                new EntityNotFoundException("유저를 찾을수 없습니다."));
+                        return new Alarm(user);
+                    });
             alarm.changeToken(androidToken);
+            alarmRepository.save(alarm);
         }
-
     }
 
+    @Transactional
     public void chageState(int userId,boolean flag) {
        Alarm alarm= alarmRepository.findByUserId(userId)
                .orElseThrow(()-> new EntityNotFoundException("알람 세팅을 찾을수 없습니다."));
@@ -51,7 +54,7 @@ public class AlarmService {
     }
 
     public void createAndAccessTopic(Groups groups,User user) {
-        if(user.getAlarm().isEnabled()) {
+        if(user.getAlarm()!=null &&user.getAlarm().isEnabled()) {
             log.info("fcm 토큰 존재. 토픽생성.");
             String topicname=groups.getGroup_name();
             if(topicname==null||topicname.isBlank()){
@@ -67,7 +70,7 @@ public class AlarmService {
     }
 
     public void quitTopic(User user,Groups groups) {
-        if(user.getAlarm().isEnabled()) {
+        if(user.getAlarm()!=null && user.getAlarm().isEnabled()) {
             log.info("토픽에서 제거.");
             String token = user.getAlarm().getDevice_token();
             fcmService.deleteOneTopic(groups.getGup_id(), token);
@@ -75,6 +78,7 @@ public class AlarmService {
 
     }
 
+    @Transactional
     public void deleteTopic(Groups groups) {
         List<GroupsUser>groupsUsers= groups.getGroupsuser();
         List<String> tokens=groupsUsers.stream().map(groupsUser -> {
