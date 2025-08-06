@@ -87,6 +87,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         String key=UUID.randomUUID().toString().substring(7);
+        log.info("key:{}",key);
 
         cacheService.store(key, TokenDto.builder()
                 .accessToken(accessToken)
