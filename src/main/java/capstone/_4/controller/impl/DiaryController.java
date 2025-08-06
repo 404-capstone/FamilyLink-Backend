@@ -28,7 +28,7 @@ public class DiaryController implements DiaryApi {
      */
 
     @Override
-    public ResponseEntity<?> searchQuestion(Integer qaId) {
+    public ResponseEntity<?> searchQuestion(Integer qaId) { //인벤토리 id
         GroupQuestionDetailResponse gqResponseDto=diaryService.searchQuestion(qaId);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode()
                 ,ResponseEnum.SUCCESS.getMessage(), gqResponseDto));

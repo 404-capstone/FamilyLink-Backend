@@ -36,10 +36,6 @@ public class GroupQuestion {
     @JsonManagedReference
     private QuestionInventory questionInventory;
 
-    @ManyToOne
-    @JoinColumn(name="qulist_id")
-    @JsonManagedReference
-    private QuestionList questionList;
 
     @OneToMany(mappedBy = "groupQuestion",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JsonBackReference

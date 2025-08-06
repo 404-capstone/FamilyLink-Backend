@@ -6,6 +6,7 @@ import capstone._4.dto.gpt.OpenAiResponseDto;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
 import capstone._4.exception.GptErrorException;
 import capstone._4.repository.DiaryRepository;
+import capstone._4.service.QuestionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,12 +29,12 @@ import java.util.stream.Collectors;
 public class OpenAiService {
 
     private final WebClient webClient;
-    private final DiaryRepository diaryRepository;
+    private final QuestionService questionService;
 
     public OpenAiService(@Qualifier("OpenAiWebClient") WebClient webClient,
-                         DiaryRepository diaryRepository) {
+                         QuestionService questionService) {
         this.webClient = webClient;
-        this.diaryRepository = diaryRepository;
+        this.questionService = questionService;
     }
 
     /**
@@ -87,6 +88,7 @@ public class OpenAiService {
             String question = response.getChoices().get(0).getMessage().getContent();
             ObjectMapper objectMapper = new ObjectMapper();
             OpenAiQuestionContent content = objectMapper.readValue(question, OpenAiQuestionContent.class);  //변환하기 json형태로.
+            questionService.questionSave(content);
             //저장하기 로직
         } catch (JsonMappingException e) {
             throw new RuntimeException("json 매핑중 오류 발생: " + e);

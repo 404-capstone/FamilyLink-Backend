@@ -22,6 +22,6 @@ public class QuestionList {
 
     @OneToMany(mappedBy = "questionList",fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<GroupQuestion> groupQuestionList;
+    private List<QuestionInfoList> questionInfoList;
 
 }

@@ -12,6 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class QuestionInventory {
+
+    public QuestionInventory(String content) {
+        this.content = content;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qi_id")
@@ -25,6 +29,6 @@ public class QuestionInventory {
 
     @OneToMany(mappedBy = "questionInventory",fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<GroupQuestion> groupQuestions;
+    private List<QuestionInfoList> questionInfoList;
 
 }

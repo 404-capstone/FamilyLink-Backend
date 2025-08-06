@@ -1,0 +1,51 @@
+package capstone._4.repository;
+
+import capstone._4.domain.GroupQuestion;
+import capstone._4.domain.QuestionInventory;
+import capstone._4.domain.QuestionList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+@Slf4j
+public class QuestionRepository {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public void save(QuestionInventory questionInventory) {  //질문 원본 저장.
+        em.persist(questionInventory);
+    }
+    public void saves(List<QuestionInventory> questionInventory) {
+        for (QuestionInventory questionInventory1 : questionInventory) {
+            em.persist(questionInventory1);
+        }
+    }
+    public void saveList(QuestionList questionList) {
+        em.persist(questionList);
+    }
+
+    public void groupsave(GroupQuestion groupQuestion) {
+        em.persist(groupQuestion);
+    }
+
+    public Optional<GroupQuestion> findGroupQuestionByGroupId(Integer groupId) {
+        return em.createQuery("select gq from GroupQuestion gq " +
+                "where gq.groups.gup_id=:groupId",GroupQuestion.class)
+                .setParameter("groupId", groupId)
+                .getResultList().stream().findFirst();
+
+
+    }
+
+
+
+
+
+
+}
