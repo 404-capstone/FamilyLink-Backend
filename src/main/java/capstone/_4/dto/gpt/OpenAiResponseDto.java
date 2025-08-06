@@ -1,4 +1,4 @@
-package capstone._4.dto.schedule;
+package capstone._4.dto.gpt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class OpenAiRecommendResponse {
+public class OpenAiResponseDto {
 
     @JsonProperty("choices")
     private List<Choices> choices;
