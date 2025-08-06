@@ -13,6 +13,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Alarm {
 
+    public Alarm(User user) {
+        this.user=user;
+        user.chageAlarm(this);
+    }
+
     public Alarm(String androidToken,User user) {
         this.device_token=androidToken;
         this.user=user;
