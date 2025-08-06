@@ -45,9 +45,8 @@ public class SocialController implements UserApi {
     @Override
     public ResponseEntity<?> codeController(String session,String fcmToken,HttpServletRequest request) {
         log.info("session: {}", session);
-        log.info("fcmToken:{}",fcmToken);
         TokenDto result =cacheService.retrieveToken(session);
-        int id=tokenTakeUserId(result.getAccessToken());
+        int id=tokenTakeUserId(request);
         alarmService.tokenSave(fcmToken,id);
         log.info("token:{}",result.getAccessToken());
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
@@ -64,8 +63,8 @@ public class SocialController implements UserApi {
                 ResponseEnum.GENERATE_COMPLETED.getMessage(), reGenerateTokenDto));
     }
 
-    private int tokenTakeUserId(String token) {
-        //String newtoken="Bearer "+token;
-        return jwtService.returnToken("Bearer "+token);
+    private int tokenTakeUserId(HttpServletRequest request) {
+        String token= request.getHeader("Authorization");
+        return jwtService.returnToken(token);
     }
 }
