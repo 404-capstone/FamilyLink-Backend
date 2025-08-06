@@ -41,8 +41,7 @@ public class UserProfileEditController implements UserEditApi {
                 ));
             }
 
-            String token = authorizationHeader.substring(7);
-            Integer idFromToken = jwtService.returnToken(token);
+            Integer idFromToken = jwtService.returnToken(authorizationHeader);
             if (idFromToken == null) {
                 log.warn("토큰에서 사용자 ID를 추출할 수 없습니다.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto<>(

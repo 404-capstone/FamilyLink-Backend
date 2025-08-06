@@ -41,6 +41,6 @@ public interface UserSearchApi {
             }
     )
     @GetMapping("/search")
-    ResponseEntity<UserSearchOutputDto> getMyInfo(HttpServletRequest request);
+    ResponseEntity<?> getMyInfo(HttpServletRequest request);
 
 }
