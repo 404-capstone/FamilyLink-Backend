@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -30,6 +31,15 @@ public class OpenAiService {
     public OpenAiService(@Qualifier("OpenAiWebClient") WebClient webClient) {
         this.webClient = webClient;
     }
+
+    @Scheduled(cron= "0 0 9 ? * MON")
+    public void createQuestion(){
+
+
+    }
+
+
+
 
     /**
      * 가족활동 추천을 gpt에게 전송하여 생성하는 서비스 부분.
