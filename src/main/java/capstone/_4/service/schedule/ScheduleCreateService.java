@@ -59,6 +59,7 @@ public class ScheduleCreateService {
                 end,
                 request.getContent(),
                 request.getPermission(),
+                null, //여기 나중에 수정하셈.
                 user,
                 calendar,
                 null

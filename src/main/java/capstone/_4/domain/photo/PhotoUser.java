@@ -1,5 +1,6 @@
-package capstone._4.domain;
+package capstone._4.domain.photo;
 
+import capstone._4.domain.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PhotoUser {
 
-    public PhotoUser(User user,Photo photo) {
+    public PhotoUser(User user, Photo photo) {
         this.user=user;
         this.photo=photo;
     }

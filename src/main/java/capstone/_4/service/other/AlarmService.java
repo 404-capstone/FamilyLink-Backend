@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,10 +83,10 @@ public class AlarmService {
     @Transactional
     public void deleteTopic(Groups groups) {
         List<GroupsUser>groupsUsers= groups.getGroupsuser();
-        List<String> tokens=groupsUsers.stream().map(groupsUser -> {
-            return groupsUser.getUser().getAlarm().getDevice_token();
-        }).toList();
-        if(tokens.size()>0){
+        List<String> tokens=groupsUsers.stream().map(GroupsUser::getUser)
+                .map(User::getAlarm).filter(Objects::nonNull)
+                .map(Alarm::getDevice_token).filter(Objects::nonNull).toList(); //null인거 치워버리기.
+        if(tokens.isEmpty()){
             log.info("토픽 삭제.");
             fcmService.deleteTopic(groups.getGup_id(), tokens);
         }

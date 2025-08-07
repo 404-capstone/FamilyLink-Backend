@@ -65,9 +65,11 @@ public class GroupScheduleCreateService {
                 end,
                 request.getContent(),
                 request.getPermission(),
+                null, //여기 나중에 수정하셈.
                 user,
                 calendar,
                 null
+
         );
         Schedule savedSchedule = scheduleRepository.save(schedule);
 

@@ -1,6 +1,7 @@
 package capstone._4.repository.album;
 
 import capstone._4.domain.*;
+import capstone._4.domain.photo.*;
 import capstone._4.dto.album.output.PhotoInfoDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -63,7 +64,7 @@ public class PhotoRepository {
     public List<PhotoInfoDto> searchPhotoWithGroup(Integer albumId) {
         QPhoto photo = QPhoto.photo;
         QPhotoUser photoUser = QPhotoUser.photoUser;
-        QPhotoImage  photoImage = QPhotoImage.photoImage;
+        QPhotoImage photoImage = QPhotoImage.photoImage;
 
         List<Photo> photos=jpaQueryFactory.selectFrom(photo) //전체 사진만 제공.
                 .where(photo.album.id.eq(albumId))

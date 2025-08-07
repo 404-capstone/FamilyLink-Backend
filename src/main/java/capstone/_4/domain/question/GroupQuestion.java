@@ -1,5 +1,7 @@
-package capstone._4.domain;
+package capstone._4.domain.question;
 
+import capstone._4.domain.GroupAnswer;
+import capstone._4.domain.Groups;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -7,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,14 +39,15 @@ public class GroupQuestion {
     @JsonManagedReference
     private QuestionInventory questionInventory;
 
-    @ManyToOne
-    @JoinColumn(name="qulist_id")
-    @JsonManagedReference
-    private QuestionList questionList;
 
     @OneToMany(mappedBy = "groupQuestion",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JsonBackReference
-    private List<GroupAnswer>  groupAnswers;
+    private List<GroupAnswer>  groupAnswers=new ArrayList<>();
+
+    public void changeGroupAnswer(GroupAnswer groupAnswer){
+        this.groupAnswers.add(groupAnswer);
+        groupAnswer.changeQuestion(this);
+    }
 
 
 }

@@ -1,6 +1,6 @@
 package capstone._4.repository.album;
 
-import capstone._4.domain.PhotoImage;
+import capstone._4.domain.photo.PhotoImage;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;

@@ -1,9 +1,8 @@
 package capstone._4.repository;
 
 import capstone._4.domain.*;
-import capstone._4.dto.diary.GroupQuestionResponseDto;
+import capstone._4.domain.question.*;
 import capstone._4.dto.diary.QuestionAnswerResponse;
-import capstone._4.dto.group.output.GroupUserInfoDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -12,10 +11,8 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -36,14 +33,18 @@ public class DiaryRepository {
         em.remove(diary);
     }
 
-    public List<GroupQuestion> findAllQuestion(Integer diaryId) {
-        QQuestionList questionList=QQuestionList.questionList;
+    public List<GroupQuestion> findAllQuestion(Integer diaryId) { //그룹이랑 맞는 질문지를 일단 가져옴.
+        QQuestionList ql=QQuestionList.questionList;
+        QQuestionInventory qi=QQuestionInventory.questionInventory;
+        QQuestionInfoList questionInfoList=QQuestionInfoList.questionInfoList;
         QGroupQuestion groupQuestion=QGroupQuestion.groupQuestion;
 
          return queryFactory
-                .select(groupQuestion).from(questionList)
-                .join(questionList.groupQuestionList,groupQuestion)
-                .where(questionList.id.eq(diaryId))
+                .select(groupQuestion).from(groupQuestion) //그룹 질문을 찾으려면, 리스트 -> info -> 인베토리
+                 .join(groupQuestion.questionInventory,qi)
+                .join(qi.questionInfoList,questionInfoList)
+                 .join(questionInfoList.questionList,ql)
+                .where(ql.id.eq(diaryId))
                 .fetch();
     }
 
