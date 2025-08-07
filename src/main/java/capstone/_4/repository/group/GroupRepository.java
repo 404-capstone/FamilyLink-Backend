@@ -29,6 +29,7 @@ public class GroupRepository {
 
     public Optional<Groups> findById(int groupid) {
         Optional<Groups> groups = Optional.ofNullable(em.find(Groups.class, groupid));
+        log.info("그룹:{}",groups.get().getGroup_name());
         return groups;
     }
 
