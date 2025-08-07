@@ -1,9 +1,8 @@
 package capstone._4.repository;
 
 import capstone._4.domain.*;
-import capstone._4.dto.diary.GroupQuestionResponseDto;
+import capstone._4.domain.question.GroupQuestion;
 import capstone._4.dto.diary.QuestionAnswerResponse;
-import capstone._4.dto.group.output.GroupUserInfoDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -12,10 +11,8 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository

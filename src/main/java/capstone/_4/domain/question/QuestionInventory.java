@@ -1,10 +1,11 @@
-package capstone._4.domain;
+package capstone._4.domain.question;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,6 +30,11 @@ public class QuestionInventory {
 
     @OneToMany(mappedBy = "questionInventory",fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<QuestionInfoList> questionInfoList;
+    private List<QuestionInfoList> questionInfoList=new ArrayList<>();
+
+    public void changeInfo(QuestionInfoList questionInfoList) {
+        this.questionInfoList.add(questionInfoList);
+        questionInfoList.changeInventory(this);
+    }
 
 }

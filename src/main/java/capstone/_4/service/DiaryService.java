@@ -1,16 +1,12 @@
 package capstone._4.service;
 
-import capstone._4.domain.GroupQuestion;
-import capstone._4.domain.QuestionInventory;
-import capstone._4.domain.User;
+import capstone._4.domain.question.GroupQuestion;
 import capstone._4.dto.diary.GroupQuestionDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.QuestionAnswerResponse;
-import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.repository.DiaryRepository;
 import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.group.GroupsUserRepository;
-import capstone._4.repository.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

@@ -1,9 +1,10 @@
-package capstone._4.domain;
+package capstone._4.domain.question;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,8 +21,14 @@ public class QuestionList {
     @Column
     private LocalDateTime created;
 
-    @OneToMany(mappedBy = "questionList",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "questionList",fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonBackReference
-    private List<QuestionInfoList> questionInfoList;
+    private List<QuestionInfoList> questionInfoList=new ArrayList<>();
+
+    public void changeInfo(QuestionInfoList questionInfoList) {
+        this.questionInfoList.add(questionInfoList);
+        questionInfoList.changeList(this);
+    }
 
 }

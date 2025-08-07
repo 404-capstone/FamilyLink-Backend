@@ -1,4 +1,4 @@
-package capstone._4.domain;
+package capstone._4.domain.question;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -31,4 +31,15 @@ public class QuestionInfoList {
     @JsonManagedReference
     private QuestionInventory questionInventory;
 
+    public void changeList(QuestionList questionList) {
+        this.questionList=questionList;
+    }
+
+    public void changeInventory(QuestionInventory questionInventory) {
+        this.questionInventory=questionInventory;
+    }
+
+    public void changeSlot(int i) {
+        this.slot = i;
+    }
 }

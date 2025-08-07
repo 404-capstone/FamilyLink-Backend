@@ -1,8 +1,9 @@
 package capstone._4.repository;
 
-import capstone._4.domain.GroupQuestion;
-import capstone._4.domain.QuestionInventory;
-import capstone._4.domain.QuestionList;
+import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.question.QuestionInfoList;
+import capstone._4.domain.question.QuestionInventory;
+import capstone._4.domain.question.QuestionList;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +45,9 @@ public class QuestionRepository {
     }
 
 
-
-
-
-
+    public void saveInfo(List<QuestionInfoList> infoLists) {
+        for (QuestionInfoList questionInfoList : infoLists) {
+            em.persist(questionInfoList);
+        }
+    }
 }
