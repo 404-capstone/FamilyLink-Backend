@@ -64,7 +64,11 @@ public class OpenAiService {
         }
     }
 
-    @Scheduled(cron = "0 0 9 ? * MON")
+    /**
+     * 매주 월요일에 질문을 생성하는 메서드
+     * question안에 contetn에 문제 여러개 존재
+     */
+    //@Scheduled(cron = "0 0 9 ? * MON")
     public void createQuestion() {
         log.info("질문지 만들기 시작.");
         OpenAiRequestDto openAiRequestDto = new OpenAiRequestDto();

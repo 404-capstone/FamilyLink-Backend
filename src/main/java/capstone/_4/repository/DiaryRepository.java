@@ -1,7 +1,7 @@
 package capstone._4.repository;
 
 import capstone._4.domain.*;
-import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.question.*;
 import capstone._4.dto.diary.QuestionAnswerResponse;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;

@@ -19,14 +19,28 @@ public class QuestionRepository {
     @PersistenceContext
     private EntityManager em;
 
+    /**
+     * 원본 문제 저장.
+     * @param questionInventory
+     */
     public void save(QuestionInventory questionInventory) {  //질문 원본 저장.
         em.persist(questionInventory);
     }
+
+    /**
+     * 원본 문제 여러개 저장.
+     * @param questionInventory
+     */
     public void saves(List<QuestionInventory> questionInventory) {
         for (QuestionInventory questionInventory1 : questionInventory) {
             em.persist(questionInventory1);
         }
     }
+
+    /**
+     * 질문지 저장 메소드
+     * @param questionList
+     */
     public void saveList(QuestionList questionList) {
         em.persist(questionList);
     }

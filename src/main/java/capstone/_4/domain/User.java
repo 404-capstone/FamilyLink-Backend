@@ -1,7 +1,7 @@
 package capstone._4.domain;
 
+import capstone._4.domain.photo.PhotoUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
