@@ -49,12 +49,14 @@ public class AlarmService {
                .orElseThrow(()-> new EntityNotFoundException("알람 세팅을 찾을수 없습니다."));
 
        alarm.chageState(flag);
-       User user=userRepository.findById(userId).get();
+
+       User user=alarm.getUser();;
        Groups groups=userRepository.findGroupById(userId).get();
        if(flag) createAndAccessTopic(groups,user); //플래그가 true 면. 토픽에 참여하기.
        else quitTopic(user,groups);
     }
 
+    @Transactional
     public void createAndAccessTopic(Groups groups,User user) {
         if(user.getAlarm()!=null &&user.getAlarm().isEnabled()) {
             log.info("fcm 토큰 존재. 토픽생성.");
@@ -86,7 +88,7 @@ public class AlarmService {
         List<String> tokens=groupsUsers.stream().map(GroupsUser::getUser)
                 .map(User::getAlarm).filter(Objects::nonNull)
                 .map(Alarm::getDevice_token).filter(Objects::nonNull).toList(); //null인거 치워버리기.
-        if(tokens.isEmpty()){
+        if(!tokens.isEmpty()){
             log.info("토픽 삭제.");
             fcmService.deleteTopic(groups.getGup_id(), tokens);
         }
