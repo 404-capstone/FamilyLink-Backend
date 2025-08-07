@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
+
 @NoArgsConstructor
 public class Calendar {
     @Id

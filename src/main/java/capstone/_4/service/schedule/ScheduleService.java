@@ -61,4 +61,6 @@ public class ScheduleService {
         List<User> users =userRepository.findByIds(usersId);
         return openAiService.createRecommend(groupScheduleInfoDto,users);
     }
+
+
 }

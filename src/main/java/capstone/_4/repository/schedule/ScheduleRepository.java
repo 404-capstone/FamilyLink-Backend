@@ -5,6 +5,7 @@ import capstone._4.domain.QGroupsSchedule;
 import capstone._4.domain.QSchedule;
 import capstone._4.domain.QUser;
 import capstone._4.domain.Schedule;
+import capstone._4.domain.sch_comment;
 import capstone._4.dto.schedule.output.GroupScheduleDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.GroupBy;
@@ -14,11 +15,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class ScheduleRepository {
@@ -119,6 +118,21 @@ public class ScheduleRepository {
         } else {
             return em.merge(schedule);
         }
+    }
+
+    @Transactional
+    public void deleteById(Long scheduleId) {
+        Schedule schedule = em.find(Schedule.class, scheduleId);
+        if (schedule != null) {
+            em.remove(schedule);
+        }
+    }
+    public boolean existsById(Long scheduleId) {
+        Schedule schedule = em.find(Schedule.class, scheduleId);
+        return schedule != null;
+    }
+    public Optional<Schedule> findById(Long id) {
+        return Optional.ofNullable(em.find(Schedule.class, id));
     }
 
 //    private List<Integer> findUserWithSchedule(Integer scheduleid){ //이 부분은 필요없음. 이유는 이미 이너조인하면서, 조건에 충족하는 컬럼도 생성해서 반환해주기 때문이다.

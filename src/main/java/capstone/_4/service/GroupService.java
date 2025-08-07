@@ -60,6 +60,7 @@ public class GroupService {
         }else{
             groups=new Groups(name);
         }
+
         groupRepository.save(groups);
         alarmService.createAndAccessTopic(groups,user); //토픽 생성.
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
@@ -230,6 +231,7 @@ public class GroupService {
         //return true;
         //groupsUserReponsitory.updateLeader(groupId,leaderId,userId);
     }
+
 
     public int findGroupId(int userId) {
         Groups groups = userRepository.findGroupById(userId)

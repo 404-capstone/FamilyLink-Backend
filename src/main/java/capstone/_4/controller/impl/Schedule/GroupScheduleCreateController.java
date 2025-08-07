@@ -1,32 +1,35 @@
 package capstone._4.controller.impl.Schedule;
 
 import capstone._4.controller.doc.GroupScheduleCreateApi;
-import capstone._4.domain.Schedule;
 import capstone._4.dto.ApiResponseDto;
-import capstone._4.dto.schedule.input.GroupScheduleCreateDto;
+import capstone._4.dto.schedule.input.ScheduleGroupCreateRequest;
+import capstone._4.dto.schedule.output.GroupScheduleDto;
 import capstone._4.enums.ErrorCode;
 import capstone._4.enums.ResponseEnum;
-import capstone._4.service.schedule.GroupScheduleCreateService;
+import capstone._4.service.schedule.ScheduleGroupCreateService;
 import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/schedule/group")
 public class GroupScheduleCreateController implements GroupScheduleCreateApi {
 
-    private final GroupScheduleCreateService groupScheduleCreateService;
+    private final ScheduleGroupCreateService scheduleGroupCreateService;
     private final JwtService jwtService;
 
-    @Override
-    public ResponseEntity<ApiResponseDto<Schedule>> addGroupSchedule(
-            GroupScheduleCreateDto request,
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponseDto<GroupScheduleDto>> addGroupSchedule(
+            @RequestBody ScheduleGroupCreateRequest request,
             HttpServletRequest requestContext) {
 
         try {
@@ -40,8 +43,8 @@ public class GroupScheduleCreateController implements GroupScheduleCreateApi {
             }
 
             // 2. JWT 토큰에서 사용자 ID 추출
-            String token = authorizationHeader.substring(7);
-            Integer userId = jwtService.returnToken(token);
+            Integer userId = jwtService.returnToken(authorizationHeader);
+
             if (userId == null) {
                 log.warn("토큰에서 사용자 ID를 추출할 수 없습니다.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -49,11 +52,11 @@ public class GroupScheduleCreateController implements GroupScheduleCreateApi {
                                 "유효하지 않은 토큰입니다.", null));
             }
 
-            // 3. 가족 일정 생성 서비스 호출
-            Schedule createdSchedule = groupScheduleCreateService.createGroupSchedule(request, userId);
+            // 3. 가족 일정 생성 서비스 호출 (userId 전달)
+            GroupScheduleDto createdSchedule = scheduleGroupCreateService.createGroupSchedule(request);
 
             // 4. 성공 응답 반환
-            ApiResponseDto<Schedule> response = new ApiResponseDto<>(
+            ApiResponseDto<GroupScheduleDto> response = new ApiResponseDto<>(
                     ResponseEnum.SUCCESS.getCode(),
                     ResponseEnum.SUCCESS.getMessage(),
                     createdSchedule

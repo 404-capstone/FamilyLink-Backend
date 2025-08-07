@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "schedule")
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Getter
 public class Schedule {
@@ -36,10 +38,14 @@ public class Schedule {
     private String content;
 
     @Column
+    private String location;
+
+    @Column
     private Boolean permission;
 
     @Column
     private Boolean timeflex;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="u_id" )
