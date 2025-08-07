@@ -40,6 +40,9 @@ public class Schedule {
     @Column
     private Boolean permission;
 
+    @Column
+    private Boolean timeflex;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="u_id" )
     @JsonManagedReference

@@ -57,6 +57,7 @@ public class ScheduleCreateService {
         // 6. 저장
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
+
         // 7. DTO 변환해서 반환
         return ScheduleCreateInfoDto.builder()
                 .id(savedSchedule.getId().longValue())

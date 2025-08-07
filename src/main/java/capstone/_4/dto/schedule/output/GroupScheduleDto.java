@@ -25,7 +25,13 @@ public class GroupScheduleDto {
     @Schema(description = "일정 종료일")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endTime;
+
+    @Schema(description = "일정 변동 여부")
+    private Boolean isTimeFlexible;
+
     @Schema(description = "일정에 참여하는 유저 dbid")
     private List<Integer> groupUserId;
+
+
 
 }

@@ -77,7 +77,7 @@ public class ScheduleRepository {
         QGroupsSchedule gs= QGroupsSchedule.groupsSchedule;
         QUser user= QUser.user;
         List<Tuple> result =queryFactory  //해당 그룹과 관련된 것들을 가져온다.
-                .select(schedule.id,schedule.title,schedule.startTime,schedule.endTime,user.id)
+                .select(schedule.id,schedule.title,schedule.startTime,schedule.endTime,schedule.timeflex,user.id)
                 .from(schedule)
                 .join(schedule.groupsSchedule, gs)
                 .join(gs.user, user)
@@ -94,6 +94,7 @@ public class ScheduleRepository {
                         t.get(schedule.title),
                         t.get(schedule.startTime),
                         t.get(schedule.endTime),
+                        t.get(schedule.timeflex),
                         new ArrayList<>()
                 );
                 dto.put(scheduleId,groupScheduleDto); //새로 생성했으니,이어서 넣음.

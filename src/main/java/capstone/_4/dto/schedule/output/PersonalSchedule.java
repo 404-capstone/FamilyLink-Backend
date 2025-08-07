@@ -26,10 +26,18 @@ public class PersonalSchedule {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime end_time;
 
+    @Schema(description = "일정 변동 여부")
+    private boolean isTimeFlexible;
+
+    @Schema(description = "권한 여부")
+    private boolean permission;
+
     public PersonalSchedule(Schedule schedule) {
         this.scheduleid = schedule.getId();
         this.title = schedule.getTitle();
         this.start_time = schedule.getStartTime();
         this.end_time = schedule.getEndTime();
+        this.isTimeFlexible= schedule.getTimeflex();
+        this.permission = schedule.getPermission();
     }
 }

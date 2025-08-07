@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,12 +49,14 @@ public class AlarmService {
                .orElseThrow(()-> new EntityNotFoundException("알람 세팅을 찾을수 없습니다."));
 
        alarm.chageState(flag);
-       User user=userRepository.findById(userId).get();
+
+       User user=alarm.getUser();;
        Groups groups=userRepository.findGroupById(userId).get();
        if(flag) createAndAccessTopic(groups,user); //플래그가 true 면. 토픽에 참여하기.
        else quitTopic(user,groups);
     }
 
+    @Transactional
     public void createAndAccessTopic(Groups groups,User user) {
         if(user.getAlarm()!=null &&user.getAlarm().isEnabled()) {
             log.info("fcm 토큰 존재. 토픽생성.");
@@ -79,12 +83,14 @@ public class AlarmService {
     }
 
     @Transactional
-    public void deleteTopic(Groups groups) {
+    public void deleteTopic(Integer groupId) {
+        Groups groups=groupRepository.findById(groupId).orElseThrow(()->
+                new EntityNotFoundException("그룹이 존재하지 않습니다"));
         List<GroupsUser>groupsUsers= groups.getGroupsuser();
-        List<String> tokens=groupsUsers.stream().map(groupsUser -> {
-            return groupsUser.getUser().getAlarm().getDevice_token();
-        }).toList();
-        if(tokens.size()>0){
+        List<String> tokens=groupsUsers.stream().map(GroupsUser::getUser)
+                .map(User::getAlarm).filter(Objects::nonNull)
+                .map(Alarm::getDevice_token).filter(Objects::nonNull).toList(); //null인거 치워버리기.
+        if(!tokens.isEmpty()){
             log.info("토픽 삭제.");
             fcmService.deleteTopic(groups.getGup_id(), tokens);
         }

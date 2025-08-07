@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import capstone._4.domain.question.GroupQuestion;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -29,4 +30,8 @@ public class GroupAnswer {
     @JoinColumn(name = "gq_id")
     @JsonManagedReference
     private GroupQuestion groupQuestion;
+
+    public void changeQuestion(GroupQuestion groupQuestion) {
+        this.groupQuestion = groupQuestion;
+    }
 }

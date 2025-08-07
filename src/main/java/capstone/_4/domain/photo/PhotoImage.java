@@ -1,12 +1,9 @@
-package capstone._4.domain;
+package capstone._4.domain.photo;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.Date;
 
 @Entity
 @Table(name="photoimage")

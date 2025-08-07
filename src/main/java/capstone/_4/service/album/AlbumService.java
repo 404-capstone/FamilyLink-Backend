@@ -1,6 +1,9 @@
 package capstone._4.service.album;
 
 import capstone._4.domain.*;
+import capstone._4.domain.photo.Photo;
+import capstone._4.domain.photo.PhotoImage;
+import capstone._4.domain.photo.PhotoUser;
 import capstone._4.dto.album.output.PhotoInfoDto;
 import capstone._4.dto.album.input.AlbumInputDto;
 import capstone._4.dto.album.input.PhotoEditDto;

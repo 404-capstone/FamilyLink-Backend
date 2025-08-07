@@ -99,6 +99,7 @@ public class GroupController implements GroupApi {
 
     @Override
     public ResponseEntity<?> groupDelete(@RequestParam Integer groupId,HttpServletRequest request) {
+        log.info("삭제시작:{}",groupId);
         groupService.deleteGroup(groupId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode(),
                 ResponseEnum.DELETE_SUCCESS.getMessage(),groupId));
