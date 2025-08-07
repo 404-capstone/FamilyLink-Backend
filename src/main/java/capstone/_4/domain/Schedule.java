@@ -38,10 +38,14 @@ public class Schedule {
     private String content;
 
     @Column
+    private String location;
+
+    @Column
     private Boolean permission;
 
     @Column
     private Boolean timeflex;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="u_id" )

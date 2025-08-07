@@ -84,4 +84,11 @@ public class UserJpaRepository implements UserRepository {
         Schedule schedule = em.find(Schedule.class, id);
         return Optional.ofNullable(schedule);
     }
+
+    @Override
+    public List<User> findAllById(List<Long> ids) {
+        return em.createQuery("SELECT u FROM User u WHERE u.id IN :ids", User.class)
+                .setParameter("ids", ids)
+                .getResultList();
+    }
 }
