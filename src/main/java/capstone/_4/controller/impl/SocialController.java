@@ -1,5 +1,5 @@
 package capstone._4.controller.impl;
-import capstone._4.controller.doc.UserApi;
+import capstone._4.controller.doc.SocialApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.user.ReGenerateTokenDto;
 import capstone._4.dto.user.TokenDto;
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @Slf4j
-public class SocialController implements UserApi {
+public class SocialController implements SocialApi {
 
     private final JwtService jwtService;
     private final CacheService cacheService;

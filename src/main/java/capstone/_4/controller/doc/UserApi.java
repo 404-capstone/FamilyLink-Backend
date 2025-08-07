@@ -2,8 +2,11 @@ package capstone._4.controller.doc;
 
 import capstone._4.dto.docs.user.LoginApiResponse;
 import capstone._4.dto.docs.user.LoginTokenResponse;
+import capstone._4.dto.docs.user.ProfileEditResponseDocDto;
 import capstone._4.dto.docs.user.TokenResponseDto;
+import capstone._4.dto.user.ProfileEditDto;
 import capstone._4.dto.user.input.SocialInputDto;
+import capstone._4.dto.user.output.UserSearchOutputDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -18,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,66 +30,94 @@ import java.net.URISyntaxException;
 @Tag(name="유저",description = "유저 기능 관련 api") //이걸로 크게 목록별로 구분가능.
 @RequestMapping("/user")
 public interface UserApi {
+    @Operation(summary = "회원 탈퇴",
+            description = "Authorization 헤더의 토큰에서 유저 ID를 추출하여 회원 탈퇴를 수행합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공"),
+                    @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰"),
+                    @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음")
+            })
+    @DeleteMapping("/delete")
+    ResponseEntity<?> deleteUser(HttpServletRequest request);
 
-    @Operation(summary = "유저 토큰 정보 조회",description = "로그인을 통해 저장한 토큰을 조회합니다.")
-    @ApiResponse(responseCode = "200",description = "조회 성공",
-    content = @Content(mediaType = "application/json",
-    examples = @ExampleObject(
-      name = "성공 응답"
-      ,summary = "조회 성공",
-      value = """
-                            {
-                              "code": 200,
-                              "message": "요청을 성공했습니다.",
-                              "data": {
-                                "accessToken": "access",
-                                "refreshToken": "refresh",
-                                "userId":"id",
-                                "flag":"boolean"
-                              }
-                            }
-                            """
+    @Operation(
+            summary = "로그아웃",
+            description = "Authorization 헤더에 토큰을 담아 로그아웃을 수행합니다.",
+            parameters = {
+                    @Parameter(
+                            name = "Authorization",
+                            description = "Bearer {accessToken}",
+                            required = true,
+                            in = ParameterIn.HEADER,
+                            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(schema = @Schema(implementation = String.class))),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+                    @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰")
+            }
     )
-    ))
-    @GetMapping("/login/code")
-    public ResponseEntity<?> codeController(
-            @Parameter(description = "로그인시 딥링크로 전해준 세션값.",example="ds21es")
-            @RequestParam String session,
-            @Parameter(description = "fcm에서 발행해서 사용가능한 기기토큰값. 지금은 필수로 안해놨음. 나중에는 필수로 변경할예정.")
-            @RequestParam(required = false) String fcmToken,
-            HttpServletRequest request);
+    @PostMapping("/logout")
+    ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader);
 
-
-
-
-    //리프래쉬 토큰
-    @Operation(summary = "액세스토큰 재발급",description = "액세스토큰을 재발급합니다.리프레시 토큰도 함께 재발급합니다.")
-    @ApiResponse(responseCode = "201",description = "발급이 성공되었습니다.",
-            headers = {@Header(name="Authorization",description = "jwt액세스 토큰",schema = @Schema(type="String"))
-                    ,@Header(name="Refresh-Token",description = "jwt 리프레시 토큰",schema = @Schema(type="String"))},
-    content = @Content(mediaType = "application/json",
-    schema = @Schema(implementation = TokenResponseDto.class),
-            examples =  @ExampleObject(
-                    name="성공 응답",
-                    summary = "액세스 토큰 재발급 성공",
-                    value= """
-                            {
-                              "code": 201,
-                              "message": "발급이 성공되었습니다",
-                              "data": {
-                                "accessToken": "access",
-                                "refreshToken": "refresh"
-                              }
-                            }
-                            """
-            )
-    ))
-
-    @GetMapping("/token/refresh")
-    public ResponseEntity<?> reAccessController(
-            @Parameter(description = "재발급 토큰,액세스토큰 대신 이거 작성.",required = true,in= ParameterIn.HEADER)
-            @RequestHeader(name = "Refresh-Token")String refreshToken, HttpServletResponse response);
-
-
-
+    @Operation(
+            summary = "프로필 수정",
+            description = "사용자의 프로필 정보를 수정합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "수정 성공",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProfileEditResponseDocDto.class),
+                                    examples = @ExampleObject(
+                                            name = "프로필 수정 성공 응답",
+                                            value = """
+                                                    {
+                                                      "code": 200,
+                                                      "message": "프로필이 성공적으로 수정되었습니다.",
+                                                      "data": {
+                                                        "username": "홍길동",
+                                                        "age": 30,
+                                                        "gender": "M",
+                                                        "image": "https://example.com/profile.jpg"
+                                                      }
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "401", description = "인증 실패"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
+    @PutMapping(value = "info/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> editProfile(
+            @RequestBody ProfileEditDto dto,
+            HttpServletRequest request
+    );
+    @Operation(
+            summary = "로그인 사용자 정보 조회",
+            description = "Authorization 헤더에 액세스 토큰을 넣고 로그인된 사용자의 프로필 정보를 조회한다.",
+            parameters = {
+                    @Parameter(
+                            name = "Authorization",
+                            description = "Bearer {accessToken}",
+                            required = true,
+                            in = ParameterIn.HEADER,
+                            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "성공적으로 사용자 정보를 반환함",
+                            content = @Content(schema = @Schema(implementation = UserSearchOutputDto.class))
+                    ),
+                    @ApiResponse(responseCode = "401", description = "인증 실패 - 토큰이 없거나 유효하지 않음"),
+                    @ApiResponse(responseCode = "404", description = "사용자 정보 없음"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
+    @GetMapping("/search")
+    ResponseEntity<?> getMyInfo(HttpServletRequest request);
 }
