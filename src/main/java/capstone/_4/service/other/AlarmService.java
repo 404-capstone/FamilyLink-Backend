@@ -83,7 +83,9 @@ public class AlarmService {
     }
 
     @Transactional
-    public void deleteTopic(Groups groups) {
+    public void deleteTopic(Integer groupId) {
+        Groups groups=groupRepository.findById(groupId).orElseThrow(()->
+                new EntityNotFoundException("그룹이 존재하지 않습니다"));
         List<GroupsUser>groupsUsers= groups.getGroupsuser();
         List<String> tokens=groupsUsers.stream().map(GroupsUser::getUser)
                 .map(User::getAlarm).filter(Objects::nonNull)

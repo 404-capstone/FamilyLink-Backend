@@ -136,9 +136,8 @@ public class GroupService {
 
     @Transactional
     public void deleteGroup(Integer groupId) {
+        alarmService.deleteTopic(groupId);
         int count = groupRepository.deleteGroupe(groupId);
-        Groups groups=getGroupFromId(groupId);
-        alarmService.deleteTopic(groups);
         if(count == 0){
             throw new EntityNotFoundException("그룹 삭제 안됨");
         }
