@@ -62,6 +62,7 @@ public class PhotoRepository {
     }
 
     public List<PhotoInfoDto> searchPhotoWithGroup(Integer albumId) {
+        log.info("사진 여러개 찾기 시작");
         QPhoto photo = QPhoto.photo;
         QPhotoUser photoUser = QPhotoUser.photoUser;
         QPhotoImage photoImage = QPhotoImage.photoImage;
@@ -70,6 +71,7 @@ public class PhotoRepository {
                 .where(photo.album.id.eq(albumId))
                 .fetch();
 
+        log.info("유저별로 두기.");
         Map<Integer,List<Integer>> userMap= jpaQueryFactory //유저 따로 조회
                 .select(photoUser.photo.id,photoUser.user.id)
                 .from(photoUser)
@@ -109,6 +111,7 @@ public class PhotoRepository {
                         Images.get(0),
                         p.getArea(),
                         p.getContent(),
+                        p.getDate(),
                         users
                 );
             dto.add(photoInfoDto);

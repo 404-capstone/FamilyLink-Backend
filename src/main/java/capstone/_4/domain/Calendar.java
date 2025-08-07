@@ -12,6 +12,10 @@ import java.util.List;
 
 @NoArgsConstructor
 public class Calendar {
+
+    public Calendar(String title) {
+        this.title = title;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="cal_id")
@@ -28,4 +32,8 @@ public class Calendar {
     @OneToMany(mappedBy = "calendar",fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Schedule> schedule = new ArrayList<>();
+
+    public void changeGroup(Groups groups) {
+        this.groups=groups;
+    }
 }

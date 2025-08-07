@@ -48,14 +48,17 @@ public class AlbumService {
         List<MultipartFile> files=albumInputDto.getFiles();
         List<PhotoImage> photos = new ArrayList<>();
         List<Integer> userIds = albumInputDto.getUserId();
+        LocalDateTime date=(albumInputDto.getTime()!=null)?  //날짜+시간 합치기.
+                LocalDateTime.of(albumInputDto.getDate(), albumInputDto.getTime()):albumInputDto.getDate().atStartOfDay();
         if(files == null || files.isEmpty()){
             throw new NoSuchElementException("파일이 존재하지 않습니다.");
         }else {
             info=s3Service.uploadFiles(files);  //여러개 저장.
         }
-        Album album=getAlbum(albumInputDto); //새 앨범 생성
+
+        Album album=getAlbum(albumInputDto,date); //새 앨범 생성
         log.info("album={}",album.getId());
-        Photo photo=new Photo(albumInputDto.getDate(),albumInputDto.getArea(), albumInputDto.getContent()); //사진갤러리 생성.
+        Photo photo=new Photo(date,albumInputDto.getArea(), albumInputDto.getContent()); //사진갤러리 생성.
         log.info("photo={}",photo.getId());
         photo.setAlbum(album);
         photoRepository.save(photo);
@@ -142,7 +145,9 @@ public class AlbumService {
 
     public AlbumInfoResponseDto searchAlbum(Integer groupId) {
         QAlbum album=QAlbum.album;
+        log.info("앨범 찾기");
         List<Tuple> albumInfo=albumRepository.searchAlbums(groupId);
+        log.info("사진 찾기");
         List<AlbumInfoDto> albumInfoDtoList=albumInfo.stream()
                 .map(t ->{
                     List<PhotoInfoDto> photoInfoDtoList=new ArrayList<>();
@@ -158,9 +163,8 @@ public class AlbumService {
                 .groupId(groupId).albumInfoDtoList(albumInfoDtoList).build();
     }
 
-    private Album getAlbum(AlbumInputDto albumInputDto) {
+    private Album getAlbum(AlbumInputDto albumInputDto,LocalDateTime date) {
         Integer groupId= albumInputDto.getGroupId();
-        LocalDateTime date= albumInputDto.getDate();
         Integer year=date.getYear();
         Integer month=date.getMonthValue();
         Album album=albumRepository.findByDate(groupId,year,month)

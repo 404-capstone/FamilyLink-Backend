@@ -1,14 +1,12 @@
 package capstone._4.service;
 
-import capstone._4.domain.Alarm;
-import capstone._4.domain.Groups;
-import capstone._4.domain.GroupsUser;
-import capstone._4.domain.User;
+import capstone._4.domain.*;
 import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.group.input.ServeyDto;
 import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupGenerateDto;
 import capstone._4.dto.group.output.GroupUserInfoDto;
+import capstone._4.repository.calendar.CalendarRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.user.UserRepository;
@@ -41,6 +39,7 @@ public class GroupService {
     private final ImageHandler imageHandler;
     private final S3Service s3Service;
     private final AlarmService alarmService;
+    private final CalendarRepository calendarRepository;
 
 /**
  * 그룹 생성과 리더 설정을 수행.
@@ -62,6 +61,9 @@ public class GroupService {
         }
 
         groupRepository.save(groups);
+        Calendar calendar=new Calendar(groups.getGroup_name());
+        groups.changeCalendar(calendar);
+        calendarRepository.save(calendar);
         alarmService.createAndAccessTopic(groups,user); //토픽 생성.
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
         groupsUserRepository.save(groupsuser);
