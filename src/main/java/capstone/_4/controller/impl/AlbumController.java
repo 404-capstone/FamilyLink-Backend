@@ -46,6 +46,7 @@ public class AlbumController implements AlbumApi {
 
     @Override
     public ResponseEntity<?> searchAlbum(@RequestParam Integer groupId){
+        log.info("그룹 찾기");
         AlbumInfoResponseDto albumInfoResponseDto =albumService.searchAlbum(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), albumInfoResponseDto));

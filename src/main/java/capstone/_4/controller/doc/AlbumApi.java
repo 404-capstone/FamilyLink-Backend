@@ -121,6 +121,7 @@ public interface AlbumApi {
                                             "thumnailurl": "대표 사진 url",
                                             "content": "가족들과 제주도여행간 사진",
                                             "area": "제주도",
+                                            "time": 시간,
                                             "userid": [2, 3]
                                           },
                                           {
@@ -129,6 +130,7 @@ public interface AlbumApi {
                                             "thumnailurl": "대표 사진 url",
                                             "content": "가족들과 전주비빔밥 먹는 사진",
                                             "area": "전라도",
+                                            "time": 시간,
                                             "userid": [1, 2, 3]
                                           }
                                         ]
@@ -142,6 +144,7 @@ public interface AlbumApi {
                                             "thumnailurl": "대표 사진 url",
                                             "content": "혼자서 오토바이 끌고 돌아다니는 사진",
                                             "area": "제주도",
+                                            "time": 시간,
                                             "userid": [1]
                                           },
                                           {
@@ -150,6 +153,7 @@ public interface AlbumApi {
                                             "thumnailurl": "대표 사진 url",
                                             "content": "가족들과 바나나보트타면서 공중제비 하는 사진",
                                             "area": "강릉",
+                                            "time": 시간,
                                             "userid": [1, 2, 3]
                                           }
                                         ]

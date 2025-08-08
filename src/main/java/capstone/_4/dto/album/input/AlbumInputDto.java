@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -27,10 +29,14 @@ public class AlbumInputDto {
     @Schema(description ="사진 기본 제목" )
     private String title;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @NotNull(message = "포맷을 지켜주세요. yyyy-MM-dd HH:mm")
-    @Schema(description ="사진 날짜. 업데이트날짜 x 포맷:yyyy-MM-dd HH:mm" )
-    private LocalDateTime date;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "포맷을 지켜주세요. yyyy-MM-dd")
+    @Schema(description ="사진 날짜. 업데이트날짜 x 포맷:yyyy-MM-dd" )
+    private LocalDate date;
+
+    @JsonFormat(pattern = "HH:mm")
+    @Schema(description = "사진 시간. 포맷: HH:mm")
+    private LocalTime time;
 
     @Schema(description ="사진 설명" )
     private String content;

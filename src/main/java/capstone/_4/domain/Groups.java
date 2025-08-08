@@ -50,7 +50,7 @@ public class Groups {
     @JsonBackReference
     private List<GroupsUser> groupsuser = new ArrayList<>();
 
-    @OneToOne(mappedBy = "groups")
+    @OneToOne(mappedBy = "groups",cascade = CascadeType.REMOVE)
     @JsonBackReference
     private Calendar calendar;
 
@@ -73,5 +73,10 @@ public class Groups {
 
     public Integer getId() {
         return gup_id;
+    }
+
+    public void changeCalendar(Calendar calendar) {
+        this.calendar=calendar;
+        calendar.changeGroup(this);
     }
 }
