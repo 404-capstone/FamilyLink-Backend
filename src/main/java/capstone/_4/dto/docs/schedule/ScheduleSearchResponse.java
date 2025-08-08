@@ -29,12 +29,12 @@ public class ScheduleSearchResponse extends ApiResponseDto<ScheduleResponseDto> 
                                         )),
                         List.of(new GroupScheduleDto(6,"포천천가기",LocalDateTime.of(2025,06,01,9,00),
                                 LocalDateTime.of(2025,06,01,20,00),
-                                true,List.of(1,2)
+                                        "포천 일정 내용 예시","포천천 위치 설명 또는 주소",true,List.of(1,2)
                                 ),
 
                                 new GroupScheduleDto(7,"오마카세 예약",LocalDateTime.of(2025,06,8,18,00),
                                         LocalDateTime.of(2025,06,8,20,00),
-                                        false,List.of(1,2,3)
+                                        "오카카세 자세한 내용","오마카세 위치",false,List.of(1,2,3)
                                 )
                         )
 

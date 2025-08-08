@@ -20,7 +20,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/schedule/group")
 public interface GroupScheduleCreateApi {
 
-    @Operation(summary = "가족 일정 추가", description = "가족 그룹에 일정을 추가합니다.")
+    @Operation(summary = "가족 일정 추가", description = "가족 그룹에 일정을 추가합니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "가족 일정 생성 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ScheduleGroupCreateRequest.class),
+                            examples = @ExampleObject(
+                                    name = "요청 예시",
+                                    value = """
+                {
+                  "title": "가족 캠핑",
+                  "startTime": "2025-08-10T09:00:00",
+                  "endTime": "2025-08-12T18:00:00",
+                  "content": "모두 함께 즐거운 시간",
+                  "groupId": 4,
+                  "calendarId": 2,
+                  "location": "강원도",
+                  "timeflex": true,
+                  "participants": [3]
+                }
+                """
+                            )
+                    )
+            )
+    )
+
+
     @ApiResponse(responseCode = "201", description = "가족 일정 생성 성공",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = GroupScheduleDto.class),
