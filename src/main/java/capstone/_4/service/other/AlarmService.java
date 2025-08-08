@@ -77,7 +77,7 @@ public class AlarmService {
         if(user.getAlarm()!=null && user.getAlarm().isEnabled()) {
             log.info("토픽에서 제거.");
             String token = user.getAlarm().getDevice_token();
-            fcmService.deleteOneTopic(groups.getGup_id(), token);
+            fcmService.deleteOneTopic(groups.getTopic_name(), token);
         }
 
     }
@@ -86,22 +86,23 @@ public class AlarmService {
     public void deleteTopic(Integer groupId) {
         Groups groups=groupRepository.findById(groupId).orElseThrow(()->
                 new EntityNotFoundException("그룹이 존재하지 않습니다"));
-        List<GroupsUser>groupsUsers= groups.getGroupsuser();
-        List<String> tokens=groupsUsers.stream().map(GroupsUser::getUser)
-                .map(User::getAlarm).filter(Objects::nonNull)
-                .map(Alarm::getDevice_token).filter(Objects::nonNull).toList(); //null인거 치워버리기.
-        if(!tokens.isEmpty()){
-            log.info("토픽 삭제.");
-            fcmService.deleteTopic(groups.getGup_id(), tokens);
+        if(groups.getTopic_name()!=null) {
+            List<GroupsUser> groupsUsers = groups.getGroupsuser();
+            List<String> tokens = groupsUsers.stream().map(GroupsUser::getUser)
+                    .map(User::getAlarm).filter(Objects::nonNull)
+                    .map(Alarm::getDevice_token).filter(Objects::nonNull).toList(); //null인거 치워버리기.
+            if (!tokens.isEmpty()) {
+                log.info("토픽 삭제.");
+                fcmService.deleteTopic(groups.getTopic_name(), tokens);
+            }
         }
 
     }
 
     public void GroupAccess(Groups group,User user) {
         if(group.getTopic_name()!=null){
+            log.info("그룹 가입 메시지 전송.");
             fcmService.sendNotification("유저 그룹 가입",user.getUsername()+"유저가 그룹을 가입하였습니다.","groupAccess", group.getTopic_name());
-        }else {
-            throw new RuntimeException("토픽이 존재하지 않아 알람을 전송하지 못했습니다.");
         }
     }
 }
