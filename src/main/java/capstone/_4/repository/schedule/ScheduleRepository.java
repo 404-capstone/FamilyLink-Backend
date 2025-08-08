@@ -89,13 +89,15 @@ public class ScheduleRepository {
             Integer scheduleId=t.get(schedule.id);
             GroupScheduleDto groupScheduleDto=dto.get(scheduleId);
             if(groupScheduleDto==null){
-                groupScheduleDto=new GroupScheduleDto(
-                        t.get(schedule.id),
-                        t.get(schedule.title),
-                        t.get(schedule.startTime),
-                        t.get(schedule.endTime),
-                        t.get(schedule.timeflex),
-                        new ArrayList<>()
+                groupScheduleDto = new GroupScheduleDto(
+                        t.get(schedule.id),          // Integer
+                        t.get(schedule.title),       // String
+                        t.get(schedule.startTime),   // LocalDateTime
+                        t.get(schedule.endTime),     // LocalDateTime
+                        t.get(schedule.content),     // String  <-- content 꼭 포함
+                        t.get(schedule.location),    // String
+                        t.get(schedule.timeflex),    // Boolean
+                        new ArrayList<Integer>()     // List<Integer>
                 );
                 dto.put(scheduleId,groupScheduleDto); //새로 생성했으니,이어서 넣음.
             }

@@ -38,7 +38,10 @@ public class ScheduleGroupCreateService {
             participantList = userRepository.findAllById(request.getParticipants());
         }
 
-        User creator = participantList.isEmpty() ? null : participantList.get(0);
+        if (participantList.isEmpty()) {
+            throw new IllegalArgumentException("참여자가 없으면 일정 생성이 불가능합니다.");
+        }
+        User creator = participantList.get(0);
 
         // 캘린더 조회
         Calendar calendar = calendarRepository.findById(request.getCalendarId().intValue())
@@ -50,6 +53,8 @@ public class ScheduleGroupCreateService {
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .content(request.getContent())
+                .location(request.getLocation())
+                .timeflex(request.getTimeflex())
                 .user(creator)
                 .calendar(calendar)
                 .build();
@@ -63,7 +68,9 @@ public class ScheduleGroupCreateService {
                 .title(saved.getTitle())
                 .startTime(saved.getStartTime())
                 .endTime(saved.getEndTime())
+                .content(saved.getContent())
                 .isTimeFlexible(saved.getTimeflex())
+                .location(saved.getLocation())
                 .groupUserId(participantList.stream().map(User::getId).toList())
                 .build();
     }

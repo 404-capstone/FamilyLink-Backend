@@ -28,6 +28,9 @@ public class ScheduleGroupCreateRequest {
     @Schema(description = "일정 메모", example = "가족 전원 참석 필수")
     private String content;
 
+    @Schema(description = "일정 변동 여부", example = "true")
+    private Boolean timeflex;
+
     @Schema(description = "참여자 ID 리스트", example = "[1, 2, 3]")
     private List<Long> participants;
 
