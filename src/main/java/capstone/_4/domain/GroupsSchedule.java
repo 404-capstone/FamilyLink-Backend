@@ -2,9 +2,16 @@ package capstone._4.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.*;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="groups_schedule")
+@Getter
+@Setter
+
 public class GroupsSchedule {
 
     @Id

@@ -4,11 +4,13 @@ import capstone._4.domain.Groups;
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
 import capstone._4.domain.Calendar;
+import capstone._4.domain.GroupsSchedule;
 import capstone._4.dto.schedule.input.ScheduleGroupCreateRequest;
 import capstone._4.dto.schedule.output.GroupScheduleDto;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.repository.schedule.GroupsScheduleRepository;
 import capstone._4.repository.calendar.CalendarRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class ScheduleGroupCreateService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
-    private final CalendarRepository calendarRepository;
+    private final GroupsScheduleRepository groupsScheduleRepository;
 
     @Transactional
     public GroupScheduleDto createGroupSchedule(ScheduleGroupCreateRequest request) {
@@ -62,6 +64,14 @@ public class ScheduleGroupCreateService {
         // 저장
         Schedule saved = scheduleRepository.save(schedule);
 
+        for (User participant : participantList) {
+            GroupsSchedule gs = GroupsSchedule.builder()
+                    .user(participant)
+                    .schedule(saved)
+                    .build();
+            groupsScheduleRepository.save(gs);
+        }
+
         // DTO로 변환하여 반환
         return GroupScheduleDto.builder()
                 .scheduleId(saved.getId())
@@ -72,6 +82,7 @@ public class ScheduleGroupCreateService {
                 .timeflex(saved.getTimeflex())
                 .location(saved.getLocation())
                 .groupUserId(participantList.stream().map(User::getId).toList())
+                .calendarId(saved.getCalendar() != null ? saved.getCalendar().getId() : null)
                 .build();
     }
 
