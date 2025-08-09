@@ -46,8 +46,8 @@ public class FcmService {
 
     }
 
-    public String deleteTopic(Integer groupId,List<String> tokens){
-        String topicName="group"+groupId;
+    public String deleteTopic(String topicName,List<String> tokens){
+        //String topicName="group"+groupId;
         try {
             FirebaseMessaging.getInstance()
                     .unsubscribeFromTopic(tokens, (topicName));
@@ -57,11 +57,13 @@ public class FcmService {
         return topicName;
     }
 
-    public String deleteOneTopic(Integer groupId,String tokens){
-        String topicName="group"+groupId;
+    public String deleteOneTopic(String topicName,String tokens){
+        //String topicName="group"+groupId;
         try {
-            FirebaseMessaging.getInstance()
-                    .unsubscribeFromTopic(Collections.singletonList(tokens), (topicName));
+            if (topicName != null) {
+                FirebaseMessaging.getInstance()
+                        .unsubscribeFromTopic(Collections.singletonList(tokens), (topicName));
+            }
         }catch (FirebaseMessagingException e){
             throw new RuntimeException("토픽 생성중에 문제발생:"+e.getMessage());
         }
