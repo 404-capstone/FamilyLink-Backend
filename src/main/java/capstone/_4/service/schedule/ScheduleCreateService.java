@@ -47,6 +47,7 @@ public class ScheduleCreateService {
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
                 .permission(request.getPermission())
+                .timeflex(request.getTimeflex())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .content(request.getContent())
@@ -66,6 +67,7 @@ public class ScheduleCreateService {
                 .endTime(savedSchedule.getEndTime())
                 .content(savedSchedule.getContent())
                 .permission(savedSchedule.getPermission())
+                .timeflex(request.getTimeflex())
                 .build();
     }
 }

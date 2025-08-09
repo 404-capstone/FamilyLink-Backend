@@ -69,7 +69,7 @@ public class ScheduleGroupCreateService {
                 .startTime(saved.getStartTime())
                 .endTime(saved.getEndTime())
                 .content(saved.getContent())
-                .isTimeFlexible(saved.getTimeflex())
+                .timeflex(saved.getTimeflex())
                 .location(saved.getLocation())
                 .groupUserId(participantList.stream().map(User::getId).toList())
                 .build();
