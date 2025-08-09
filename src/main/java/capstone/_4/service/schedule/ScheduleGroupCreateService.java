@@ -43,7 +43,10 @@ public class ScheduleGroupCreateService {
         }
         User creator = participantList.get(0);
 
-
+        Calendar calendar = group.getCalendar();
+        if (calendar == null) {
+            throw new IllegalArgumentException("그룹에 연결된 캘린더가 없습니다.");
+        }
         // 일정 생성
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
@@ -53,6 +56,7 @@ public class ScheduleGroupCreateService {
                 .location(request.getLocation())
                 .timeflex(request.getTimeflex())
                 .user(creator)
+                .calendar(calendar)
                 .build();
 
         // 저장

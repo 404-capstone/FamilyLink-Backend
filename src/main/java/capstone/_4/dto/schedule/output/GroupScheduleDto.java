@@ -41,4 +41,8 @@ public class GroupScheduleDto {
     @Schema(description = "일정에 참여하는 유저 dbid")
     @JsonProperty("participants")
     private List<Integer> groupUserId;
+
+
+    @Schema(description = "연결된 캘린더 ID")
+    private Integer calendarId;
 }
