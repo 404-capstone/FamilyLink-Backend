@@ -43,9 +43,6 @@ public class ScheduleGroupCreateService {
         }
         User creator = participantList.get(0);
 
-        // 캘린더 조회
-        Calendar calendar = calendarRepository.findById(request.getCalendarId().intValue())
-                .orElseThrow(() -> new IllegalArgumentException("캘린더를 찾을 수 없습니다."));
 
         // 일정 생성
         Schedule schedule = Schedule.builder()
@@ -56,7 +53,6 @@ public class ScheduleGroupCreateService {
                 .location(request.getLocation())
                 .timeflex(request.getTimeflex())
                 .user(creator)
-                .calendar(calendar)
                 .build();
 
         // 저장

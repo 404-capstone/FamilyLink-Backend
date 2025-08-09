@@ -37,10 +37,6 @@ public class ScheduleGroupCreateRequest {
     @Schema(description = "참여자 ID 리스트", example = "[1, 2, 3]")
     private List<Long> participants;
 
-    @Schema(description = "캘린더 ID", example = "1")
-    @NotNull
-    private Long calendarId;
-
     @Schema(description = "가족 그룹 ID", example = "5")
     @NotNull
     private Long groupId;
