@@ -32,11 +32,10 @@ public interface GroupScheduleCreateApi {
                                     value = """
                 {
                   "title": "가족 캠핑",
-                  "startTime": "2025-08-10T09:00:00",
-                  "endTime": "2025-08-12T18:00:00",
+                  "startTime": "2025-08-10 09:00",
+                  "endTime": "2025-08-12T18:00",
                   "content": "모두 함께 즐거운 시간",
                   "groupId": 4,
-                  "calendarId": 2,
                   "location": "강원도",
                   "timeflex": true,
                   "participants": [3]
@@ -58,8 +57,15 @@ public interface GroupScheduleCreateApi {
                               "code": 201,
                               "message": "성공",
                               "data": {
-                                "userId": 1,
-                                "groupId": 10
+                                      "scheduleId": 1,
+                                      "title": "가족 캠핑",
+                                      "startTime": "2025-08-10 09:00",
+                                      "endTime": "2025-08-12 18:00",
+                                      "content": "모두 함께 즐거운 시간",
+                                      "location": "강원도",
+                                      "timeflex": true,
+                                      "participants": [3],
+                                      "calendarId": 5
                               }
                             }
                             """

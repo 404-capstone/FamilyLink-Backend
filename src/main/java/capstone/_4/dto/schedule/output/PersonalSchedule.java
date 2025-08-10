@@ -27,7 +27,7 @@ public class PersonalSchedule {
     private LocalDateTime end_time;
 
     @Schema(description = "일정 변동 여부")
-    private boolean isTimeFlexible;
+    private boolean timeflex;
 
     @Schema(description = "권한 여부")
     private boolean permission;
@@ -37,7 +37,7 @@ public class PersonalSchedule {
         this.title = schedule.getTitle();
         this.start_time = schedule.getStartTime();
         this.end_time = schedule.getEndTime();
-        this.isTimeFlexible= schedule.getTimeflex();
+        this.timeflex= schedule.getTimeflex();
         this.permission = schedule.getPermission();
     }
 }

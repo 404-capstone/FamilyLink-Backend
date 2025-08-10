@@ -97,7 +97,8 @@ public class ScheduleRepository {
                         t.get(schedule.content),     // String  <-- content 꼭 포함
                         t.get(schedule.location),    // String
                         t.get(schedule.timeflex),    // Boolean
-                        new ArrayList<Integer>()     // List<Integer>
+                        new ArrayList<Integer>(),     // List<Integer>
+                        t.get(schedule.calendar.id)
                 );
                 dto.put(scheduleId,groupScheduleDto); //새로 생성했으니,이어서 넣음.
             }

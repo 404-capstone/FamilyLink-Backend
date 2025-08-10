@@ -34,12 +34,13 @@ public interface ScheduleCreateApi {
                                   "code": 201,
                                   "message": "성공",
                                   "data": {
-                                    "id": 123,
+                                    "id": 1,
                                     "title": "회의",
-                                    "startTime": "2025-08-01T09:00:00",
-                                    "endTime": "2025-08-01T10:00:00",
+                                    "startTime": "2025-08-01 09:00:00",
+                                    "endTime": "2025-08-01 10:00:00",
                                     "content": "팀 미팅",
                                     "permission": true,
+                                    "timeflex": false
                                     "user": {
                                         "id": 1,
                                         "username": "홍길동"

@@ -43,7 +43,7 @@ public class Schedule {
     @Column
     private Boolean permission;
 
-    @Column
+    @Column(name = "timeflex", nullable = false)
     private Boolean timeflex;
 
 

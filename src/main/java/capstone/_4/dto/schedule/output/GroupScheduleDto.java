@@ -21,11 +21,11 @@ public class GroupScheduleDto {
     private String title;
 
     @Schema(description = "일정 시작일")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime startTime;
 
     @Schema(description = "일정 종료일")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endTime;
 
     @Schema(description = "일정 내용")
@@ -35,10 +35,14 @@ public class GroupScheduleDto {
     private String location;
 
     @Schema(description = "일정 변동 여부")
-    @JsonProperty("timeflex")  // JSON 필드명을 요청과 동일하게 맞춤
-    private Boolean isTimeFlexible;
+    @JsonProperty("timeflex")
+    private Boolean timeflex;
 
     @Schema(description = "일정에 참여하는 유저 dbid")
-    @JsonProperty("participants")  // 요청과 같은 필드명으로 맞춤
+    @JsonProperty("participants")
     private List<Integer> groupUserId;
+
+
+    @Schema(description = "연결된 캘린더 ID")
+    private Integer calendarId;
 }
