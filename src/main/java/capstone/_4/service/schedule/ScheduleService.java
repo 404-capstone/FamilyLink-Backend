@@ -2,13 +2,14 @@ package capstone._4.service.schedule;
 
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
+import capstone._4.dto.schedule.output.*;
+import capstone._4.repository.schedule.CommentRepository;
+import capstone._4.domain.sch_comment;
 import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.group.output.GroupUserInfoDto;
+import capstone._4.dto.schedule.input.CommentCreateRequest;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
-import capstone._4.dto.schedule.output.GroupScheduleDto;
-import capstone._4.dto.schedule.output.PersonalSchedule;
-import capstone._4.dto.schedule.output.ScheduleInfoDto;
-import capstone._4.dto.schedule.output.ScheduleResponseDto;
+import capstone._4.enums.ErrorCode;
 import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
@@ -16,7 +17,8 @@ import capstone._4.service.other.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -28,6 +30,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final GroupsUserRepository groupsUserRepository;
     private final OpenAiService openAiService;
+    private final CommentRepository commentRepository;
 
     public ScheduleResponseDto getSchedule(Integer groupId) {  //그룹에 해당하는 유저를 찾고, 그룹 전체 가족 일정과,개인 일정들을 조회
         List<GroupUserInfoDto> groupUserInfo= groupsUserRepository.findBygroupId(groupId);
@@ -63,4 +66,40 @@ public class ScheduleService {
     }
 
 
+    /**
+     * 일정 삭제
+     * @param scheduleId 삭제할 일정 ID
+     * @return 삭제 성공 여부
+     */
+    @Transactional
+    public boolean deleteScheduleById(Long scheduleId) {
+        if (!scheduleRepository.existsById(scheduleId)) {
+            return false; // 스케줄이 없으면 false 반환
+        }
+        scheduleRepository.deleteById(scheduleId);
+        log.info("일정 삭제 완료: {}", scheduleId);
+        return true;
+    }
+
+    @Transactional
+    public CommentResponse addComment(CommentCreateRequest request) {
+        Schedule schedule = scheduleRepository.findById(request.getScheduleId())
+                .orElseThrow(() -> new RuntimeException("일정을 찾을 수 없습니다."));
+
+        sch_comment comment = new sch_comment();
+        comment.setSchedule(schedule);
+        comment.setBody(request.getContent());
+        comment.setDateAt(LocalDate.now());
+
+        sch_comment savedComment = commentRepository.save(comment);
+
+        // 엔티티 -> DTO 변환
+        return new CommentResponse(
+                savedComment.getId(),
+                savedComment.getBody(),
+                savedComment.getDateAt(),
+                savedComment.getSchedule().getId().longValue()
+        );
+    }
 }
+

@@ -10,9 +10,10 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class CommentResponse {
+    private Long id;
+    private String body;
+    private LocalDate dateAt;
+    private Long scheduleId;
 
-    private Long id;             // com_id
-    private String body;         // sch_body
-    private LocalDate dateAt;    // date_at
-    private Long scheduleId;     // sch_id
+
 }
