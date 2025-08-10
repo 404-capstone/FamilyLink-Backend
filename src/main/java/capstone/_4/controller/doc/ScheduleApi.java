@@ -6,7 +6,11 @@ import capstone._4.dto.docs.schedule.ScheduleSearchResponse;
 import capstone._4.dto.schedule.input.CommentCreateRequest;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
 import capstone._4.dto.schedule.input.ScheduleCreateRequest;
+import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
+import capstone._4.dto.schedule.output.ScheduleEditResponseDto;
+import capstone._4.enums.ErrorCode;
 import capstone._4.dto.schedule.output.CommentResponse;
+import capstone._4.enums.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -149,5 +154,25 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
     )
     @PostMapping("/comment/add")
     ResponseEntity<?> addComment(@RequestBody CommentCreateRequest request);
+
+
+
+    @Operation(summary = "댓글 조회", description = "특정 일정에 작성된 댓글들을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "댓글 조회 성공",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = CommentResponse.class)))
+
+    @GetMapping("/comment")
+    ResponseEntity<?> getComments(@RequestParam Long scheduleId);
+
+    //일정 수정
+    @Operation(summary = "일정 수정", description = "특정 일정을 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "일정 수정 성공",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ScheduleEditResponseDto.class)))
+    @PutMapping("/edit")
+    ResponseEntity<ApiResponseDto<ScheduleEditResponseDto>> updateSchedule(
+            @RequestBody ScheduleUpdateRequest request
+    );
 }
 
