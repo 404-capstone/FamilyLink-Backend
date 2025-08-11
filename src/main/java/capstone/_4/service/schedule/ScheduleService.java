@@ -1,5 +1,6 @@
 package capstone._4.service.schedule;
 
+import capstone._4.domain.GroupsSchedule;
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
@@ -83,7 +84,7 @@ public class ScheduleService {
         log.info("일정 삭제 완료: {}", scheduleId);
         return true;
     }
-
+    //댓글작성
     @Transactional
     public CommentResponse addComment(CommentCreateRequest request) {
         Schedule schedule = scheduleRepository.findById(request.getScheduleId())
@@ -96,28 +97,70 @@ public class ScheduleService {
 
         sch_comment savedComment = commentRepository.save(comment);
 
-        // 엔티티 -> DTO 변환
+        // Schedule -> ScheduleResponse 변환
+        ScheduleResponse scheduleDto = convertToScheduleResponse(schedule);
+
         return new CommentResponse(
                 savedComment.getId(),
                 savedComment.getBody(),
                 savedComment.getDateAt(),
-                savedComment.getSchedule().getId().longValue()
+                schedule.getId().longValue(),
+                scheduleDto
         );
     }
-
+    //조회
     @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByScheduleId(Long scheduleId) {
         List<sch_comment> comments = commentRepository.findByScheduleId(scheduleId);
 
         return comments.stream()
-                .map(c -> new CommentResponse(
-                        c.getId(),
-                        c.getBody(),
-                        c.getDateAt(),
-                        c.getSchedule().getId().longValue()
-                ))
+                .map(c -> {
+                    ScheduleResponse scheduleDto = convertToScheduleResponse(c.getSchedule());
+                    return new CommentResponse(
+                            c.getId(),
+                            c.getBody(),
+                            c.getDateAt(),
+                            c.getSchedule().getId().longValue(),
+                            scheduleDto
+                    );
+                })
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Schedule 엔티티를 ScheduleResponse로 변환
+     */
+    private ScheduleResponse convertToScheduleResponse(Schedule schedule) {
+        if (schedule.getGroupsSchedule() != null && !schedule.getGroupsSchedule().isEmpty()) {
+            // groupsSchedule 리스트에서 userId 리스트 추출
+            List<Integer> participantIds = schedule.getGroupsSchedule().stream()
+                    .map(gs -> gs.getUser().getId())
+                    .collect(Collectors.toList());
+
+            return new GroupScheduleResponse(
+                    schedule.getId(),
+                    schedule.getTitle(),
+                    schedule.getStartTime(),
+                    schedule.getEndTime(),
+                    schedule.getTimeflex(),
+                    schedule.getContent(),
+                    schedule.getLocation(),
+                    participantIds,
+                    schedule.getCalendar() != null ? schedule.getCalendar().getId() : null
+            );
+        } else {
+            return new PersonalScheduleResponse(
+                    schedule.getId(),
+                    schedule.getTitle(),
+                    schedule.getStartTime(),
+                    schedule.getEndTime(),
+                    schedule.getTimeflex(),
+                    schedule.getPermission()
+            );
+        }
+    }
+
+
 
     @Transactional
     public ScheduleEditResponseDto updateSchedule(ScheduleUpdateRequest request) {
