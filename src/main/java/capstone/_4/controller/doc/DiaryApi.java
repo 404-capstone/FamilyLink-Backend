@@ -1,6 +1,7 @@
 package capstone._4.controller.doc;
 
 import capstone._4.dto.diary.GroupQuestionDetailResponse;
+import capstone._4.dto.diary.input.DiaryCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -8,10 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "다이어리",description = "다이어리 기능 관련 api")
 @RequestMapping("/diary")
@@ -73,4 +71,10 @@ public interface DiaryApi {
     @ApiResponse(responseCode = "204",description = "삭제 성공")
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteDiary(@RequestParam Integer diaryId);
+
+
+    @Operation(summary = "다이어리 작성", description = "새로운 다이어리를 작성합니다.")
+    @ApiResponse(responseCode = "200", description = "작성 성공")
+    @PostMapping("/write")
+    public ResponseEntity<?> writeDiary(@RequestBody DiaryCreateRequest request);
 }

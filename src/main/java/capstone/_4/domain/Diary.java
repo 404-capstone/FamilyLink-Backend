@@ -2,22 +2,25 @@ package capstone._4.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "diary")
 @NoArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 public class Diary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "di_id")
     private Integer id;
-
-    @Column(name = "di_title")
-    private String title;
 
     @Column(name = "di_content")
     private String content;
