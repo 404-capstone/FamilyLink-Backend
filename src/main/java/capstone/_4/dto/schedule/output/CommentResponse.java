@@ -14,6 +14,5 @@ public class CommentResponse {
     private String body;
     private LocalDate dateAt;
     private Long scheduleId;
-
-
+    private ScheduleResponse schedule;
 }

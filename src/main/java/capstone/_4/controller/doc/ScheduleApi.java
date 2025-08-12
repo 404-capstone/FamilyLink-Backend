@@ -9,6 +9,7 @@ import capstone._4.dto.schedule.output.ScheduleEditResponseDto;
 import capstone._4.dto.schedule.output.CommentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -152,11 +153,10 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
 
 
 
-    @Operation(summary = "댓글 조회", description = "특정 일정에 작성된 댓글들을 조회합니다.")
+    @Operation(summary = "일정 상세 조회", description = "특정 일정에 작성된 댓글과 일정들을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "댓글 조회 성공",
             content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = CommentResponse.class)))
-
+                    array = @ArraySchema(schema = @Schema(implementation = CommentResponse.class))))
     @GetMapping("/comment")
     ResponseEntity<?> getComments(@RequestParam Long scheduleId);
 
@@ -167,6 +167,7 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
                     schema = @Schema(implementation = ScheduleEditResponseDto.class)))
     @PutMapping("/edit")
     ResponseEntity<ApiResponseDto<ScheduleEditResponseDto>> updateSchedule(
+            @Parameter(description = "수정할 일정 정보", required = true)
             @RequestBody ScheduleUpdateRequest request
     );
 
