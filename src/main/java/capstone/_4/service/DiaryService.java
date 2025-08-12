@@ -11,6 +11,7 @@ import capstone._4.dto.diary.QuestionAnswerResponse;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
+import capstone._4.dto.diary.output.DiaryDetailResponse;
 import capstone._4.repository.diary.DiaryJpaRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
@@ -119,4 +120,19 @@ public class DiaryService {
                 })
                 .toList();
     }
+
+    public DiaryDetailResponse getDiaryDetail(Long diaryId) {
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new EntityNotFoundException("다이어리를 찾을 수 없습니다."));
+
+        int userId = diary.getUser() != null ? diary.getUser().getId() : null;
+
+        return new DiaryDetailResponse(
+                diary.getId() != null ? diary.getId().longValue() : null,
+                diary.getContent(),
+                diary.getTime(),
+                diary.getUser() != null ? diary.getUser().getId().longValue() : null
+        );
+    }
+
 }

@@ -88,4 +88,9 @@ public interface DiaryApi {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @GetMapping("/all/search")
     ResponseEntity<?> getDiaryAndQuestions(@RequestParam Integer groupQuestionId);
+
+    @Operation(summary = "다이어리 상세 정보 조회", description = "다이어리 상세 정보를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @GetMapping("/search")
+    ResponseEntity<?> getDiaryDetail(@RequestParam Long diaryId);
 }

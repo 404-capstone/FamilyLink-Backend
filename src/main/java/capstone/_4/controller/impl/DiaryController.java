@@ -6,6 +6,7 @@ import capstone._4.dto.diary.GroupQuestionDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
+import capstone._4.dto.diary.output.DiaryDetailResponse;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
 import jakarta.validation.Valid;
@@ -73,5 +74,14 @@ public class DiaryController implements DiaryApi {
             @RequestParam Integer groupQuestionId) {
         List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(groupQuestionId);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<?> getDiaryDetail(Long diaryId) {
+        DiaryDetailResponse response = diaryService.getDiaryDetail(diaryId);
+        return ResponseEntity.ok(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                response));
     }
 }
