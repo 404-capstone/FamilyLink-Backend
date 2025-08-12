@@ -204,9 +204,9 @@ public class ScheduleService {
     }
 
     public OptimalResponse optimalSchedule(ScheduleOptimizeRequest optimalSchedule) {
-//        List<Integer> userIds = groupsUserRepository.findBygroupId(optimalSchedule.getGroupId()) 이제는 그룹활동에 참여하는 인원만 담아서 보내기.
-//                .stream().map(GroupUserInfoDto::getUserId).toList();
-        List<Schedule>personalSchedule=scheduleRepository.getScheduleWithDay(optimalSchedule.getGroupId(),optimalSchedule.getDate());
+        List<String> userRole = userRepository.findByIds(optimalSchedule.getMemberIds())
+                .stream().map((u)->u.getGroupsuser().get(0).getRole()).toList();
+        List<Schedule>personalSchedule=scheduleRepository.getScheduleWithDay(optimalSchedule.getGroupId(),optimalSchedule.getDate(),optimalSchedule.getMemberIds());
 
         Map<Integer,List<Schedule>> byUserScheduel=personalSchedule
                 .stream().collect(Collectors.groupingBy(s->s.getUser().getId()));
@@ -225,7 +225,11 @@ public class ScheduleService {
                 .retrieve()
                 .bodyToMono(SchedulelOptimizeApiResponse.class)
                 .block();
-        return new OptimalResponse(optimalSchedule.getGroupId(), );
+
+         BeforeSchedule beforeSchedule=new BeforeSchedule(personalSchedule);
+         AfterSchedule afterSchedule = new AfterSchedule(personalSchedule,schedulelOptimizeApiResponse,
+                 optimalSchedule.getTitle(),optimalSchedule.getMemberIds(),userRole);
+        return new OptimalResponse(optimalSchedule.getGroupId(),beforeSchedule,afterSchedule);
 
     }
 

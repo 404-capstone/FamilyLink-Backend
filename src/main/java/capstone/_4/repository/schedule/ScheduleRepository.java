@@ -142,7 +142,7 @@ public class ScheduleRepository {
         return Optional.ofNullable(em.find(Schedule.class, id));
     }
 
-    public List<Schedule> getScheduleWithDay(Integer groupId,LocalDate date) { //개인 일정들만 일단 조회.
+    public List<Schedule> getScheduleWithDay(Integer groupId,LocalDate date,List<Integer> memberIds) { //개인 일정들만 일단 조회.
         LocalDateTime start=date.atStartOfDay(); //하루시작
         LocalDateTime end=start.plusDays(1); //다음날까지.
         return em.createQuery("select s " +
@@ -152,11 +152,14 @@ public class ScheduleRepository {
                         "where c.groups=:groupId " +
                         "and s.startTime >= :start " +
                         "and s.endTime < :end " +
-                        "and gs.id is null ",Schedule.class
+                        "and gs.id is null " +
+                        "and s.user.id in :memberIds " +
+                        "order by s.startTime,s.endTime",Schedule.class
                 )
                 .setParameter("groupId", groupId)
                 .setParameter("start", start)
                 .setParameter("end", end)
+                .setParameter("memberIds", memberIds)
                 .getResultList();
 
     }

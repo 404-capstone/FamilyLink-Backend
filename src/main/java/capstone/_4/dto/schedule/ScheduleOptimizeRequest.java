@@ -20,6 +20,9 @@ public class ScheduleOptimizeRequest {
     @Schema(description = "그룹id")
     private Integer groupId;
 
+    @Schema(description = "그룹 이름.")
+    private String title;
+
     @Schema(description = "그룹 일정 시작 시간")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime startTime;

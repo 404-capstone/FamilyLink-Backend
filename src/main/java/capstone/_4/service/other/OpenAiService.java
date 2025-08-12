@@ -69,7 +69,7 @@ public class OpenAiService {
      * question안에 contetn에 문제 여러개 존재
      */
     //@Scheduled(cron = "0 0 9 ? * MON")
-    public void createQuestion() {
+    public OpenAiQuestionContent createQuestion() {
         log.info("질문지 만들기 시작.");
         OpenAiRequestDto openAiRequestDto = new OpenAiRequestDto();
         openAiRequestDto.setModel("gpt-4.1-nano");  //모델 설정
@@ -93,6 +93,7 @@ public class OpenAiService {
             ObjectMapper objectMapper = new ObjectMapper();
             OpenAiQuestionContent content = objectMapper.readValue(question, OpenAiQuestionContent.class);  //변환하기 json형태로.
             questionService.questionSave(content);
+            return content;
             //저장하기 로직
         } catch (JsonMappingException e) {
             throw new RuntimeException("json 매핑중 오류 발생: " + e);
