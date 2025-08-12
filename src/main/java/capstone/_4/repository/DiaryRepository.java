@@ -4,15 +4,23 @@ import capstone._4.domain.*;
 import capstone._4.domain.question.*;
 import capstone._4.dto.diary.QuestionAnswerResponse;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import capstone._4.domain.Diary;
+import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.QDiary;
+import capstone._4.domain.question.QGroupQuestion;
 
 import java.util.List;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -31,6 +39,20 @@ public class DiaryRepository {
             throw new EntityNotFoundException("다이어리를 찾을수 없습니다.");
         }
         em.remove(diary);
+    }
+    //저장
+    @Transactional
+    public Diary save(Diary diary) {
+        if (diary.getId() == null) {
+            em.persist(diary);
+            return diary;
+        } else {
+            return em.merge(diary);
+        }
+    }
+    //다이어리 아이디 검색
+    public Optional<Diary> findById(Long id) {
+        return Optional.ofNullable(em.find(Diary.class, id));
     }
 
     public List<GroupQuestion> findAllQuestion(Integer diaryId) { //그룹이랑 맞는 질문지를 일단 가져옴.
@@ -62,7 +84,7 @@ public class DiaryRepository {
                 .join(groupAnswer.user.groupsuser,gsUser)
                 .where(groupQuestion.id.in(questionId))
                 .fetch();
-        return tuples.stream().collect(Collectors //map형태로,볃ㄴ샤ㅐㅜ
+        return tuples.stream().collect(Collectors //map형태로,
                 .groupingBy(t ->
                     t.get(groupQuestion.id), //키
                         Collectors.mapping(t->new QuestionAnswerResponse( //값.
@@ -70,5 +92,18 @@ public class DiaryRepository {
                         ),
                                 Collectors.toList())
                 ));
+    }
+
+    public List<Tuple> findDiaryAndQuestion(Integer groupQuestionId) {
+        QGroupQuestion groupQuestion = QGroupQuestion.groupQuestion;
+
+        PathBuilder<Diary> diaryPath = new PathBuilder<>(Diary.class, "diary");
+
+        return queryFactory
+                .select(diaryPath, groupQuestion)
+                .from(diaryPath)
+                .join(diaryPath.get("groupQuestion", GroupQuestion.class), groupQuestion)
+                .where(groupQuestion.id.eq(groupQuestionId))
+                .fetch();
     }
 }

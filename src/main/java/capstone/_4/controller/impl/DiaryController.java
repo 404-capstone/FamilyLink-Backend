@@ -4,14 +4,20 @@ import capstone._4.controller.doc.DiaryApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.diary.GroupQuestionDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
+import capstone._4.dto.diary.input.DiaryCreateRequest;
+import capstone._4.dto.diary.output.DiaryCreateResponse;
+import capstone._4.dto.diary.output.DiaryDetailResponse;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 
 import java.util.List;
+
 
 @RestController
 @Slf4j
@@ -44,5 +50,38 @@ public class DiaryController implements DiaryApi {
         diaryService.deleteDiary(diaryId);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.DELETE_SUCCESS.getCode()
                 ,ResponseEnum.DELETE_SUCCESS.getMessage(),"삭제가 완료되었습니다." ));
+    }
+
+
+    /**
+     * 다이어리 작성 API.
+     * @param request 다이어리 작성 요청 DTO
+     * @return 생성된 다이어리 정보
+     */
+    @Override
+    public ResponseEntity<?> writeDiary(DiaryCreateRequest request) {
+        DiaryCreateResponse diaryResponse = diaryService.createDiary(request);
+
+        return ResponseEntity.ok().body(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                diaryResponse
+        ));
+    }
+
+    @GetMapping("/all/search")
+    public ResponseEntity<List<DiaryAllSearchResponse>> getDiaryAndQuestions(
+            @RequestParam Integer groupQuestionId) {
+        List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(groupQuestionId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<?> getDiaryDetail(Long diaryId) {
+        DiaryDetailResponse response = diaryService.getDiaryDetail(diaryId);
+        return ResponseEntity.ok(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                response));
     }
 }
