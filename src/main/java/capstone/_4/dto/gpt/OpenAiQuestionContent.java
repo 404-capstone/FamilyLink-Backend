@@ -19,7 +19,7 @@ public class OpenAiQuestionContent {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public class Question {
+    public static class Question {
         private String content;
     }
 }

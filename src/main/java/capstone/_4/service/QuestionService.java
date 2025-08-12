@@ -31,6 +31,7 @@ public class QuestionService {
      */
     @Transactional
     public void questionSave(OpenAiQuestionContent content){ //생성된 질문 저장.
+        log.info("Question save");
         List<QuestionInventory> q=content.getQuestions().stream()
                 .map(OpenAiQuestionContent.Question::getContent)
                 .map(QuestionInventory::new)

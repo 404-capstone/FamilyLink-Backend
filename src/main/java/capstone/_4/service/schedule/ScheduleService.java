@@ -226,10 +226,9 @@ public class ScheduleService {
                 .bodyToMono(SchedulelOptimizeApiResponse.class)
                 .block();
 
-         BeforeSchedule beforeSchedule=new BeforeSchedule(personalSchedule);
-         AfterSchedule afterSchedule = new AfterSchedule(personalSchedule,schedulelOptimizeApiResponse,
-                 optimalSchedule.getTitle(),optimalSchedule.getMemberIds(),userRole);
-        return new OptimalResponse(optimalSchedule.getGroupId(),beforeSchedule,afterSchedule);
+        return new OptimalResponse(optimalSchedule.getGroupId(),new BeforeSchedule(personalSchedule),
+                new AfterSchedule(personalSchedule,schedulelOptimizeApiResponse,
+                optimalSchedule.getTitle(),optimalSchedule.getMemberIds(),userRole));
 
     }
 

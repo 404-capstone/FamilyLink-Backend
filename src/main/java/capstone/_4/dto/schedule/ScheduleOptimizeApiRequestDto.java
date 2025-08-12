@@ -16,7 +16,7 @@ public class ScheduleOptimizeApiRequestDto {
         this.memberId = memberId;
         this.personalscheduleDetail=schedules.stream().map((s)->{
             return ScheduleOptimizeDetailRequestDto.builder()
-                    .schduleId(s.getId())
+                    .scheduleId(s.getId())
                     .startTime(s.getStartTime())
                     .endTime(s.getEndTime())
                     .permission(s.getPermission())
