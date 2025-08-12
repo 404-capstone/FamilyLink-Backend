@@ -2,10 +2,7 @@ package capstone._4.service.schedule;
 
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
-import capstone._4.dto.schedule.OptimalResponse;
-import capstone._4.dto.schedule.OptimizeRequest;
-import capstone._4.dto.schedule.ScheduleOptimizeApiRequestDto;
-import capstone._4.dto.schedule.ScheduleOptimizeRequest;
+import capstone._4.dto.schedule.*;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.*;
 import capstone._4.repository.schedule.CommentRepository;
@@ -180,11 +177,13 @@ public class ScheduleService {
         OptimizeRequest optimizeRequest=new OptimizeRequest(optimalSchedule,detailSchedule);
 
         //fastapi 요청.
-        return webClient.post().uri("/schedule/optimization")
+         AfterSchedule afterSchedule=webClient.post().uri("/schedule/optimization")
                 .bodyValue(optimizeRequest)
                 .retrieve()
-                .bodyToMono(OptimalResponse.class)
+                .bodyToMono(AfterSchedule.class)
                 .block();
+        return new OptimalResponse(optimalSchedule.getGroupId(), optimizeRequest,afterSchedule);
+
     }
 
     private static List<Schedule> getSchedule(List<Schedule> schedule) {
