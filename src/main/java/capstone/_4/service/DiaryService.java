@@ -37,9 +37,9 @@ public class DiaryService {
         }
     }
 
-    public GroupQuestionDetailResponse searchQuestion(Integer qaId) {
+    public GroupQuestionDetailResponse searchQuestion(Integer qaId,Integer groupId) {
 
-        List<GroupQuestion> questionsInfo=diaryRepository.findAllQuestion(qaId); //질문지 정보,이미 전에 조회했을때 그룹정보를 썻기때문에 여기서는 필요x
+        List<GroupQuestion> questionsInfo=diaryRepository.findAllQuestion(qaId,groupId); //질문지 정보,이미 전에 조회했을때 그룹정보를 썻기때문에 여기서는 필요x
 
         List<Integer> questionIds = questionsInfo.stream() //문제 id 정리.
                 .map(GroupQuestion::getId).toList();

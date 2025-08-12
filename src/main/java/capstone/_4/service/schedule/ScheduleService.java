@@ -177,12 +177,12 @@ public class ScheduleService {
         OptimizeRequest optimizeRequest=new OptimizeRequest(optimalSchedule,detailSchedule);
 
         //fastapi 요청.
-         AfterSchedule afterSchedule=webClient.post().uri("/schedule/optimization")
+         SchedulelOptimizeApiResponse schedulelOptimizeApiResponse =webClient.post().uri("/schedule/optimization")
                 .bodyValue(optimizeRequest)
                 .retrieve()
-                .bodyToMono(AfterSchedule.class)
+                .bodyToMono(SchedulelOptimizeApiResponse.class)
                 .block();
-        return new OptimalResponse(optimalSchedule.getGroupId(), optimizeRequest,afterSchedule);
+        return new OptimalResponse(optimalSchedule.getGroupId(), );
 
     }
 
