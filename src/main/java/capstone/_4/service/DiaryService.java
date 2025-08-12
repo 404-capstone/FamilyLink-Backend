@@ -1,17 +1,22 @@
 package capstone._4.service;
 
 import capstone._4.domain.Diary;
+import capstone._4.domain.QDiary;
 import capstone._4.domain.User;
 import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.question.QGroupQuestion;
 import capstone._4.dto.diary.GroupQuestionDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.QuestionAnswerResponse;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
+import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
+import capstone._4.repository.diary.DiaryJpaRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
 import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.group.GroupsUserRepository;
+import com.querydsl.core.Tuple;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +39,7 @@ public class DiaryService {
     private final GroupsUserRepository groupsUserRepository;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
-
+    private final DiaryJpaRepository diaryJpaRepository;
     @Transactional
     public void deleteDiary(Integer diaryId) {
         try{
@@ -97,4 +102,21 @@ public class DiaryService {
         );
     }
 
+    public List<DiaryAllSearchResponse> getDiaryAndQuestions(Integer groupQuestionId) {
+        List<Object[]> results = diaryJpaRepository.findDiaryAndQuestion(groupQuestionId);
+
+        return results.stream()
+                .map(row -> {
+                    Diary diary = (Diary) row[0];
+                    GroupQuestion groupQuestion = (GroupQuestion) row[1];
+                    return new DiaryAllSearchResponse(
+                            diary.getId(),
+                            diary.getContent(),
+                            diary.getTime(),
+                            groupQuestion.getId(),
+                            groupQuestion.getQuestionInventory().getContent()
+                    );
+                })
+                .toList();
+    }
 }

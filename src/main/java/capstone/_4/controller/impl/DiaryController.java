@@ -12,11 +12,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 
 import java.util.List;
+
 
 @RestController
 @Slf4j
@@ -66,5 +66,12 @@ public class DiaryController implements DiaryApi {
                 ResponseEnum.SUCCESS.getMessage(),
                 diaryResponse
         ));
+    }
+
+    @GetMapping("/all/search")
+    public ResponseEntity<List<DiaryAllSearchResponse>> getDiaryAndQuestions(
+            @RequestParam Integer groupQuestionId) {
+        List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(groupQuestionId);
+        return ResponseEntity.ok(response);
     }
 }

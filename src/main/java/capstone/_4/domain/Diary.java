@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import capstone._4.domain.question.GroupQuestion;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,11 @@ public class Diary {
 
     @Column(name = "diary_at")
     private LocalDateTime time;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gq_id")
+    @JsonManagedReference
+    private GroupQuestion groupQuestion;
 
     @ManyToOne
     @JoinColumn(name = "u_id")

@@ -4,6 +4,7 @@ import capstone._4.domain.*;
 import capstone._4.domain.question.*;
 import capstone._4.dto.diary.QuestionAnswerResponse;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,7 +12,12 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import capstone._4.domain.Diary;
+import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.QDiary;
+import capstone._4.domain.question.QGroupQuestion;
 
+import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,5 +92,18 @@ public class DiaryRepository {
                         ),
                                 Collectors.toList())
                 ));
+    }
+
+    public List<Tuple> findDiaryAndQuestion(Integer groupQuestionId) {
+        QGroupQuestion groupQuestion = QGroupQuestion.groupQuestion;
+
+        PathBuilder<Diary> diaryPath = new PathBuilder<>(Diary.class, "diary");
+
+        return queryFactory
+                .select(diaryPath, groupQuestion)
+                .from(diaryPath)
+                .join(diaryPath.get("groupQuestion", GroupQuestion.class), groupQuestion)
+                .where(groupQuestion.id.eq(groupQuestionId))
+                .fetch();
     }
 }
