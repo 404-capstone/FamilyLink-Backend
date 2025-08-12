@@ -2,6 +2,10 @@ package capstone._4.service.schedule;
 
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
+import capstone._4.dto.schedule.OptimalResponse;
+import capstone._4.dto.schedule.OptimizeRequest;
+import capstone._4.dto.schedule.ScheduleOptimizeApiRequestDto;
+import capstone._4.dto.schedule.ScheduleOptimizeRequest;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.*;
 import capstone._4.repository.schedule.CommentRepository;
@@ -10,22 +14,22 @@ import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.dto.schedule.input.CommentCreateRequest;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
-import capstone._4.enums.ErrorCode;
 import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.OpenAiService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class ScheduleService {
 
     private final UserRepository userRepository;
@@ -33,6 +37,20 @@ public class ScheduleService {
     private final GroupsUserRepository groupsUserRepository;
     private final OpenAiService openAiService;
     private final CommentRepository commentRepository;
+    private final WebClient webClient;
+
+    public ScheduleService(UserRepository userRepository, ScheduleRepository scheduleRepository,
+                           GroupsUserRepository groupsUserRepository,
+                           OpenAiService openAiService,
+                           CommentRepository commentRepository,
+                           @Qualifier("FastApiWebClient") WebClient webClient) {
+        this.userRepository = userRepository;
+        this.scheduleRepository = scheduleRepository;
+        this.groupsUserRepository = groupsUserRepository;
+        this.openAiService = openAiService;
+        this.commentRepository = commentRepository;
+        this.webClient = webClient;
+    }
 
     public ScheduleResponseDto getSchedule(Integer groupId) {  //그룹에 해당하는 유저를 찾고, 그룹 전체 가족 일정과,개인 일정들을 조회
         List<GroupUserInfoDto> groupUserInfo = groupsUserRepository.findBygroupId(groupId);
@@ -142,6 +160,29 @@ public class ScheduleService {
                 updatedSchedule.getLocation(),
                 updatedSchedule.getTimeflex()
         );
+    }
+
+    public OptimalResponse optimalSchedule(ScheduleOptimizeRequest optimalSchedule) {
+        List<Integer> userIds = groupsUserRepository.findBygroupId(optimalSchedule.getGroupId())
+                .stream().map(GroupUserInfoDto::getUserId).toList();
+        List<Schedule>personalSchedule=scheduleRepository.getScheduleWithDay(optimalSchedule.getGroupId(),optimalSchedule.getDate());
+//유저와 스케쥴을 모으고. 유저별로 나누어서 주기.
+        List<ScheduleOptimizeApiRequestDto> detailSchedule=userIds.stream()
+                .map((id)->{
+                    List<Schedule> schedule=personalSchedule.stream()
+                            .filter(s->s.getUser().getId()==id)
+                            .toList();
+                    return new ScheduleOptimizeApiRequestDto(id,schedule);
+                })
+                .toList();
+        OptimizeRequest optimizeRequest=new OptimizeRequest(optimalSchedule,detailSchedule);
+
+        //fastapi 요청.
+        return webClient.post().uri("/schedule/optimization")
+                .bodyValue(optimizeRequest)
+                .retrieve()
+                .bodyToMono(OptimalResponse.class)
+                .block();
     }
 }
 
