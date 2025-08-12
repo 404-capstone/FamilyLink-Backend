@@ -148,15 +148,12 @@ public class ScheduleRepository {
         return em.createQuery("select s " +
                         "from Schedule s " +
                         "left join s.groupsSchedule gs " +
-                        "left join s.calendar c " +
-                        "where c.groups=:groupId " +
-                        "and s.startTime >= :start " +
+                        "where s.startTime >= :start " +
                         "and s.endTime < :end " +
                         "and gs.id is null " +
                         "and s.user.id in :memberIds " +
                         "order by s.startTime,s.endTime",Schedule.class
                 )
-                .setParameter("groupId", groupId)
                 .setParameter("start", start)
                 .setParameter("end", end)
                 .setParameter("memberIds", memberIds)

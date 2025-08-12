@@ -20,12 +20,12 @@ public class ScheduleCreateRequest {
     @Schema(description = "시간 변동 가능 여부", example = "false")
     private Boolean timeflex;
 
-    @Schema(description = "일정 시작 시간", example = "2025-08-10 14:00")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Schema(description = "일정 시작 시간", example = "2025-08-10T14:00")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startTime;
 
     @Schema(description = "일정 종료 시간", example = "2025-08-10T16:00")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
 
     @Schema(description = "장소", example = "서울 강남역 회의실")

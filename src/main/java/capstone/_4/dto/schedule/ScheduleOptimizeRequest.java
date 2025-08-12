@@ -24,11 +24,11 @@ public class ScheduleOptimizeRequest {
     private String title;
 
     @Schema(description = "그룹 일정 시작 시간")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startTime;
 
     @Schema(description = "그룹 일정 종료 시간")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
 
     @Schema(description = "일정 참여 인원.")

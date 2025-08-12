@@ -26,7 +26,7 @@ public class PhotoInfoDto {
     @Schema(description = "사진 장소")
     private String area;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Schema(description = "사진 추가 날짜")
     private LocalDateTime time;
 

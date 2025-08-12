@@ -15,10 +15,10 @@ import java.util.List;
 public class ScheduleResponse {
     private Integer scheduleId;     // 공통: 일정 ID
     private String title;           // 공통: 제목
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startTime;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
     private Boolean timeflex;       // 공통: 시간 변동 여부
 }

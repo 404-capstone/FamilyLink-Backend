@@ -204,13 +204,15 @@ public class ScheduleService {
     }
 
     public OptimalResponse optimalSchedule(ScheduleOptimizeRequest optimalSchedule) {
+        log.info("유저 찾기.");
         List<String> userRole = userRepository.findByIds(optimalSchedule.getMemberIds())
                 .stream().map((u)->u.getGroupsuser().get(0).getRole()).toList();
         List<Schedule>personalSchedule=scheduleRepository.getScheduleWithDay(optimalSchedule.getGroupId(),optimalSchedule.getDate(),optimalSchedule.getMemberIds());
-
+        log.info("유저별 스케쥴 나누기 실행.");
         Map<Integer,List<Schedule>> byUserScheduel=personalSchedule
                 .stream().collect(Collectors.groupingBy(s->s.getUser().getId()));
 //유저와 스케쥴을 모으고. 유저별로 나누어서 주기.
+        log.info("요청 dto작성");
         List<ScheduleOptimizeApiRequestDto> detailSchedule=optimalSchedule.getMemberIds().stream()
                 .map((id)->{
                     return new ScheduleOptimizeApiRequestDto(id,
@@ -220,12 +222,14 @@ public class ScheduleService {
         OptimizeRequest optimizeRequest=new OptimizeRequest(optimalSchedule,detailSchedule);
 
         //fastapi 요청.
+        log.info("api요청");
          SchedulelOptimizeApiResponse schedulelOptimizeApiResponse =webClient.post().uri("/schedule/optimization")
                 .bodyValue(optimizeRequest)
                 .retrieve()
                 .bodyToMono(SchedulelOptimizeApiResponse.class)
                 .block();
 
+        log.info("응답하기.");
         return new OptimalResponse(optimalSchedule.getGroupId(),new BeforeSchedule(personalSchedule),
                 new AfterSchedule(personalSchedule,schedulelOptimizeApiResponse,
                 optimalSchedule.getTitle(),optimalSchedule.getMemberIds(),userRole));
