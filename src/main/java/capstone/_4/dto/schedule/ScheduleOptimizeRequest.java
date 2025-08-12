@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +27,9 @@ public class ScheduleOptimizeRequest {
     @Schema(description = "그룹 일정 종료 시간")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endTime;
+
+    @Schema(description = "일정 참여 인원.")
+    private List<Integer> memberIds;
 
     @Schema(description = "최적화할 날짜")
     @JsonFormat(pattern = "yyyy-MM-dd")

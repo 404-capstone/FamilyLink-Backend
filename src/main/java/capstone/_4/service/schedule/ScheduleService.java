@@ -26,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -163,16 +164,17 @@ public class ScheduleService {
     }
 
     public OptimalResponse optimalSchedule(ScheduleOptimizeRequest optimalSchedule) {
-        List<Integer> userIds = groupsUserRepository.findBygroupId(optimalSchedule.getGroupId())
-                .stream().map(GroupUserInfoDto::getUserId).toList();
+//        List<Integer> userIds = groupsUserRepository.findBygroupId(optimalSchedule.getGroupId()) 이제는 그룹활동에 참여하는 인원만 담아서 보내기.
+//                .stream().map(GroupUserInfoDto::getUserId).toList();
         List<Schedule>personalSchedule=scheduleRepository.getScheduleWithDay(optimalSchedule.getGroupId(),optimalSchedule.getDate());
+
+        Map<Integer,List<Schedule>> byUserScheduel=personalSchedule
+                .stream().collect(Collectors.groupingBy(s->s.getUser().getId()));
 //유저와 스케쥴을 모으고. 유저별로 나누어서 주기.
-        List<ScheduleOptimizeApiRequestDto> detailSchedule=userIds.stream()
+        List<ScheduleOptimizeApiRequestDto> detailSchedule=optimalSchedule.getMemberIds().stream()
                 .map((id)->{
-                    List<Schedule> schedule=personalSchedule.stream()
-                            .filter(s->s.getUser().getId()==id)
-                            .toList();
-                    return new ScheduleOptimizeApiRequestDto(id,schedule);
+                    return new ScheduleOptimizeApiRequestDto(id,
+                            byUserScheduel.getOrDefault(id, List.of()));
                 })
                 .toList();
         OptimizeRequest optimizeRequest=new OptimizeRequest(optimalSchedule,detailSchedule);
@@ -183,6 +185,10 @@ public class ScheduleService {
                 .retrieve()
                 .bodyToMono(OptimalResponse.class)
                 .block();
+    }
+
+    private static List<Schedule> getSchedule(List<Schedule> schedule) {
+        return schedule;
     }
 }
 

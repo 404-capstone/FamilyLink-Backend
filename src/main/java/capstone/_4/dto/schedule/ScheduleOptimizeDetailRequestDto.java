@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ScheduleOptimizeDetailRequestDto {
-    private Integer schduleId;
+    private Integer scheduleId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Boolean permission;
