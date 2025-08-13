@@ -5,10 +5,23 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface DiaryJpaRepository extends JpaRepository<Diary, Long> {
 
-    @Query("SELECT d, gq FROM Diary d JOIN d.groupQuestion gq WHERE gq.id = :groupQuestionId")
-    List<Object[]> findDiaryAndQuestion(@Param("groupQuestionId") Integer groupQuestionId);
+    @Query("""
+    SELECT d, g
+    FROM Diary d
+    JOIN d.groupQuestion g
+    WHERE DATE(d.time) = :targetDate
+""")
+    List<Object[]> findDiaryAndQuestionByDate(@Param("targetDate") LocalDate targetDate);
+
+    @Query("""
+        SELECT d
+        FROM Diary d
+        WHERE FUNCTION('DATE', d.time) = :targetDate
+    """)
+    List<Diary> findByDate(@Param("targetDate") LocalDate targetDate);
 }

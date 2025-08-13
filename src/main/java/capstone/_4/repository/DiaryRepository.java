@@ -106,4 +106,6 @@ public class DiaryRepository {
                 .where(groupQuestion.id.eq(groupQuestionId))
                 .fetch();
     }
+
+
 }

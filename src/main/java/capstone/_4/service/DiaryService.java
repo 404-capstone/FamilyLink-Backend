@@ -102,9 +102,9 @@ public class DiaryService {
                 savedDiary.getUser().getId().longValue()
         );
     }
-
-    public List<DiaryAllSearchResponse> getDiaryAndQuestions(Integer groupQuestionId) {
-        List<Object[]> results = diaryJpaRepository.findDiaryAndQuestion(groupQuestionId);
+    //다이어리 전체 조회 (일기 + 질문)
+    public List<DiaryAllSearchResponse> getDiaryAndQuestions(LocalDate targetDate) {
+        List<Object[]> results = diaryJpaRepository.findDiaryAndQuestionByDate(targetDate);
 
         return results.stream()
                 .map(row -> {
@@ -120,19 +120,22 @@ public class DiaryService {
                 })
                 .toList();
     }
+    //다이어리 상세 조회
+    public List<DiaryDetailResponse> getDiaryDetailByDate(LocalDate targetDate) {
+        List<Diary> diaries = diaryJpaRepository.findByDate(targetDate);
 
-    public DiaryDetailResponse getDiaryDetail(Long diaryId) {
-        Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new EntityNotFoundException("다이어리를 찾을 수 없습니다."));
+        if (diaries.isEmpty()) {
+            throw new EntityNotFoundException("해당 날짜에 다이어리가 없습니다.");
+        }
 
-        int userId = diary.getUser() != null ? diary.getUser().getId() : null;
-
-        return new DiaryDetailResponse(
-                diary.getId() != null ? diary.getId().longValue() : null,
-                diary.getContent(),
-                diary.getTime(),
-                diary.getUser() != null ? diary.getUser().getId().longValue() : null
-        );
+        return diaries.stream()
+                .map(diary -> new DiaryDetailResponse(
+                        diary.getId().longValue(),
+                        diary.getContent(),
+                        diary.getTime(),
+                        diary.getUser() != null ? diary.getUser().getId().longValue() : null
+                ))
+                .toList();
     }
 
 }

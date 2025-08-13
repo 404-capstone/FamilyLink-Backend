@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -71,17 +72,18 @@ public class DiaryController implements DiaryApi {
 
     @GetMapping("/all/search")
     public ResponseEntity<List<DiaryAllSearchResponse>> getDiaryAndQuestions(
-            @RequestParam Integer groupQuestionId) {
-        List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(groupQuestionId);
+            @RequestParam LocalDate targetDate) {
+        List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(targetDate);
         return ResponseEntity.ok(response);
     }
-
+    //다이어리 상세조회
     @Override
-    public ResponseEntity<?> getDiaryDetail(Long diaryId) {
-        DiaryDetailResponse response = diaryService.getDiaryDetail(diaryId);
+    public ResponseEntity<?> getDiaryDetail(LocalDate targetDate) {
+        List<DiaryDetailResponse> responses = diaryService.getDiaryDetailByDate(targetDate);
         return ResponseEntity.ok(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),
-                response));
+                responses
+        ));
     }
 }

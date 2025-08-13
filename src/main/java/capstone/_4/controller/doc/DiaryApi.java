@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "다이어리",description = "다이어리 기능 관련 api")
@@ -87,10 +88,10 @@ public interface DiaryApi {
     @Operation(summary = "특정 그룹 질문에 해당하는 다이어리와 질문 조회", description = "특정 그룹 질문 ID에 해당하는 다이어리와 질문을 함께 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @GetMapping("/all/search")
-    ResponseEntity<?> getDiaryAndQuestions(@RequestParam Integer groupQuestionId);
+    ResponseEntity<?> getDiaryAndQuestions(@RequestParam LocalDate targetDate);
 
     @Operation(summary = "다이어리 상세 정보 조회", description = "다이어리 상세 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @GetMapping("/search")
-    ResponseEntity<?> getDiaryDetail(@RequestParam Long diaryId);
+    ResponseEntity<?> getDiaryDetail(@RequestParam LocalDate targetDate);
 }
