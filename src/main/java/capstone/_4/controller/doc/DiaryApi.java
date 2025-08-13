@@ -71,7 +71,9 @@ public interface DiaryApi {
 
             ))
     @GetMapping("/question/search")
-    public ResponseEntity<?> searchQuestion(@RequestParam Integer qaId);
+    public ResponseEntity<?> searchQuestion(
+            @RequestParam Integer groupId,
+            @RequestParam Integer qaId);
 
     @Operation(summary = "다이어리 삭제", description = "다이어리를 삭제합니다.")
     @ApiResponse(responseCode = "204", description = "삭제 성공")

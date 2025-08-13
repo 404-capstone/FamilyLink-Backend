@@ -7,8 +7,10 @@ import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
 import capstone._4.dto.diary.output.DiaryDetailResponse;
+import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
+import capstone._4.service.other.OpenAiService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.util.List;
 public class DiaryController implements DiaryApi {
 
     private final DiaryService diaryService;
+    private final OpenAiService openAiService;
 
     /**
      * 그룹 질문지 상세조회 api
@@ -35,8 +38,8 @@ public class DiaryController implements DiaryApi {
      */
 
     @Override
-    public ResponseEntity<?> searchQuestion(Integer qaId) { //인벤토리 id
-        GroupQuestionDetailResponse gqResponseDto=diaryService.searchQuestion(qaId);
+    public ResponseEntity<?> searchQuestion(Integer groupId,Integer qaId) { //그룹 앤서 id
+        GroupQuestionDetailResponse gqResponseDto=diaryService.searchQuestion(qaId,groupId);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode()
                 ,ResponseEnum.SUCCESS.getMessage(), gqResponseDto));
     }
@@ -85,5 +88,12 @@ public class DiaryController implements DiaryApi {
                 ResponseEnum.SUCCESS.getMessage(),
                 responses
         ));
+    }
+
+    @GetMapping("/question/generate")
+    public ResponseEntity<?> createQuestion(){
+        OpenAiQuestionContent response =openAiService.createQuestion();
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
+                response));
     }
 }

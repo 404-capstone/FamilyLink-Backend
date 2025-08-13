@@ -19,11 +19,11 @@ public class PersonalSchedule {
     private String title;
 
     @Schema(description = "일정 시작일")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_time;
 
     @Schema(description = "일정 종료일")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime end_time;
 
     @Schema(description = "일정 변동 여부")
