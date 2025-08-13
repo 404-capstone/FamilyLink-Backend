@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,5 +27,6 @@ public class sch_comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sch_id", nullable = false)
+    @JsonBackReference
     private Schedule schedule;
 }

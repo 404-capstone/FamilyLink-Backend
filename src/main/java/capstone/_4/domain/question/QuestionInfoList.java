@@ -1,5 +1,6 @@
 package capstone._4.domain.question;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionInfoList {
+public class
+QuestionInfoList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +25,12 @@ public class QuestionInfoList {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qulist_id")
-    @JsonManagedReference
+    @JsonBackReference
     private QuestionList questionList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qi_id")
-    @JsonManagedReference
+    @JsonBackReference
     private QuestionInventory questionInventory;
 
     public void changeList(QuestionList questionList) {

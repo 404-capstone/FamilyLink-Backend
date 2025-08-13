@@ -44,15 +44,15 @@ public class Photo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Album album;
 
     @OneToMany(mappedBy = "photo",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<PhotoUser> photoUser=new ArrayList<>();
 
     @OneToMany(mappedBy = "photo",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<PhotoImage> photoImages=new ArrayList<>();
 
     public void addPhotourl(PhotoImage photoImage){

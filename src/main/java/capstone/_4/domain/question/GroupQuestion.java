@@ -26,22 +26,19 @@ public class GroupQuestion {
     @Column
     private LocalDate day;
 
-    @Column
-    private boolean slot;
-
     @ManyToOne
     @JoinColumn(name = "gup_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Groups groups;
 
     @ManyToOne
     @JoinColumn(name="qu_id")
-    @JsonManagedReference
-    private QuestionInventory questionInventory;
+    @JsonBackReference
+    private QuestionList questionList;
 
 
     @OneToMany(mappedBy = "groupQuestion",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JsonBackReference
+    @JsonManagedReference
     private List<GroupAnswer>  groupAnswers=new ArrayList<>();
 
     public void changeGroupAnswer(GroupAnswer groupAnswer){
@@ -50,4 +47,8 @@ public class GroupQuestion {
     }
 
 
+    public void changeQuestion(QuestionList questionList) {
+        this.questionList=questionList;
+        questionList.addQuestion(this);
+    }
 }

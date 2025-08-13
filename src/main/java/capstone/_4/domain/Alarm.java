@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -40,7 +41,7 @@ public class Alarm {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
-    @JsonManagedReference
+    @JsonBackReference
     private User user;
 
 

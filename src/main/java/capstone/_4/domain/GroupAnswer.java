@@ -1,6 +1,8 @@
 package capstone._4.domain;
 
 import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.question.QuestionInventory;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -23,13 +25,18 @@ public class GroupAnswer {
 
     @ManyToOne
     @JoinColumn(name = "u_id")
-    @JsonManagedReference
+    @JsonBackReference
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "gq_id")
-    @JsonManagedReference
+    @JsonBackReference
     private GroupQuestion groupQuestion;
+
+    @ManyToOne
+    @JoinColumn(name = "qi_id")
+    @JsonBackReference
+    private QuestionInventory questionInventory;
 
     public void changeQuestion(GroupQuestion groupQuestion) {
         this.groupQuestion = groupQuestion;

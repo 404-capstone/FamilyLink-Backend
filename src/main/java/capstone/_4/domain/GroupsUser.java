@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -46,12 +47,12 @@ public class GroupsUser {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="gup_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Groups group;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
-    @JsonManagedReference
+    @JsonBackReference
     private User user;
 
     public void setScore(int score,int percent,String level) {

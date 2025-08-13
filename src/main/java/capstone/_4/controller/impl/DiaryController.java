@@ -32,15 +32,15 @@ public class DiaryController implements DiaryApi {
     /**
      * 그룹 질문지 상세조회 api
      *
-     * @param qaId
+     * @param
      * @return
      */
 
     @Override
-    public ResponseEntity<?> searchQuestion(Integer groupId,Integer qaId) { //그룹 앤서 id
-        GroupQuestionDetailResponse gqResponseDto=diaryService.searchQuestion(qaId,groupId);
+    public ResponseEntity<?> searchQuestion(Integer groupId,Integer groupQuestionId) { //그룹 앤서 id
+        GroupQuestionDetailResponse gqResponseDto=diaryService.searchQuestion(groupQuestionId,groupId);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode()
-                ,ResponseEnum.SUCCESS.getMessage(), gqResponseDto));
+                ,ResponseEnum.SUCCESS.getMessage(), "ok"));
     }
 
     /**

@@ -40,11 +40,11 @@ public class Album {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gup_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Groups groups;
 
     @OneToMany(mappedBy = "album",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<Photo> photo=new ArrayList<>();
 
     public void addPhoto(Photo photo){

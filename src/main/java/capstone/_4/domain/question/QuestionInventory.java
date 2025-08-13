@@ -1,6 +1,8 @@
 package capstone._4.domain.question;
 
+import capstone._4.domain.GroupAnswer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,8 +31,12 @@ public class QuestionInventory {
     private Integer number;
 
     @OneToMany(mappedBy = "questionInventory",fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<QuestionInfoList> questionInfoList=new ArrayList<>();
+
+    @OneToMany(mappedBy = "questionInventory",fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<GroupAnswer> groupAnswerList=new ArrayList<>();
 
     public void changeInfo(QuestionInfoList questionInfoList) {
         this.questionInfoList.add(questionInfoList);

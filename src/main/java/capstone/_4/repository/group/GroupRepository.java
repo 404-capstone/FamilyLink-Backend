@@ -2,6 +2,8 @@ package capstone._4.repository.group;
 
 import capstone._4.domain.Groups;
 import capstone._4.domain.QGroups;
+import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.question.QuestionList;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import jakarta.persistence.EntityManager;
@@ -11,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,8 +27,21 @@ public class GroupRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public boolean save(Groups groups) {
-        em.persist(groups);
+        if(groups.getId()==null){
+            em.persist(groups);
+        }else{
+            em.merge(groups);
+        }
         return true;
+    }
+
+    public void saveQuestion(GroupQuestion groupQuestion) {
+        if(groupQuestion.getId()==null){
+            em.persist(groupQuestion);
+        }else{
+            em.merge(groupQuestion);
+        }
+
     }
 
     public Optional<Groups> findById(int groupid) {
@@ -56,4 +73,15 @@ public class GroupRepository {
         return update.where(qGroups.gup_id.eq(groupId))
                 .execute();
     }
+
+    public QuestionList RandomSearchList(){
+        List<QuestionList> list= em.createQuery("select ql from QuestionList ql", QuestionList.class)
+                .getResultList();
+        Random random = new Random();
+        QuestionList questionList = list.get(random.nextInt(list.size()));
+
+        return questionList;
+    }
+
+
 }

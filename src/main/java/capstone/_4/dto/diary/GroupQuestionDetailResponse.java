@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 @Builder
 public class GroupQuestionDetailResponse {
     @Schema(description = "질문 리스트 기본키")
-    private Integer questionListId;
+    private Integer groupQuestionId;
     @Schema(description = "작성 날찌")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;

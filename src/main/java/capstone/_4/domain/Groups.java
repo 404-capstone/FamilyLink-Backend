@@ -2,6 +2,7 @@ package capstone._4.domain;
 
 import capstone._4.domain.question.GroupQuestion;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class Groups {
     private String topic_name;
 
     @OneToMany(mappedBy = "group",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JsonBackReference
+    @JsonManagedReference
     private List<GroupsUser> groupsuser = new ArrayList<>();
 
     @OneToOne(mappedBy = "groups",cascade = CascadeType.REMOVE)
@@ -55,11 +56,11 @@ public class Groups {
     private Calendar calendar;
 
     @OneToMany(mappedBy = "groups",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JsonBackReference
+    @JsonManagedReference
     private List<Album> albums = new ArrayList<>();
 
     @OneToMany(mappedBy = "groups",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JsonBackReference
+    @JsonManagedReference
     private List<GroupQuestion> groupQuestions = new ArrayList<>();
 
     public void addUser(GroupsUser groupsuser){
