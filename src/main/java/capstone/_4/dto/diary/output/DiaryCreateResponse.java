@@ -10,7 +10,7 @@ public class DiaryCreateResponse {
     private Long id;
     private String content;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime diaryAt;
 
     private Long userId;

@@ -1,16 +1,12 @@
 package capstone._4.controller.doc;
 
-import capstone._4.domain.Schedule;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.docs.schedule.ScheduleSearchResponse;
+import capstone._4.dto.schedule.ScheduleOptimizeRequest;
 import capstone._4.dto.schedule.input.CommentCreateRequest;
-import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
-import capstone._4.dto.schedule.input.ScheduleCreateRequest;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.ScheduleEditResponseDto;
-import capstone._4.enums.ErrorCode;
 import capstone._4.dto.schedule.output.CommentResponse;
-import capstone._4.enums.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,7 +16,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -175,5 +170,8 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
             @Parameter(description = "수정할 일정 정보", required = true)
             @RequestBody ScheduleUpdateRequest request
     );
+
+    @PostMapping("/optimal")
+    ResponseEntity<?> optimalSchedule(@RequestBody ScheduleOptimizeRequest optimalSchedule);
 }
 

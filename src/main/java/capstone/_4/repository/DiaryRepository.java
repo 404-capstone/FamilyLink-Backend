@@ -55,8 +55,8 @@ public class DiaryRepository {
         return Optional.ofNullable(em.find(Diary.class, id));
     }
 
-    public List<GroupQuestion> findAllQuestion(Integer diaryId) { //그룹이랑 맞는 질문지를 일단 가져옴.
-        QQuestionList ql=QQuestionList.questionList;
+    public List<GroupQuestion> findAllQuestion(Integer listId,Integer groupId) { //그룹이랑 맞는 질문지를 일단 가져옴.
+        QQuestionList ql=QQuestionList.questionList; //퀘스천 리스트 기준으로 조회중.
         QQuestionInventory qi=QQuestionInventory.questionInventory;
         QQuestionInfoList questionInfoList=QQuestionInfoList.questionInfoList;
         QGroupQuestion groupQuestion=QGroupQuestion.groupQuestion;
@@ -66,7 +66,8 @@ public class DiaryRepository {
                  .join(groupQuestion.questionInventory,qi)
                 .join(qi.questionInfoList,questionInfoList)
                  .join(questionInfoList.questionList,ql)
-                .where(ql.id.eq(diaryId))
+                .where(ql.id.eq(listId),
+                        groupQuestion.groups.gup_id.eq(groupId))
                 .fetch();
     }
 
