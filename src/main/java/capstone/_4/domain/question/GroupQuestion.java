@@ -18,6 +18,10 @@ import java.util.List;
 @NoArgsConstructor
 public class GroupQuestion {
 
+    public GroupQuestion(LocalDate date) {
+        this.day=date;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gq_id")
@@ -32,7 +36,7 @@ public class GroupQuestion {
     private Groups groups;
 
     @ManyToOne
-    @JoinColumn(name="qu_id")
+    @JoinColumn(name="qulist_id")
     @JsonBackReference
     private QuestionList questionList;
 
@@ -47,8 +51,10 @@ public class GroupQuestion {
     }
 
 
-    public void changeQuestion(QuestionList questionList) {
+    public void changeQuestion(QuestionList questionList,Groups groups) {
         this.questionList=questionList;
         questionList.addQuestion(this);
+        this.groups=groups;
+        groups.addQuestion(this);
     }
 }

@@ -29,7 +29,7 @@ public class QuestionList {
     @JsonManagedReference
     private List<QuestionInfoList> questionInfoList=new ArrayList<>();
 
-    @OneToMany(mappedBy = "",fetch = FetchType.LAZY,
+    @OneToMany(mappedBy = "questionList",fetch = FetchType.LAZY,
     cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<GroupQuestion> groupQuestionList=new ArrayList<>();

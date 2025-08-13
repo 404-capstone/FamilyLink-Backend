@@ -4,9 +4,7 @@ import capstone._4.domain.Diary;
 import capstone._4.domain.User;
 import capstone._4.domain.question.GroupQuestion;
 import capstone._4.domain.question.QuestionInventory;
-import capstone._4.dto.diary.GroupQuestionDetailResponse;
-import capstone._4.dto.diary.GroupQuestionResponseDto;
-import capstone._4.dto.diary.QuestionAnswerResponse;
+import capstone._4.dto.diary.*;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
@@ -48,30 +46,30 @@ public class DiaryService {
         }
     }
 
-    public GroupQuestionDetailResponse searchQuestion(Integer groupQuestionId,Integer groupId) {
+    public GroupAnswerDetailResponse searchAnswerDetail(Integer groupQuestionId, Integer groupId) {
 
         GroupQuestion questionsInfo=diaryRepository.findGroupQuestion(groupQuestionId,groupId)
                 .orElseThrow(()->new EntityNotFoundException("질문지가 존재하지 않습니다.")); //질문지 정보,이미 전에 조회했을때 그룹정보를 썻기때문에 여기서는 필요x
 
-        List<QuestionInventory> questionIds = diaryRepository.findAllQuestion(questionsInfo);
+        List<QuestionInventory> questionIds = diaryRepository.findQuestionsWithGroupQuestion(questionsInfo);
 
         Map<Integer,List<QuestionAnswerResponse>> questionAnswerResponses =diaryRepository.findAllAnswer(questionIds); //문제id를 중점으로 가족 응답 response 존재.
 
-        List<GroupQuestionResponseDto> questionResponseDto= new ArrayList<>();
+        List<GroupAnswerResponseDto> questionResponseDto= new ArrayList<>();
         for(QuestionInventory groupQuestion:questionIds){ //그룹 질문 가져오기.
             Integer questionId=groupQuestion.getId();
 
-            GroupQuestionResponseDto groupQuestionResponseDto=
-                   GroupQuestionResponseDto.builder()
+            GroupAnswerResponseDto groupAnswerResponseDto =
+                   GroupAnswerResponseDto.builder()
                            .questionId(questionId)
                            .question(groupQuestion.getContent())
                            .answerInfo(questionAnswerResponses.getOrDefault(questionId, Collections.emptyList()))
                            .build();
-            questionResponseDto.add(groupQuestionResponseDto);
+            questionResponseDto.add(groupAnswerResponseDto);
         }
 
         LocalDate time=questionsInfo.getDay();
-        return GroupQuestionDetailResponse.builder()
+        return GroupAnswerDetailResponse.builder()
                 .questionInfo(questionResponseDto)
                 .date(time)
                 .groupQuestionId(groupQuestionId)
@@ -133,4 +131,11 @@ public class DiaryService {
         );
     }
 
+    public GroupQuestionResponseDto searchQuestion(Integer groupId) {
+        GroupQuestion groupQuestion=diaryRepository.findTopGroupQuestion(groupId)
+                .orElseThrow(()->new EntityNotFoundException("최신 문제가 존재하지 않습니다."));
+        log.info("문제들 찾기.");
+        List<QuestionInventory> questions=diaryRepository.findQuestionsWithGroupQuestion(groupQuestion);
+        return new GroupQuestionResponseDto(groupId,questions);
+    }
 }

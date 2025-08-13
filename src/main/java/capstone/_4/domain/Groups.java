@@ -80,4 +80,8 @@ public class Groups {
         this.calendar=calendar;
         calendar.changeGroup(this);
     }
+
+    public void addQuestion(GroupQuestion groupQuestion) {
+        this.groupQuestions.add(groupQuestion);
+    }
 }

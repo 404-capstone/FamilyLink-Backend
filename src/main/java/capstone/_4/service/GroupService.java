@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -59,11 +60,18 @@ public class GroupService {
         alarmService.createAndAccessTopic(groups,user); //토픽 생성.
         GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
         groupsUserRepository.save(groupsuser);
-        QuestionList questionList =groupRepository.RandomSearchList();
-        GroupQuestion groupQuestion=new GroupQuestion();
-        groupQuestion.changeQuestion(questionList);
-        groupRepository.saveQuestion(groupQuestion);
+        log.info("그룹 질문 랜덤생성.");
+        generateQuestion(groups);
         return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
+    }
+
+    @Transactional
+    public void generateQuestion(Groups groups) {
+        QuestionList questionList =groupRepository.RandomSearchList();
+        GroupQuestion groupQuestion=new GroupQuestion(LocalDate.now());
+        log.info("그룹과 맺기.{}",groupQuestion);
+        groupQuestion.changeQuestion(questionList,groups);
+        groupRepository.saveQuestion(groupQuestion);
     }
 
     private Groups checkImage(String name, MultipartFile image) {
