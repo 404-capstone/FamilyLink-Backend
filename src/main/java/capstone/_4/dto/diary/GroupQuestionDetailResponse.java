@@ -16,7 +16,7 @@ import java.util.List;
 public class GroupQuestionDetailResponse {
     @Schema(description = "질문 리스트 기본키")
     private Integer questionListId;
-    @Schema(description = "작성 날찌")
+    @Schema(description = "작성 날짜")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     @Schema(description = "질문 응답 정보들.")

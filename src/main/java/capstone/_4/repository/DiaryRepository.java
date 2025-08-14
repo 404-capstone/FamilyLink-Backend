@@ -3,6 +3,7 @@ package capstone._4.repository;
 import capstone._4.domain.*;
 import capstone._4.domain.question.*;
 import capstone._4.dto.diary.QuestionAnswerResponse;
+import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -71,29 +72,45 @@ public class DiaryRepository {
                 .fetch();
     }
 
-    public Map<Integer,List<QuestionAnswerResponse>> findAllAnswer(List<Integer> questionId) {
-        QGroupAnswer  groupAnswer=QGroupAnswer.groupAnswer;
-        QGroupQuestion groupQuestion=QGroupQuestion.groupQuestion;
-        QUser user=QUser.user;
-        QGroupsUser gsUser=QGroupsUser.groupsUser;
+    public Map<Integer, List<DiaryAllSearchResponse.QuestionAnswerResponse>> findAllAnswer(List<Integer> questionIds) {
+        QGroupAnswer groupAnswer = QGroupAnswer.groupAnswer;
+        QGroupQuestion groupQuestion = QGroupQuestion.groupQuestion;
+        QUser user = QUser.user;
+        QGroupsUser gsUser = QGroupsUser.groupsUser;
 
-
-        List<Tuple>tuples=queryFactory.select(groupQuestion.id,user.id,user.username,gsUser.role,groupAnswer) //tuple로 받고 넘기기.
+        List<Tuple> tuples = queryFactory.select(
+                        groupQuestion.id,
+                        groupAnswer.id,
+                        groupAnswer.title,
+                        groupAnswer.answer,
+                        user.id,
+                        user.username,
+                        groupAnswer.flag
+                        // submittedAt 추가하려면 엔티티에도 필드 필요
+                )
                 .from(groupAnswer)
-                .join(groupAnswer.groupQuestion,groupQuestion)
-                .join(groupAnswer.user,user)
-                .join(groupAnswer.user.groupsuser,gsUser)
-                .where(groupQuestion.id.in(questionId))
+                .join(groupAnswer.groupQuestion, groupQuestion)
+                .join(groupAnswer.user, user)
+                .join(user.groupsuser, gsUser)
+                .where(groupQuestion.id.in(questionIds))
                 .fetch();
-        return tuples.stream().collect(Collectors //map형태로,
-                .groupingBy(t ->
-                    t.get(groupQuestion.id), //키
-                        Collectors.mapping(t->new QuestionAnswerResponse( //값.
-                                t.get(user.id),t.get(user.username),t.get(gsUser.role),t.get(groupAnswer.answer)
-                        ),
-                                Collectors.toList())
+
+        return tuples.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.get(groupQuestion.id),
+                        Collectors.mapping(t -> new DiaryAllSearchResponse.QuestionAnswerResponse(
+                                t.get(groupAnswer.id),
+                                t.get(groupAnswer.title),
+                                t.get(groupAnswer.answer),
+                                t.get(user.id),
+                                t.get(user.username),
+                                t.get(groupAnswer.flag),
+                                null  // submittedAt 없으면 null 처리
+                        ), Collectors.toList())
                 ));
     }
+
+
 
     public List<Tuple> findDiaryAndQuestion(Integer groupQuestionId) {
         QGroupQuestion groupQuestion = QGroupQuestion.groupQuestion;

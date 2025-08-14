@@ -12,6 +12,7 @@ import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
 import capstone._4.dto.diary.output.DiaryDetailResponse;
+import capstone._4.repository.diary.DiaryEmotionRepository;
 import capstone._4.repository.diary.DiaryJpaRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
@@ -41,6 +42,7 @@ public class DiaryService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final DiaryJpaRepository diaryJpaRepository;
+    private final DiaryEmotionRepository diaryEmotionRepository;
     @Transactional
     public void deleteDiary(Integer diaryId) {
         try{
@@ -50,35 +52,50 @@ public class DiaryService {
         }
     }
 
-    public GroupQuestionDetailResponse searchQuestion(Integer qaId,Integer groupId) {
+    public GroupQuestionDetailResponse searchQuestion(Integer qaId, Integer groupId) {
 
-        List<GroupQuestion> questionsInfo=diaryRepository.findAllQuestion(qaId,groupId); //질문지 정보,이미 전에 조회했을때 그룹정보를 썻기때문에 여기서는 필요x
+        List<GroupQuestion> questionsInfo = diaryRepository.findAllQuestion(qaId, groupId);
 
-        List<Integer> questionIds = questionsInfo.stream() //문제 id 정리.
-                .map(GroupQuestion::getId).toList();
+        List<Integer> questionIds = questionsInfo.stream()
+                .map(GroupQuestion::getId)
+                .toList();
 
-        Map<Integer,List<QuestionAnswerResponse>> questionAnswerResponses =diaryRepository.findAllAnswer(questionIds); //문제id를 중점으로 가족 응답 response 존재.
+        // Repository 반환 타입과 일치
+        Map<Integer, List<DiaryAllSearchResponse.QuestionAnswerResponse>> questionAnswerResponses =
+                diaryRepository.findAllAnswer(questionIds);
 
-        List<GroupQuestionResponseDto> questionResponseDto= new ArrayList<>();
-        for(GroupQuestion groupQuestion:questionsInfo){ //그룹 질문 가져오기.
-            Integer questionId=groupQuestion.getId();
+        List<GroupQuestionResponseDto> questionResponseDto = new ArrayList<>();
+        for (GroupQuestion groupQuestion : questionsInfo) {
+            Integer questionId = groupQuestion.getId();
 
-            GroupQuestionResponseDto groupQuestionResponseDto=
-                   GroupQuestionResponseDto.builder()
-                           .questionId(questionId)
-                           .question(groupQuestion.getQuestionInventory().getContent())
-                           .answerInfo(questionAnswerResponses.getOrDefault(questionId, Collections.emptyList()))
-                           .build();
+            List<QuestionAnswerResponse> convertedAnswers = questionAnswerResponses
+                    .getOrDefault(questionId, Collections.emptyList())
+                    .stream()
+                    .map(a -> new QuestionAnswerResponse(
+                            a.userId(),      // 기존 record 필드 매핑
+                            a.userName(),
+                            null,            // postion 필드 없으면 null 처리
+                            a.userAnswer()
+                    ))
+                    .toList();
+
+            GroupQuestionResponseDto groupQuestionResponseDto =
+                    GroupQuestionResponseDto.builder()
+                            .questionId(questionId)
+                            .question(groupQuestion.getQuestionInventory().getContent())
+                            .answerInfo(convertedAnswers) // 변환 후 삽입
+                            .build();
             questionResponseDto.add(groupQuestionResponseDto);
         }
 
-        LocalDate time=questionsInfo.get(0).getDay();
+        LocalDate time = questionsInfo.get(0).getDay();
         return GroupQuestionDetailResponse.builder()
                 .questionInfo(questionResponseDto)
                 .date(time)
                 .questionListId(qaId)
                 .build();
     }
+
 
     @Transactional
     public DiaryCreateResponse createDiary(DiaryCreateRequest request) {
@@ -102,24 +119,39 @@ public class DiaryService {
                 savedDiary.getUser().getId().longValue()
         );
     }
-    //다이어리 전체 조회 (일기 + 질문)
-    public List<DiaryAllSearchResponse> getDiaryAndQuestions(LocalDate targetDate) {
-        List<Object[]> results = diaryJpaRepository.findDiaryAndQuestionByDate(targetDate);
+    /**
+     * 다이어리 ID 기준으로 다이어리 + 감정 + 질문 + 답변 전체 조회
+     */
+    public DiaryAllSearchResponse getDiaryAndQuestionsByDiaryId(Long diaryId) {
+        Diary diary = diaryJpaRepository.findById(diaryId)
+                .orElseThrow(() -> new EntityNotFoundException("다이어리를 찾을 수 없습니다. id: " + diaryId));
 
-        return results.stream()
-                .map(row -> {
-                    Diary diary = (Diary) row[0];
-                    GroupQuestion groupQuestion = (GroupQuestion) row[1];
-                    return new DiaryAllSearchResponse(
-                            diary.getId(),
-                            diary.getContent(),
-                            diary.getTime(),
-                            groupQuestion.getId(),
-                            groupQuestion.getQuestionInventory().getContent()
-                    );
-                })
-                .toList();
+        List<String> emotions = diaryEmotionRepository.findEmotionsByDiaryIdOrderByScoreDesc(diaryId);
+        String topEmotion = emotions.isEmpty() ? null : emotions.get(0);
+
+        GroupQuestion groupQuestion = diary.getGroupQuestion();
+
+        List<Integer> questionIds = List.of(groupQuestion.getId());
+        Map<Integer, List<DiaryAllSearchResponse.QuestionAnswerResponse>> answersMap =
+                diaryRepository.findAllAnswer(questionIds);
+
+        List<DiaryAllSearchResponse.GroupQuestionResponseDto> questionDtos = List.of(
+                new DiaryAllSearchResponse.GroupQuestionResponseDto(
+                        groupQuestion.getId(),
+                        groupQuestion.getQuestionInventory().getContent(),
+                        answersMap.getOrDefault(groupQuestion.getId(), List.of())
+                )
+        );
+
+        return new DiaryAllSearchResponse(
+                diary.getId(),
+                diary.getContent(),
+                diary.getTime(),
+                topEmotion,
+                questionDtos
+        );
     }
+
     //다이어리 상세 조회
     public List<DiaryDetailResponse> getDiaryDetailByDate(LocalDate targetDate) {
         List<Diary> diaries = diaryJpaRepository.findByDate(targetDate);
@@ -139,3 +171,4 @@ public class DiaryService {
     }
 
 }
+

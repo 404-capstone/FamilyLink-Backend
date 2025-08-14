@@ -6,6 +6,7 @@ import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 import capstone._4.enums.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -87,10 +88,15 @@ public interface DiaryApi {
     public ResponseEntity<?> writeDiary(@RequestBody DiaryCreateRequest request);
 
 
-    @Operation(summary = "특정 그룹 질문에 해당하는 다이어리와 질문 조회", description = "특정 그룹 질문 ID에 해당하는 다이어리와 질문을 함께 조회합니다.")
+    @Operation(
+            summary = "특정 다이어리 ID에 해당하는 다이어리와 질문 조회",
+            description = "다이어리 ID를 기준으로 다이어리 내용, 최고 감정, 관련 질문과 답변을 조회합니다."
+    )
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @GetMapping("/all/search")
-    ResponseEntity<?> getDiaryAndQuestions(@RequestParam LocalDate targetDate);
+    public ResponseEntity<DiaryAllSearchResponse> getDiaryAndQuestions(
+            @Parameter(description = "조회할 다이어리 ID", required = true)
+            @RequestParam Long diaryId);
 
     @Operation(summary = "다이어리 상세 정보 조회", description = "다이어리 상세 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")

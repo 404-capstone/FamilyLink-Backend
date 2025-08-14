@@ -74,9 +74,9 @@ public class DiaryController implements DiaryApi {
     }
 
     @GetMapping("/all/search")
-    public ResponseEntity<List<DiaryAllSearchResponse>> getDiaryAndQuestions(
-            @RequestParam LocalDate targetDate) {
-        List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(targetDate);
+    public ResponseEntity<DiaryAllSearchResponse> getDiaryAndQuestions(
+            @RequestParam Long diaryId) {
+        DiaryAllSearchResponse response = diaryService.getDiaryAndQuestionsByDiaryId(diaryId);
         return ResponseEntity.ok(response);
     }
     //다이어리 상세조회

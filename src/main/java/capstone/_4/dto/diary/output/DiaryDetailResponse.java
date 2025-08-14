@@ -11,7 +11,7 @@ public class DiaryDetailResponse {
     private Long id;
     private String content;
     private Long userId;
-
+    private String emtion;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime diaryAt;
 

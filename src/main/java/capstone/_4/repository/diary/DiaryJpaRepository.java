@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface DiaryJpaRepository extends JpaRepository<Diary, Long> {
         WHERE FUNCTION('DATE', d.time) = :targetDate
     """)
     List<Diary> findByDate(@Param("targetDate") LocalDate targetDate);
+
 }

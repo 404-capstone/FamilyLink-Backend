@@ -34,4 +34,6 @@ public class GroupAnswer {
     public void changeQuestion(GroupQuestion groupQuestion) {
         this.groupQuestion = groupQuestion;
     }
+
+    protected GroupAnswer() {}
 }
