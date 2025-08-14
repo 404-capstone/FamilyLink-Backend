@@ -2,6 +2,7 @@ package capstone._4.controller.doc;
 
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.docs.schedule.ScheduleSearchResponse;
+import capstone._4.dto.schedule.OptimalResponse;
 import capstone._4.dto.schedule.ScheduleOptimizeRequest;
 import capstone._4.dto.schedule.input.CommentCreateRequest;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
@@ -171,6 +172,69 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
             @RequestBody ScheduleUpdateRequest request
     );
 
+    @Operation(summary = "일정 최적화",description = "일정을 최적화해서 반환합니다.")
+    @ApiResponse(responseCode = "200",description = "요청성공.",
+    content = @Content(mediaType = "application/json",
+    schema = @Schema(implementation = OptimalResponse.class),examples = @ExampleObject(
+            name = "정상응답",
+            value = """
+                    {
+                      "code": 200,
+                      "message": "성공",
+                      "data": {
+                        "groupId": 101,
+                        "beforeSchedule": {
+                          "personalSchedule": [
+                            {
+                              "title": "멤버 A - 프로젝트 작업",
+                              "memberId": 1,
+                              "memberPosition": "아들",
+                              "schduleId": 11,
+                              "startTime": "2024-08-15T09:00:00",
+                              "endTime": "2024-08-15T11:00:00"
+                            },
+                            {
+                              "title": "멤버 B - 고객사 통화",
+                              "memberId": 2,
+                              "memberPosition": "엄마",
+                              "schduleId": 12,
+                              "startTime": "2024-08-15T10:00:00",
+                              "endTime": "2024-08-15T12:00:00"
+                            }
+                          ]
+                        },
+                        "afterSchedule": {
+                          "personalSchedule": [
+                            {
+                              "title": "멤버 A - 프로젝트 작업",
+                              "memberId": 1,
+                              "memberPosition": "아들",
+                              "schduleId": 11,
+                              "startTime": "2024-08-15T09:00:00",
+                              "endTime": "2024-08-15T10:30:00"
+                            },
+                            {
+                              "title": "멤버 B - 고객사 통화",
+                              "memberId": 2,
+                              "memberPosition": "엄마",
+                              "schduleId": 12,
+                              "startTime": "2024-08-15T11:30:00",
+                              "endTime": "2024-08-15T13:00:00"
+                            }
+                          ],
+                          "groupScheduleSimpleInfoDtos": {
+                            "title": "팀 싱크업 미팅",
+                            "memberId": [1, 2],
+                            "memberPosition": ["아들", "엄마"],
+                            "startTime": "2024-08-15T10:30:00",
+                            "endTime": "2024-08-15T11:30:00"
+                          }
+                        }
+                      }
+                    }
+                    
+                    """
+    )))
     @PostMapping("/optimal")
     ResponseEntity<?> optimalSchedule(@RequestBody ScheduleOptimizeRequest optimalSchedule);
 }
