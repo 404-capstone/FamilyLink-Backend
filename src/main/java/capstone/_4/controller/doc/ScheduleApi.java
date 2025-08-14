@@ -222,7 +222,7 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
                               "endTime": "2024-08-15T13:00:00"
                             }
                           ],
-                          "groupScheduleSimpleInfoDtos": {
+                          "groupSchedule": {
                             "title": "팀 싱크업 미팅",
                             "memberId": [1, 2],
                             "memberPosition": ["아들", "엄마"],

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class AfterSchedule {
     private List<SchduleSimpleInfoDto> personalSchedule;
-    private GroupScheduleSimpleInfoDto groupScheduleSimpleInfoDtos;
+    private GroupScheduleSimpleInfoDto groupSchedule;
 
     public AfterSchedule(List<Schedule> personalSchedule,SchedulelOptimizeApiResponse apiResponse,
                          String title,List<Integer> memberIds ,List<String> userRole) {
@@ -41,7 +41,7 @@ public class AfterSchedule {
                             .build();
                 }).toList();
 
-        this.groupScheduleSimpleInfoDtos=GroupScheduleSimpleInfoDto.
+        this.groupSchedule =GroupScheduleSimpleInfoDto.
                 builder()
                 .title(title)
                 .memberId(memberIds)
