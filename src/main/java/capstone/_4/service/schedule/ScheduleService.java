@@ -17,6 +17,7 @@ import capstone._4.repository.group.GroupsUserRepository;
 import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.OpenAiService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
@@ -211,6 +212,9 @@ public class ScheduleService {
         List<String> userRole = userRepository.findByIds(optimalSchedule.getMemberIds())
                 .stream().map((u)->u.getGroupsuser().get(0).getRole()).toList();
         List<Schedule>personalSchedule=scheduleRepository.getScheduleWithDay(optimalSchedule.getGroupId(),optimalSchedule.getDate(),optimalSchedule.getMemberIds());
+        if(personalSchedule.isEmpty()){
+            throw new EntityNotFoundException("해당 날짜에 일정이 존재하지 않습니다.");
+        }
         log.info("유저별 스케쥴 나누기 실행.");
         Map<Integer,List<Schedule>> byUserScheduel=personalSchedule
                 .stream().collect(Collectors.groupingBy(s->s.getUser().getId()));
