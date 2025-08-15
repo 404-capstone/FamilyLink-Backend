@@ -32,12 +32,5 @@ public class SocialExceptionHandler {
                 .body(apiResponseDto);
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(TokenException.class)
-    public ResponseEntity<?> tokenException(TokenException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponseDto<>(ErrorCode.TOKEN_INVALID.getStatus(),
-                ErrorCode.TOKEN_INVALID.getMessage(), e.getMessage()
-                ));
-    }
 
 }

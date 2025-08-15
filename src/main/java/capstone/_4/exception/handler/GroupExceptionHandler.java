@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GroupExceptionHandler {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> entityNotFoundException(EntityNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ErrorCode.ENTITY_NOT_FOUND.getStatus(),
-                ErrorCode.ENTITY_NOT_FOUND.getMessage(),e.getMessage()));
-    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RedisException.class)

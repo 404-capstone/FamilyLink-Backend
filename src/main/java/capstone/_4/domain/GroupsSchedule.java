@@ -1,5 +1,6 @@
 package capstone._4.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,12 +22,12 @@ public class GroupsSchedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
-    @JsonManagedReference
+    @JsonBackReference
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="sch_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Schedule schedule;
 
     public void setUser(User user) {

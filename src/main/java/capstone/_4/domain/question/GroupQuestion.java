@@ -18,6 +18,10 @@ import java.util.List;
 @NoArgsConstructor
 public class GroupQuestion {
 
+    public GroupQuestion(LocalDate date) {
+        this.day=date;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gq_id")
@@ -26,22 +30,19 @@ public class GroupQuestion {
     @Column
     private LocalDate day;
 
-    @Column
-    private boolean slot;
-
     @ManyToOne
     @JoinColumn(name = "gup_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Groups groups;
 
     @ManyToOne
-    @JoinColumn(name="qu_id")
-    @JsonManagedReference
-    private QuestionInventory questionInventory;
+    @JoinColumn(name="qulist_id")
+    @JsonBackReference
+    private QuestionList questionList;
 
 
     @OneToMany(mappedBy = "groupQuestion",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JsonBackReference
+    @JsonManagedReference
     private List<GroupAnswer>  groupAnswers=new ArrayList<>();
 
     public void changeGroupAnswer(GroupAnswer groupAnswer){
@@ -50,4 +51,10 @@ public class GroupQuestion {
     }
 
 
+    public void changeQuestion(QuestionList questionList,Groups groups) {
+        this.questionList=questionList;
+        questionList.addQuestion(this);
+        this.groups=groups;
+        groups.addQuestion(this);
+    }
 }

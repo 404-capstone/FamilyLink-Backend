@@ -13,11 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import capstone._4.domain.Diary;
-import capstone._4.domain.question.GroupQuestion;
-import capstone._4.domain.QDiary;
-import capstone._4.domain.question.QGroupQuestion;
 
-import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,39 +51,43 @@ public class DiaryRepository {
         return Optional.ofNullable(em.find(Diary.class, id));
     }
 
-    public List<GroupQuestion> findAllQuestion(Integer listId,Integer groupId) { //그룹이랑 맞는 질문지를 일단 가져옴.
-        QQuestionList ql=QQuestionList.questionList; //퀘스천 리스트 기준으로 조회중.
-        QQuestionInventory qi=QQuestionInventory.questionInventory;
-        QQuestionInfoList questionInfoList=QQuestionInfoList.questionInfoList;
-        QGroupQuestion groupQuestion=QGroupQuestion.groupQuestion;
+    public Optional<GroupQuestion> findGroupQuestion(Integer groupQuestionId, Integer groupId) { //그룹이랑 맞는 질문지를 일단 가져옴.
 
-         return queryFactory
-                .select(groupQuestion).from(groupQuestion) //그룹 질문을 찾으려면, 리스트 -> info -> 인베토리
-                 .join(groupQuestion.questionInventory,qi)
-                .join(qi.questionInfoList,questionInfoList)
-                 .join(questionInfoList.questionList,ql)
-                .where(ql.id.eq(listId),
-                        groupQuestion.groups.gup_id.eq(groupId))
-                .fetch();
+         return em.createQuery("select gq from GroupQuestion gq " +
+                 "where gq.id = :groupQuestionId", GroupQuestion.class)
+                 .setParameter("groupQuestionId", groupQuestionId)
+                 .getResultList().stream().findFirst();
     }
 
-    public Map<Integer,List<QuestionAnswerResponse>> findAllAnswer(List<Integer> questionId) {
+    public Optional<GroupQuestion> findTopGroupQuestion(Integer groupId) {
+        return em.createQuery("select gs from GroupQuestion gs " +
+                "where gs.groups.id=:groupId " +
+                "order by gs.id desc",GroupQuestion.class)
+                .setParameter("groupId", groupId)
+                .setMaxResults(1).getResultStream()
+                .findFirst();
+    }
+
+    public Map<Integer,List<QuestionAnswerResponse>> findAllAnswer(List<QuestionInventory> questionInventory) {
         QGroupAnswer  groupAnswer=QGroupAnswer.groupAnswer;
         QGroupQuestion groupQuestion=QGroupQuestion.groupQuestion;
         QUser user=QUser.user;
         QGroupsUser gsUser=QGroupsUser.groupsUser;
+        QQuestionInventory qquestionInventory=QQuestionInventory.questionInventory;
+        List<Integer> questionIds=questionInventory.stream().map(QuestionInventory::getId).toList();
 
 
-        List<Tuple>tuples=queryFactory.select(groupQuestion.id,user.id,user.username,gsUser.role,groupAnswer) //tuple로 받고 넘기기.
+        List<Tuple>tuples=queryFactory.select(qquestionInventory.id,user.id,user.username,gsUser.role,groupAnswer.answer) //tuple로 받고 넘기기.
                 .from(groupAnswer)
-                .join(groupAnswer.groupQuestion,groupQuestion)
+                .join(groupAnswer.questionInventory,qquestionInventory)
                 .join(groupAnswer.user,user)
                 .join(groupAnswer.user.groupsuser,gsUser)
-                .where(groupQuestion.id.in(questionId))
+                .where(qquestionInventory.id.in(questionIds))
                 .fetch();
+
         return tuples.stream().collect(Collectors //map형태로,
                 .groupingBy(t ->
-                    t.get(groupQuestion.id), //키
+                    t.get(qquestionInventory.id), //키
                         Collectors.mapping(t->new QuestionAnswerResponse( //값.
                                 t.get(user.id),t.get(user.username),t.get(gsUser.role),t.get(groupAnswer.answer)
                         ),
@@ -106,5 +106,18 @@ public class DiaryRepository {
                 .join(diaryPath.get("groupQuestion", GroupQuestion.class), groupQuestion)
                 .where(groupQuestion.id.eq(groupQuestionId))
                 .fetch();
+    }
+
+    public List<QuestionInventory> findQuestionsWithGroupQuestion(GroupQuestion questionsInfo) {
+        QQuestionInfoList questionInfoList=QQuestionInfoList.questionInfoList;
+        QQuestionInventory questionInventory=QQuestionInventory.questionInventory;
+
+        return queryFactory.select(questionInventory)
+                .from(questionInfoList)
+                .join(questionInfoList.questionInventory,questionInventory)
+                .where(questionInfoList.questionList.id.eq(questionsInfo.getQuestionList().getId()))
+                .orderBy(questionInfoList.slot.asc())
+                .fetch();
+
     }
 }
