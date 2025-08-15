@@ -6,6 +6,7 @@ import capstone._4.domain.User;
 import capstone._4.dto.schedule.*;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.*;
+import capstone._4.exception.FastApiException;
 import capstone._4.repository.schedule.CommentRepository;
 import capstone._4.domain.sch_comment;
 import capstone._4.dto.gpt.OpenAiRecommendComment;
@@ -18,9 +19,11 @@ import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.OpenAiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -226,6 +229,11 @@ public class ScheduleService {
          SchedulelOptimizeApiResponse schedulelOptimizeApiResponse =webClient.post().uri("/schedule/optimization")
                 .bodyValue(optimizeRequest)
                 .retrieve()
+                 .onStatus(HttpStatusCode::is4xxClientError,cr->
+                     cr.bodyToMono(String.class).flatMap(error-> Mono.error(new FastApiException("최적화중 오류가 발생했습니다:"+error)))
+                 )
+                 .onStatus(HttpStatusCode::is5xxServerError,cr->
+                         cr.bodyToMono(String.class).flatMap(error->Mono.error(new FastApiException("최적화중 오류가 발생했습니다."+error))))
                 .bodyToMono(SchedulelOptimizeApiResponse.class)
                 .block();
 
