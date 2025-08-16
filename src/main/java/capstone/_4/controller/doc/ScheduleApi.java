@@ -170,7 +170,7 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
     @ApiResponse(responseCode = "200", description = "일정 수정 성공",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ScheduleEditResponseDto.class)))
-    @PutMapping("/edit")
+    @PatchMapping("/edit")
     ResponseEntity<ApiResponseDto<ScheduleEditResponseDto>> updateSchedule(
             @Parameter(description = "수정할 일정 정보", required = true)
             @RequestBody ScheduleUpdateRequest request
