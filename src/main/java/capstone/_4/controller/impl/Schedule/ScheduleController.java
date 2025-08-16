@@ -78,7 +78,7 @@ public class ScheduleController implements ScheduleApi {
     }
 
     // 일정 수정
-    @PutMapping("/edit")
+    @PatchMapping("/edit")
     public ResponseEntity<ApiResponseDto<ScheduleEditResponseDto>> updateSchedule(
             @RequestBody ScheduleUpdateRequest request) {
         ScheduleEditResponseDto updatedSchedule = scheduleService.updateSchedule(request);
