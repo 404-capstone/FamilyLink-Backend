@@ -1,16 +1,13 @@
 package capstone._4.controller.doc;
 
-import capstone._4.domain.Schedule;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.docs.schedule.ScheduleSearchResponse;
+import capstone._4.dto.schedule.OptimalResponse;
+import capstone._4.dto.schedule.ScheduleOptimizeRequest;
 import capstone._4.dto.schedule.input.CommentCreateRequest;
-import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
-import capstone._4.dto.schedule.input.ScheduleCreateRequest;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.ScheduleEditResponseDto;
-import capstone._4.enums.ErrorCode;
 import capstone._4.dto.schedule.output.CommentResponse;
-import capstone._4.enums.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,7 +17,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -175,5 +171,71 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
             @Parameter(description = "수정할 일정 정보", required = true)
             @RequestBody ScheduleUpdateRequest request
     );
+
+    @Operation(summary = "일정 최적화",description = "일정을 최적화해서 반환합니다.")
+    @ApiResponse(responseCode = "200",description = "요청성공.",
+    content = @Content(mediaType = "application/json",
+    schema = @Schema(implementation = OptimalResponse.class),examples = @ExampleObject(
+            name = "정상응답",
+            value = """
+                    {
+                      "code": 200,
+                      "message": "성공",
+                      "data": {
+                        "groupId": 101,
+                        "beforeSchedule": {
+                          "personalSchedule": [
+                            {
+                              "title": "멤버 A - 프로젝트 작업",
+                              "memberId": 1,
+                              "memberPosition": "아들",
+                              "schduleId": 11,
+                              "startTime": "2024-08-15T09:00:00",
+                              "endTime": "2024-08-15T11:00:00"
+                            },
+                            {
+                              "title": "멤버 B - 고객사 통화",
+                              "memberId": 2,
+                              "memberPosition": "엄마",
+                              "schduleId": 12,
+                              "startTime": "2024-08-15T10:00:00",
+                              "endTime": "2024-08-15T12:00:00"
+                            }
+                          ]
+                        },
+                        "afterSchedule": {
+                          "personalSchedule": [
+                            {
+                              "title": "멤버 A - 프로젝트 작업",
+                              "memberId": 1,
+                              "memberPosition": "아들",
+                              "schduleId": 11,
+                              "startTime": "2024-08-15T09:00:00",
+                              "endTime": "2024-08-15T10:30:00"
+                            },
+                            {
+                              "title": "멤버 B - 고객사 통화",
+                              "memberId": 2,
+                              "memberPosition": "엄마",
+                              "schduleId": 12,
+                              "startTime": "2024-08-15T11:30:00",
+                              "endTime": "2024-08-15T13:00:00"
+                            }
+                          ],
+                          "groupSchedule": {
+                            "title": "팀 싱크업 미팅",
+                            "memberId": [1, 2],
+                            "memberPosition": ["아들", "엄마"],
+                            "startTime": "2024-08-15T10:30:00",
+                            "endTime": "2024-08-15T11:30:00"
+                          }
+                        }
+                      }
+                    }
+                    
+                    """
+    )))
+    @PostMapping("/optimal")
+    ResponseEntity<?> optimalSchedule(@RequestBody ScheduleOptimizeRequest optimalSchedule);
 }
 

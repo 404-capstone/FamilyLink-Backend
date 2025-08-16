@@ -1,22 +1,28 @@
 package capstone._4.dto.diary;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import capstone._4.domain.question.QuestionInventory;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-public class GroupQuestionResponseDto {  //문제들.
-    @Schema(description = "질문 기본키")
-    private Integer questionId;
+@Slf4j
+@NoArgsConstructor
+public class GroupQuestionResponseDto {
+    private Integer groupId;
+    private List<GroupQuestionDetailResponse> groupQuestion;
 
-    @Schema(description = "질문 텍스트.")
-    private String question;
-
-    @Schema(description = "질문 응답데이터")
-    private List<QuestionAnswerResponse> answerInfo;
-
+    public GroupQuestionResponseDto(Integer groupId, List<QuestionInventory> groupQuestion) {
+        this.groupId = groupId;
+        this.groupQuestion=
+                groupQuestion.stream().map((q)->{
+                    log.info("문제정보 id:{},content:{}",q.getId(),q.getContent());
+                    return new GroupQuestionDetailResponse(q.getId(),q.getContent());
+                }).toList();
+    }
 }

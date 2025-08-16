@@ -27,11 +27,11 @@ public class Calendar {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="gup_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Groups groups;
 
     @OneToMany(mappedBy = "calendar",fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<Schedule> schedule = new ArrayList<>();
 
     public void changeGroup(Groups groups) {

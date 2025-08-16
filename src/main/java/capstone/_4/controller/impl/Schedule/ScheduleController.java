@@ -1,8 +1,8 @@
 package capstone._4.controller.impl.Schedule;
-import capstone._4.domain.sch_comment;
+import capstone._4.dto.schedule.OptimalResponse;
+import capstone._4.dto.schedule.ScheduleOptimizeRequest;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.ScheduleEditResponseDto;
-import capstone._4.enums.ErrorCode;
 import capstone._4.controller.doc.ScheduleApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.gpt.OpenAiRecommendComment;
@@ -86,5 +86,15 @@ public class ScheduleController implements ScheduleApi {
                 new ApiResponseDto<>(ResponseEnum.UPDATE_SUCCESS.getCode(),
                         ResponseEnum.UPDATE_SUCCESS.getMessage(),
                         updatedSchedule));
+    }
+
+    @Override
+    public ResponseEntity<?> optimalSchedule(ScheduleOptimizeRequest optimalSchedule) {
+        OptimalResponse optimalResponse=scheduleService.optimalSchedule(optimalSchedule);
+        return ResponseEntity.ok().body(
+                new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                        ResponseEnum.SUCCESS.getMessage(),
+                        optimalResponse)
+        );
     }
 }

@@ -7,6 +7,7 @@ import capstone._4.domain.QUser;
 import capstone._4.domain.Schedule;
 import capstone._4.domain.sch_comment;
 import capstone._4.dto.schedule.output.GroupScheduleDto;
+import capstone._4.dto.schedule.output.ScheduleResponseDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Repository
@@ -136,6 +140,25 @@ public class ScheduleRepository {
     }
     public Optional<Schedule> findById(Long id) {
         return Optional.ofNullable(em.find(Schedule.class, id));
+    }
+
+    public List<Schedule> getScheduleWithDay(Integer groupId,LocalDate date,List<Integer> memberIds) { //개인 일정들만 일단 조회.
+        LocalDateTime start=date.atStartOfDay(); //하루시작
+        LocalDateTime end=start.plusDays(1); //다음날까지.
+        return em.createQuery("select s " +
+                        "from Schedule s " +
+                        "left join s.groupsSchedule gs " +
+                        "where s.startTime >= :start " +
+                        "and s.endTime < :end " +
+                        "and gs.id is null " +
+                        "and s.user.id in :memberIds " +
+                        "order by s.startTime,s.endTime",Schedule.class
+                )
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .setParameter("memberIds", memberIds)
+                .getResultList();
+
     }
 
 //    private List<Integer> findUserWithSchedule(Integer scheduleid){ //이 부분은 필요없음. 이유는 이미 이너조인하면서, 조건에 충족하는 컬럼도 생성해서 반환해주기 때문이다.

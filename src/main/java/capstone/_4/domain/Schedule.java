@@ -47,16 +47,16 @@ public class Schedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="u_id" )
-    @JsonManagedReference
+    @JsonBackReference
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="cal_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Calendar calendar;
 
     @OneToMany(mappedBy = "schedule")
-    @JsonBackReference
+    @JsonManagedReference
     private List<GroupsSchedule> groupsSchedule;
 
 }

@@ -1,14 +1,10 @@
 package capstone._4.dto.diary;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-@Builder
-public class GroupQuestionDetailResponse {
+public class QuestionInventoryInfo {
     private Integer slot;
-
     private String content;
+
 }

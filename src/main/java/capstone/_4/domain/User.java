@@ -2,6 +2,7 @@ package capstone._4.domain;
 
 import capstone._4.domain.photo.PhotoUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -59,19 +60,19 @@ public class User {
     private String image;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<GroupsUser> groupsuser = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<PhotoUser> photouser = new ArrayList<>();
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private Alarm alarm;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference
     private List<Diary> diary = new ArrayList<>();
 
 

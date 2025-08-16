@@ -1,5 +1,6 @@
 package capstone._4.domain.photo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class PhotoImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="photo_id")
-    @JsonManagedReference
+    @JsonBackReference
     private Photo photo;
 
 

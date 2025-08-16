@@ -1,6 +1,8 @@
 package capstone._4.service;
 
 import capstone._4.domain.*;
+import capstone._4.domain.question.GroupQuestion;
+import capstone._4.domain.question.QuestionList;
 import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.group.input.ServeyDto;
 import capstone._4.dto.group.output.GroupInfoResponseDto;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -48,8 +51,32 @@ public class GroupService {
     @Transactional
     public GroupGenerateDto generateGroup(String name, int id,String role,MultipartFile image) {
         User user = getUserFromId(id);
+        Groups groups = checkImage(name, image);
+
+        groupRepository.save(groups);
+        Calendar calendar=new Calendar(groups.getGroup_name());
+        groups.changeCalendar(calendar);
+        calendarRepository.save(calendar);
+        alarmService.createAndAccessTopic(groups,user); //토픽 생성.
+        GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
+        groupsUserRepository.save(groupsuser);
+        log.info("그룹 질문 랜덤생성.");
+        generateQuestion(groups);
+        return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
+    }
+
+    @Transactional
+    public void generateQuestion(Groups groups) {
+        QuestionList questionList =groupRepository.RandomSearchList();
+        GroupQuestion groupQuestion=new GroupQuestion(LocalDate.now());
+        log.info("그룹과 맺기.{}",groupQuestion);
+        groupQuestion.changeQuestion(questionList,groups);
+        groupRepository.saveQuestion(groupQuestion);
+    }
+
+    private Groups checkImage(String name, MultipartFile image) {
         Groups groups;
-        if(image!=null && !image.isEmpty()){
+        if(image !=null && !image.isEmpty()){
             try {
                 S3PhotoInfoDto s3PhotoInfoDto = s3Service.uploadFile(image);
                 groups = new Groups(name, s3PhotoInfoDto.getFileUrl(), s3PhotoInfoDto.getFileName());
@@ -59,15 +86,7 @@ public class GroupService {
         }else{
             groups=new Groups(name);
         }
-
-        groupRepository.save(groups);
-        Calendar calendar=new Calendar(groups.getGroup_name());
-        groups.changeCalendar(calendar);
-        calendarRepository.save(calendar);
-        alarmService.createAndAccessTopic(groups,user); //토픽 생성.
-        GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
-        groupsUserRepository.save(groupsuser);
-        return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
+        return groups;
     }
 
     /**
