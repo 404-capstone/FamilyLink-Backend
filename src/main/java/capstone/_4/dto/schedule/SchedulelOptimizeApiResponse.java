@@ -9,6 +9,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SchedulelOptimizeApiResponse {

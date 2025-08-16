@@ -9,6 +9,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PersonalScheduleDto {

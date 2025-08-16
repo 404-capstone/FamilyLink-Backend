@@ -209,8 +209,10 @@ public class ScheduleService {
 
     public OptimalResponse optimalSchedule(ScheduleOptimizeRequest optimalSchedule) {
         log.info("유저 찾기.");
-        List<String> userRole = userRepository.findByIds(optimalSchedule.getMemberIds())
-                .stream().map((u)->u.getGroupsuser().get(0).getRole()).toList();
+        Map<Integer,String>userRoles=userRepository.findByIds(optimalSchedule.getMemberIds())
+                .stream().collect(Collectors.toMap(User::getId,u->u.getGroupsuser().get(0).getRole() ));
+//        List<String> userRole = userRepository.findByIds(optimalSchedule.getMemberIds())
+//                .stream().map((u)->u.getGroupsuser().get(0).getRole()).toList();
         List<Schedule>personalSchedule=scheduleRepository.getScheduleWithDay(optimalSchedule.getGroupId(),optimalSchedule.getDate(),optimalSchedule.getMemberIds());
         if(personalSchedule.isEmpty()){
             throw new EntityNotFoundException("해당 날짜에 일정이 존재하지 않습니다.");
@@ -240,11 +242,17 @@ public class ScheduleService {
                          cr.bodyToMono(String.class).flatMap(error->Mono.error(new FastApiException("최적화중 오류가 발생했습니다."+error))))
                 .bodyToMono(SchedulelOptimizeApiResponse.class)
                 .block();
-
+        log.info("Fastapi 응답:{}",schedulelOptimizeApiResponse);
+        List<Integer>canMember=schedulelOptimizeApiResponse.getPersonalSchedule().stream()
+                .filter(ps->ps.getCanParticipate()).map(PersonalScheduleDto::getMemberId).toList();
+//        if(schedulelOptimizeApiResponse.getPersonalSchedule().stream().anyMatch(
+//                ps->!ps.getCanParticipate())){
+//            throw new FastApiException("가족인원 참여인원을 최적화하는데 실패했습니다.");
+//        }
         log.info("응답하기.");
         return new OptimalResponse(optimalSchedule.getGroupId(),new BeforeSchedule(personalSchedule),
                 new AfterSchedule(personalSchedule,schedulelOptimizeApiResponse,
-                optimalSchedule.getTitle(),optimalSchedule.getMemberIds(),userRole));
+                optimalSchedule.getTitle(),canMember,userRoles));
 
     }
 

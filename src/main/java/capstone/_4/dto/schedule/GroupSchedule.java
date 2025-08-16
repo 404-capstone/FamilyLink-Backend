@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GroupSchedule {
