@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "일정", description = "일정관련 api")
 @RequestMapping("/schedule")
-public interface ScheduleCreateApi {
+public interface
+ScheduleCreateApi {
     @Operation(
             summary = "개인 일정 생성",
             description = "Access Token에서 유저 ID 추출 후 개인 일정을 생성합니다."
