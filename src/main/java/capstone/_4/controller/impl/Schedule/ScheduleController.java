@@ -2,6 +2,7 @@ package capstone._4.controller.impl.Schedule;
 import capstone._4.dto.schedule.OptimalResponse;
 import capstone._4.dto.schedule.ScheduleOptimizeRequest;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
+import capstone._4.dto.schedule.output.ScheduleWithCommentsResponse;
 import capstone._4.dto.schedule.output.ScheduleEditResponseDto;
 import capstone._4.controller.doc.ScheduleApi;
 import capstone._4.dto.ApiResponseDto;
@@ -69,13 +70,21 @@ public class ScheduleController implements ScheduleApi {
                         ResponseEnum.GENERATE_COMPLETED.getMessage(),
                         commentResponse));
     }
-
-    // 일정 댓글 조회
+    // 일정 댓글 조회 (일정 중심 + 댓글 서브)
+    @Override
     @GetMapping("/comment")
     public ResponseEntity<?> getComments(@RequestParam Long scheduleId) {
-        List<CommentResponse> comments = scheduleService.getCommentsByScheduleId(scheduleId);
-        return ResponseEntity.ok(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(), comments));
+        ScheduleWithCommentsResponse scheduleWithComments = scheduleService.getScheduleWithComments(scheduleId);
+
+        return ResponseEntity.ok(
+                new ApiResponseDto<>(
+                        ResponseEnum.SUCCESS.getCode(),
+                        ResponseEnum.SUCCESS.getMessage(),
+                        scheduleWithComments
+                )
+        );
     }
+
 
     // 일정 수정
     @PatchMapping("/edit")

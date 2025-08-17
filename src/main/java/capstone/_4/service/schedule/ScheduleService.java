@@ -1,6 +1,5 @@
 package capstone._4.service.schedule;
 
-import capstone._4.domain.GroupsSchedule;
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
 import capstone._4.dto.schedule.*;
@@ -128,24 +127,44 @@ public class ScheduleService {
                 scheduleDto
         );
     }
-    //조회
+    //일정 댓글 조회
     @Transactional(readOnly = true)
-    public List<CommentResponse> getCommentsByScheduleId(Long scheduleId) {
-        List<sch_comment> comments = commentRepository.findByScheduleId(scheduleId);
+    public ScheduleWithCommentsResponse getScheduleWithComments(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("일정을 찾을 수 없습니다."));
 
-        return comments.stream()
-                .map(c -> {
-                    ScheduleResponse scheduleDto = convertToScheduleResponse(c.getSchedule());
-                    return new CommentResponse(
-                            c.getId(),
-                            c.getBody(),
-                            c.getDateAt(),
-                            c.getSchedule().getId().longValue(),
-                            scheduleDto
-                    );
-                })
+        // 참여자 리스트
+        List<Long> participantIds = schedule.getGroupsSchedule().stream()
+                .map(gs -> gs.getUser().getId().longValue())
                 .collect(Collectors.toList());
+
+        // 댓글 리스트
+        List<CommentSimpleResponse> commentList = commentRepository.findByScheduleId(scheduleId).stream()
+                .map(c -> new CommentSimpleResponse(c.getId(), c.getBody(),c.getDateAt()))
+                .collect(Collectors.toList());
+        //개인 일정만 퍼미션
+        Boolean permission = null;
+        if (schedule.getUser() != null) { // 개인 일정이면
+            permission = schedule.getPermission();
+        }
+
+        return ScheduleWithCommentsResponse.builder()
+                .scheduleId(schedule.getId())
+                .title(schedule.getTitle())
+                .startTime(schedule.getStartTime())
+                .endTime(schedule.getEndTime())
+                .timeflex(schedule.getTimeflex())
+                .location(schedule.getLocation())
+                .content(schedule.getContent())
+                .participantIds(participantIds)
+                .permission(permission)
+                .comments(commentList)
+                .build();
     }
+
+
+
+
 
     /**
      * Schedule 엔티티를 ScheduleResponse로 변환
