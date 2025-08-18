@@ -12,4 +12,5 @@ public class CommentCreateRequest {
     @Size(max = 500)
     private String content;    // sch_body
 
+    private Long userId;
 }

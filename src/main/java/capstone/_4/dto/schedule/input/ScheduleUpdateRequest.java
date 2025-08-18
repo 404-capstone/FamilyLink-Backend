@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,4 +22,5 @@ public class ScheduleUpdateRequest {
     private String content;
     private String location;
     private Boolean timeflex;
+    private List<Long> participantIds;
 }

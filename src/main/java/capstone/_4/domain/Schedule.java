@@ -55,8 +55,12 @@ public class Schedule {
     @JsonBackReference
     private Calendar calendar;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<GroupsSchedule> groupsSchedule;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="gup_id")
+    @JsonBackReference
+    private Groups group;
 }
