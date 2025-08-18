@@ -1,5 +1,6 @@
 package capstone._4.service.schedule;
 
+import capstone._4.domain.GroupsSchedule;
 import capstone._4.domain.Schedule;
 import capstone._4.domain.User;
 import capstone._4.dto.schedule.*;
@@ -109,8 +110,12 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(request.getScheduleId())
                 .orElseThrow(() -> new RuntimeException("일정을 찾을 수 없습니다."));
 
+        User user = userRepository.findById(request.getUserId().intValue())
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
         sch_comment comment = new sch_comment();
         comment.setSchedule(schedule);
+        comment.setUser(user);
         comment.setBody(request.getContent());
         comment.setDateAt(LocalDate.now());
 
@@ -127,7 +132,7 @@ public class ScheduleService {
                 scheduleDto
         );
     }
-    //일정 댓글 조회
+    //일정 + 댓글 조회
     @Transactional(readOnly = true)
     public ScheduleWithCommentsResponse getScheduleWithComments(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
@@ -140,7 +145,12 @@ public class ScheduleService {
 
         // 댓글 리스트
         List<CommentSimpleResponse> commentList = commentRepository.findByScheduleId(scheduleId).stream()
-                .map(c -> new CommentSimpleResponse(c.getId(), c.getBody(),c.getDateAt()))
+                .map(c -> new CommentSimpleResponse(
+                        c.getId(),
+                        c.getBody(),
+                        c.getDateAt(),
+                        c.getUser().getId().longValue()
+                ))
                 .collect(Collectors.toList());
         //개인 일정만 퍼미션
         Boolean permission = null;
@@ -200,7 +210,7 @@ public class ScheduleService {
     }
 
 
-
+    //일정 수정
     @Transactional
     public ScheduleEditResponseDto updateSchedule(ScheduleUpdateRequest request) {
         Schedule schedule = scheduleRepository.findById(request.getId())
@@ -213,6 +223,33 @@ public class ScheduleService {
         if (request.getLocation() != null) schedule.setLocation(request.getLocation());
         if (request.getTimeflex() != null) schedule.setTimeflex(request.getTimeflex());
 
+
+        if (request.getParticipantIds() != null) {
+            schedule.getGroupsSchedule().clear();
+            int groupId = schedule.getGroup().getId();
+
+            List<GroupsSchedule> newParticipants = request.getParticipantIds().stream()
+                    .map(userId -> {
+                        // 그룹에 속한 유저인지 체크
+                        boolean exists = groupsUserRepository.existsByGroupIdAndUserid(groupId, userId.intValue());
+                        if (!exists) {
+                            log.warn("그룹 {}에 없는 유저 {}가 추가 시도됨", groupId, userId);
+                            throw new RuntimeException("그룹에 속하지 않은 유저 " + userId + "를 추가할 수 없습니다.");
+                        }
+                        // 유저 엔티티 조회
+                        User user = userRepository.findById(userId.intValue())
+                                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다: " + userId));
+                        // 그룹 스케줄 생성
+                        GroupsSchedule gs = new GroupsSchedule();
+                        gs.setSchedule(schedule);
+                        gs.setUser(user);
+                        return gs;
+                    })
+                    .collect(Collectors.toList());
+
+            schedule.getGroupsSchedule().addAll(newParticipants);
+        }
+
         Schedule updatedSchedule = scheduleRepository.save(schedule);
 
         return new ScheduleEditResponseDto(
@@ -222,9 +259,14 @@ public class ScheduleService {
                 updatedSchedule.getEndTime(),
                 updatedSchedule.getContent(),
                 updatedSchedule.getLocation(),
-                updatedSchedule.getTimeflex()
+                updatedSchedule.getTimeflex(),
+                updatedSchedule.getGroupsSchedule().stream()
+                        .map(gs -> gs.getUser().getId()) // 참여자 ID 추출
+                        .collect(Collectors.toList())
         );
     }
+
+
 
     public OptimalResponse optimalSchedule(ScheduleOptimizeRequest optimalSchedule) {
         log.info("유저 찾기.");

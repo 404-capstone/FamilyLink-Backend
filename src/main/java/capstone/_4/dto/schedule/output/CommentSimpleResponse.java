@@ -11,4 +11,5 @@ public class CommentSimpleResponse {
     private Long commentId;
     private String body;
     private LocalDate dateAt;
+    private Long userId;
 }

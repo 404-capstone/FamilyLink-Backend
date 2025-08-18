@@ -29,4 +29,8 @@ public class sch_comment {
     @JoinColumn(name = "sch_id", nullable = false)
     @JsonBackReference
     private Schedule schedule;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
