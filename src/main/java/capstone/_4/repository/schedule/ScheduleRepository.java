@@ -5,9 +5,7 @@ import capstone._4.domain.QGroupsSchedule;
 import capstone._4.domain.QSchedule;
 import capstone._4.domain.QUser;
 import capstone._4.domain.Schedule;
-import capstone._4.domain.sch_comment;
 import capstone._4.dto.schedule.output.GroupScheduleDto;
-import capstone._4.dto.schedule.output.ScheduleResponseDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
@@ -16,11 +14,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Repository
@@ -161,8 +157,12 @@ public class ScheduleRepository {
 
     }
 
-    public void deleteByUserId(Integer userid) {
+    public void deleteScheduleByUserId(Integer userid) {
         em.createQuery("delete from Schedule s where s.user.id = :userid")
+                .setParameter("userid", userid)
+                .executeUpdate();
+
+        em.createQuery("delete from GroupsSchedule s where s.user.id = :userid")
                 .setParameter("userid", userid)
                 .executeUpdate();
     }
