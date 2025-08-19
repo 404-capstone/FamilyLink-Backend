@@ -92,7 +92,7 @@ public class DiaryService {
         Diary savedDiary = diaryRepository.save(diary);
 
         return new DiaryCreateResponse(
-                savedDiary.getId().longValue(), // Integer -> Long 변환 필요 시
+                savedDiary.getId().longValue(),
                 savedDiary.getContent(),
                 savedDiary.getTime(),
                 savedDiary.getUser().getId().longValue()

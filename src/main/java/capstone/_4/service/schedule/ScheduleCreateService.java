@@ -50,6 +50,7 @@ public class ScheduleCreateService {
                 .timeflex(request.getTimeflex())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
+                .location(request.getLocation())
                 .content(request.getContent())
                 .user(user)
                 .calendar(calendar)
@@ -67,6 +68,7 @@ public class ScheduleCreateService {
                 .endTime(savedSchedule.getEndTime())
                 .content(savedSchedule.getContent())
                 .permission(savedSchedule.getPermission())
+                .location(savedSchedule.getLocation())
                 .timeflex(request.getTimeflex())
                 .build();
     }

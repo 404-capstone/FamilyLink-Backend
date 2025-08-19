@@ -1,6 +1,7 @@
 package capstone._4.repository.diary;
 
 import capstone._4.domain.Diary;
+import capstone._4.dto.diary.output.DiaryCreateResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,4 +12,5 @@ public interface DiaryJpaRepository extends JpaRepository<Diary, Long> {
 
     @Query("SELECT d, gq FROM Diary d JOIN d.groupQuestion gq WHERE gq.id = :groupQuestionId")
     List<Object[]> findDiaryAndQuestion(@Param("groupQuestionId") Integer groupQuestionId);
+
 }
