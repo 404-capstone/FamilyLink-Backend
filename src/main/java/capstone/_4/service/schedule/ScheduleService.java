@@ -1,14 +1,11 @@
 package capstone._4.service.schedule;
 
-import capstone._4.domain.GroupsSchedule;
-import capstone._4.domain.Schedule;
-import capstone._4.domain.User;
+import capstone._4.domain.*;
 import capstone._4.dto.schedule.*;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.*;
 import capstone._4.exception.FastApiException;
 import capstone._4.repository.schedule.CommentRepository;
-import capstone._4.domain.sch_comment;
 import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.dto.schedule.input.CommentCreateRequest;
@@ -29,6 +26,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -226,7 +224,11 @@ public class ScheduleService {
 
         if (request.getParticipantIds() != null) {
             schedule.getGroupsSchedule().clear();
-            int groupId = schedule.getGroup().getId();
+            Groups group = schedule.getGroup();
+            if (group == null) {
+                throw new RuntimeException("스케줄에 연결된 그룹이 없습니다.");
+            }
+            int groupId = group.getId();
 
             List<GroupsSchedule> newParticipants = request.getParticipantIds().stream()
                     .map(userId -> {
@@ -261,7 +263,10 @@ public class ScheduleService {
                 updatedSchedule.getLocation(),
                 updatedSchedule.getTimeflex(),
                 updatedSchedule.getGroupsSchedule().stream()
-                        .map(gs -> gs.getUser().getId()) // 참여자 ID 추출
+                        .map(gs -> Optional.ofNullable(gs.getUser())
+                                .map(User::getId)
+                                .map(Long::valueOf)
+                                .orElse(null))
                         .collect(Collectors.toList())
         );
     }

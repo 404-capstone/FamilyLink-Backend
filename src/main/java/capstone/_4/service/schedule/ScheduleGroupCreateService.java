@@ -59,6 +59,7 @@ public class ScheduleGroupCreateService {
                 .timeflex(request.getTimeflex())
                 .user(creator)
                 .calendar(calendar)
+                .group(group)
                 .build();
 
         // 저장
