@@ -11,6 +11,7 @@ import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.repository.calendar.CalendarRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
+import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.AlarmService;
 import capstone._4.service.other.S3Service;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -43,6 +45,7 @@ public class GroupService {
     private final S3Service s3Service;
     private final AlarmService alarmService;
     private final CalendarRepository calendarRepository;
+    private final ScheduleRepository scheduleRepository;
 
 /**
  * 그룹 생성과 리더 설정을 수행.
@@ -68,7 +71,7 @@ public class GroupService {
     @Transactional
     public void generateQuestion(Groups groups) {
         QuestionList questionList =groupRepository.RandomSearchList();
-        GroupQuestion groupQuestion=new GroupQuestion(LocalDate.now());
+        GroupQuestion groupQuestion=new GroupQuestion(LocalDate.now(ZoneId.of("Asia/Seoul")));
         log.info("그룹과 맺기.{}",groupQuestion);
         groupQuestion.changeQuestion(questionList,groups);
         groupRepository.saveQuestion(groupQuestion);
@@ -147,6 +150,7 @@ public class GroupService {
 
     @Transactional
     public void quitGroup(Integer groupId,Integer userid) {
+        scheduleRepository.deleteByUserId(userid);
         int count = groupsUserRepository.deleteUser(groupId,userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
@@ -196,6 +200,7 @@ public class GroupService {
 
     @Transactional
     public void deleteUserWithGroup(Integer groupId,Integer userid) {
+        scheduleRepository.deleteByUserId(userid);
         int count = groupsUserRepository.deleteUser(groupId,userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
