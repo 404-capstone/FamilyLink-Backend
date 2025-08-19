@@ -57,7 +57,7 @@ public class ScheduleGroupCreateService {
                 .content(request.getContent())
                 .location(request.getLocation())
                 .timeflex(request.getTimeflex())
-                .user(creator)
+                .user(null)
                 .calendar(calendar)
                 .group(group)
                 .build();
