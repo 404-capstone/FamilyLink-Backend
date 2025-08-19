@@ -153,7 +153,7 @@ public class GroupService {
 
     @Transactional
     public void quitGroup(Integer groupId,Integer userid) {
-        scheduleRepository.deleteByUserId(userid);
+        scheduleRepository.deleteScheduleByUserId(userid);
         int count = groupsUserRepository.deleteUser(groupId,userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
@@ -203,7 +203,7 @@ public class GroupService {
 
     @Transactional
     public void deleteUserWithGroup(Integer groupId,Integer userid) {
-        scheduleRepository.deleteByUserId(userid);
+        scheduleRepository.deleteScheduleByUserId(userid);
         int count = groupsUserRepository.deleteUser(groupId,userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
