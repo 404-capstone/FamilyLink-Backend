@@ -161,6 +161,12 @@ public class ScheduleRepository {
 
     }
 
+    public void deleteByUserId(Integer userid) {
+        em.createQuery("delete from Schedule s where s.user.id = :userid")
+                .setParameter("userid", userid)
+                .executeUpdate();
+    }
+
 //    private List<Integer> findUserWithSchedule(Integer scheduleid){ //이 부분은 필요없음. 이유는 이미 이너조인하면서, 조건에 충족하는 컬럼도 생성해서 반환해주기 때문이다.
 //        QGroupsSchedule groupsSchedule= QGroupsSchedule.groupsSchedule;
 //        QUser user= QUser.user;
