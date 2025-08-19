@@ -138,6 +138,9 @@ public class GroupService {
             throw new EntityExistsException("이미 그룹에 가입했습니다");
         }
         User user = getUserFromId(id);
+        if(group.getGroupsuser().stream().anyMatch(groupsUser -> groupsUser.getRole().equals(role))){
+            throw new RuntimeException("그룹 역활이 겹칩니다.");
+        }
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
         groupsUserRepository.save(groupsUser);
         alarmService.GroupAccess(group,user); //알람 전송.
