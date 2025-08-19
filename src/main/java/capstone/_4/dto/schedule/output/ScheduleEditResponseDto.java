@@ -21,5 +21,5 @@ public class ScheduleEditResponseDto {
     private String content;
     private String location;
     private Boolean timeflex;
-    private List<Integer> commentIds;
+    private List<Long> participantIds;
 }
