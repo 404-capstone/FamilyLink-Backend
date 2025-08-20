@@ -24,8 +24,17 @@ public class Diary {
     @Column(name = "di_id")
     private Integer id;
 
+    @Column(name = "di_title")
+    private String title;
+
     @Column(name = "di_content")
     private String content;
+
+    @Column(name = "feedbook")
+    private String feedbook;
+
+    @Column(name = "emotion")
+    private String emotion;
 
     @Column(name = "diary_at")
     private LocalDateTime time;
@@ -35,8 +44,13 @@ public class Diary {
     @JsonBackReference
     private GroupQuestion groupQuestion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     @JsonBackReference
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cal_id")
+    @JsonBackReference
+    private Calendar calendar;
 }

@@ -17,7 +17,7 @@ public class ScheduleCreateInfoDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
-
+    private String location;
     private String content;
     private Boolean permission;
     private Boolean timeflex;
