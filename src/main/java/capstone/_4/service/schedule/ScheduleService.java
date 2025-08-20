@@ -52,11 +52,12 @@ public class ScheduleService {
         this.commentRepository = commentRepository;
         this.webClient = webClient;
     }
-
+    //전체 일정 조회
     public ScheduleResponseDto getSchedule(Integer groupId) {  //그룹에 해당하는 유저를 찾고, 그룹 전체 가족 일정과,개인 일정들을 조회
         List<GroupUserInfoDto> groupUserInfo = groupsUserRepository.findBygroupId(groupId);
         List<Integer> member = groupUserInfo.stream().map(GroupUserInfoDto::getUserId).toList(); //멤버 찾고
 
+        //개인일정 조회
         List<ScheduleInfoDto> scheduleInfoDtos = member.stream()
                 .map(id -> {
                     List<Schedule> userScuedule = scheduleRepository.getUserSchedules(id);
@@ -65,6 +66,7 @@ public class ScheduleService {
                             .toList(); //여기까지 personal스케쥴 만들고
                     return new ScheduleInfoDto(id, personalSchedules);
                 }).toList();
+        //그룹일정 조회
         List<GroupScheduleDto> groupScheduleDto = scheduleRepository.getGroupSchedulesV2(groupId);
 
         return ScheduleResponseDto.builder()
@@ -217,8 +219,6 @@ public class ScheduleService {
         if (request.getTitle() != null) schedule.setTitle(request.getTitle());
         if (request.getStartTime() != null) schedule.setStartTime(request.getStartTime());
         if (request.getEndTime() != null) schedule.setEndTime(request.getEndTime());
-        if (request.getContent() != null) schedule.setContent(request.getContent());
-        if (request.getLocation() != null) schedule.setLocation(request.getLocation());
         if (request.getTimeflex() != null) schedule.setTimeflex(request.getTimeflex());
 
 
