@@ -111,7 +111,7 @@ public class AlarmService {
     public void groupAccess(Groups group, User user) {
         if(group.getTopic_name()!=null) {
             log.info("그룹 가입 메시지 전송.");
-            publisher.publishEvent(new TopicNotifyEvent("유저 그룹 가입", user.getUsername() + "유저가 그룹을 가입하였습니다.", "groupAccess", group.getTopic_name()));
+            publisher.publishEvent(new TopicNotifyEvent(group.getTopic_name(),"유저 그룹 가입", user.getUsername() + "유저가 그룹을 가입하였습니다.","groupAccess" ));
         }
         }
 }
