@@ -1,17 +1,25 @@
 package capstone._4.service;
 
+import capstone._4.domain.Groups;
+import capstone._4.domain.question.GroupQuestion;
 import capstone._4.domain.question.QuestionInfoList;
 import capstone._4.domain.question.QuestionInventory;
 import capstone._4.domain.question.QuestionList;
 import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.repository.QuestionRepository;
+import capstone._4.repository.group.GroupQuestionRepository;
+import capstone._4.repository.group.GroupRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
@@ -19,7 +27,9 @@ import java.util.List;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
-
+    private final GroupRepository groupRepository;
+    private final QuestionRepository queryRepository;
+    private final GroupQuestionRepository groupQuestionRepository;
 
     /**
      * 해당 메서드는, gpt로 생성 된 질문들을 각각 db에 저장하는것이다.
@@ -62,6 +72,37 @@ public class QuestionService {
 
 
 
+    }
+
+
+
+    @Transactional
+    public void checkQuestions(Groups group){
+        Optional<GroupQuestion> groupQuestion=questionRepository.findTopGroupQuestion(group.getId());
+        LocalDate date=LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if(groupQuestion.isEmpty()){
+            groupQuestion.get().changeDate(date);
+            return;
+        }
+
+        if (questionRepository.checkAnswer(groupQuestion.get().getId())){ //만약 응답을 했다면 새로운 문제 생성.
+            List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
+            GroupQuestion newQuestion=new GroupQuestion(date);
+            int index=ThreadLocalRandom.current().nextInt(unQuestions.size());
+            newQuestion.changeQuestion(unQuestions.get(index),group);
+            questionRepository.groupsave(newQuestion);
+        }else{
+            groupQuestion.get().changeDate(date);
+        }
+    }
+
+    @Transactional
+    public void generateQuestion(Groups groups) {
+        QuestionList questionList = questionRepository.RandomSearchList();
+        GroupQuestion groupQuestion=new GroupQuestion(LocalDate.now(ZoneId.of("Asia/Seoul")));
+        log.info("그룹과 맺기.{}",groupQuestion);
+        groupQuestion.changeQuestion(questionList,groups);
+        groupQuestionRepository.save(groupQuestion);
     }
 
 }

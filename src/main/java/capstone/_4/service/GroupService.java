@@ -1,8 +1,6 @@
 package capstone._4.service;
 
 import capstone._4.domain.*;
-import capstone._4.domain.question.GroupQuestion;
-import capstone._4.domain.question.QuestionList;
 import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.group.input.ServeyDto;
 import capstone._4.dto.group.output.GroupInfoResponseDto;
@@ -16,7 +14,6 @@ import capstone._4.repository.user.UserRepository;
 import capstone._4.service.other.AlarmService;
 import capstone._4.service.other.S3Service;
 import capstone._4.service.redis.RedisService;
-import capstone._4.util.ImageHandler;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.soundicly.jnanoidenhanced.jnanoid.NanoIdUtils;
 import io.lettuce.core.RedisException;
@@ -25,27 +22,28 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class GroupService {
-
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final GroupsUserRepository groupsUserRepository;
-    private final RedisService redisService;
-    private final ImageHandler imageHandler;
-    private final S3Service s3Service;
-    private final AlarmService alarmService;
     private final CalendarRepository calendarRepository;
     private final ScheduleRepository scheduleRepository;
+    private final RedisService redisService;
+    private final S3Service s3Service;
+    private final QuestionService questionService;
+    private final AlarmService alarmService;
 
 /**
  * 그룹 생성과 리더 설정을 수행.
@@ -60,22 +58,16 @@ public class GroupService {
         Calendar calendar=new Calendar(groups.getGroup_name());
         groups.changeCalendar(calendar);
         calendarRepository.save(calendar);
-        alarmService.createAndAccessTopic(groups,user); //토픽 생성.
-        GroupsUser groupsuser=new GroupsUser(groups,user,role,true);
+        GroupsUser groupsuser=new GroupsUser(groups, user, role,true);
         groupsUserRepository.save(groupsuser);
+        alarmService.createTopic(groups, user);
         log.info("그룹 질문 랜덤생성.");
-        generateQuestion(groups);
+        questionService.generateQuestion(groups);
         return new GroupGenerateDto(groups.getGroup_name(),groups.getGup_id());
     }
 
-    @Transactional
-    public void generateQuestion(Groups groups) {
-        QuestionList questionList =groupRepository.RandomSearchList();
-        GroupQuestion groupQuestion=new GroupQuestion(LocalDate.now(ZoneId.of("Asia/Seoul")));
-        log.info("그룹과 맺기.{}",groupQuestion);
-        groupQuestion.changeQuestion(questionList,groups);
-        groupRepository.saveQuestion(groupQuestion);
-    }
+
+
 
     private Groups checkImage(String name, MultipartFile image) {
         Groups groups;
@@ -143,8 +135,8 @@ public class GroupService {
         }
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
         groupsUserRepository.save(groupsUser);
-        alarmService.GroupAccess(group,user); //알람 전송.
-        alarmService.createAndAccessTopic(group,user); //d알람 토픽 저장.
+        alarmService.createTopic(group,user); //d알람 토픽 저장.
+        alarmService.groupAccess(group,user); //알람 전송.
         return GroupGenerateDto.builder()
                 .groupName(group.getGroup_name())
                 .groupId(group.getGup_id())
@@ -175,7 +167,7 @@ public class GroupService {
     @Transactional
     public void updateGroup(Integer groupId, String name, MultipartFile image) {
         //String path = checkImage(image);
-        Groups groups =groupRepository.findById(groupId).orElseThrow(()->new EntityNotFoundException("그룹이 존재하지 않음."));
+        Groups groups = groupRepository.findById(groupId).orElseThrow(()->new EntityNotFoundException("그룹이 존재하지 않음."));
         Long count =0L;
         if(image!=null && !image.isEmpty()){ //null 아닐시. 이미지가 존재할시.
             try {
@@ -187,7 +179,7 @@ public class GroupService {
             }
         }else{
             checkGroupImage(groups);
-            count=groupRepository.updateGroup(groupId,name,null,null);
+            count= groupRepository.updateGroup(groupId,name,null,null);
         }
         if(count == 0){
             throw new EntityNotFoundException("그룹이 존재하지 않습니다.");
@@ -214,7 +206,7 @@ public class GroupService {
     }
 
     public String searchCode(Integer groupid) {
-        String code=groupRepository.findById(groupid).get().getCode();
+        String code= groupRepository.findById(groupid).get().getCode();
         Object check=redisService.getData(code);
         if(check != null){
             return code;
@@ -269,6 +261,32 @@ public class GroupService {
 
     }
 
+    /**
+     * 00시 1분마다 전체 그룹에 질문을 체크해 생성할지,다음에 또 사용할지 고르는 로직.
+     */
+    @Scheduled(cron = "0 1 0 * * *",zone = "Asia/Seoul")
+    @Async
+    public void createGroupQuestion(){
+        final int BATCH_SIZE = 100;
+        int pagenum=0;
+        Page<Groups> groups;
+
+        do{
+            PageRequest pageRequest = PageRequest.of(pagenum,BATCH_SIZE); //100개씩 페이징해 부르기.
+            groups=groupRepository.findAll(pageRequest);
+            for(Groups group:groups.getContent()){
+                try {
+                    questionService.checkQuestions(group);
+                }catch(Exception e){
+                    log.error("질문생성중 오류발생:{},{}",e.getMessage(),group.getGup_id());
+                    //throw new RuntimeException("질문 생성 작업중 문제발생"+e.getMessage()+"{}");
+                }
+            }
+
+            pagenum++;
+        }while(groups.hasNext());
+    }
+
 
     private Groups getGroupFromId(Integer groupid) {
         return groupRepository.findById(groupid).orElseThrow(
@@ -291,14 +309,6 @@ public class GroupService {
         return groupid;
     }
 
-
-    private String checkImage(MultipartFile image) {
-        if(image !=null){
-            return imageHandler.saveImage(image);
-        }else{
-            return null;
-        }
-    }
 
     private GroupsUser getGroupsUser(Integer groupId, int id) {
         return groupsUserRepository.findByIds(groupId, id).orElseThrow(

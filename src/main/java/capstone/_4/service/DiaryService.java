@@ -132,7 +132,7 @@ public class DiaryService {
     }
 
     public GroupQuestionResponseDto searchQuestion(Integer groupId) {
-        GroupQuestion groupQuestion=diaryRepository.findTopGroupQuestion(groupId)
+        GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(groupId)
                 .orElseThrow(()->new EntityNotFoundException("최신 문제가 존재하지 않습니다."));
         log.info("문제들 찾기.");
         List<QuestionInventory> questions=diaryRepository.findQuestionsWithGroupQuestion(groupQuestion);

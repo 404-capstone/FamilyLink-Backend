@@ -20,23 +20,23 @@ public class AlarmController implements AlarmApi {
     private final JwtService jwtService;
 
     @Override
-    public ResponseEntity<?> tokenRenewal(String androidToken,HttpServletRequest request) {
-        int id=tokenTakeUserId(request);
-        alarmService.tokenSave(androidToken,id);
+    public ResponseEntity<?> tokenRenewal(String androidToken, HttpServletRequest request) {
+        int id = tokenTakeUserId(request);
+        alarmService.tokenSave(androidToken, id);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), "토큰 재 갱신 성공."));
     }
 
     @Override
-    public ResponseEntity<?> alarmSetting(boolean flag,HttpServletRequest request) {
-        int id=tokenTakeUserId(request);
-        alarmService.chageState(id,flag);
+    public ResponseEntity<?> alarmSetting(boolean flag, HttpServletRequest request) {
+        int id = tokenTakeUserId(request);
+        alarmService.changeState(id, flag);
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(), "설정 성공."));
     }
 
     private int tokenTakeUserId(HttpServletRequest request) {
-        String token= request.getHeader("Authorization");
+        String token = request.getHeader("Authorization");
         return jwtService.returnToken(token);
     }
 }

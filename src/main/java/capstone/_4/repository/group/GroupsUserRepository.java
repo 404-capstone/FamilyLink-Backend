@@ -64,48 +64,4 @@ public class GroupsUserRepository {
 
     }
 
-//    @Transactional
-//    public void updateUser(Integer groupId ,Integer leaderId,Integer userId) {
-//
-//        int updateQuery=em.createQuery("update GroupsUser gu set gu.leader=true " +
-//                        "where gu.group.gup_id=:groupId and gu.user.id=:userId")
-//                .setParameter("groupId",groupId)
-//                .setParameter("userId",userId)
-//                .executeUpdate();
-//
-//        int deleteQuery=em.createQuery("delete from GroupsUser gu " +
-//                "where gu.group.gup_id=:groupId " +
-//                        "and gu.user.id=:leaderId")
-//                .setParameter("groupId",groupId)
-//                .setParameter("leaderId",leaderId)
-//                .executeUpdate();
-//
-//        if(updateQuery<1){
-//            throw new EntityNotFoundException("새 그룹장을 찾지못했습니다");
-//        }
-//        if(deleteQuery<1){
-//            throw new EntityNotFoundException("기존 그룹장을 삭제하지 못했습니다.");
-//        }
-//
-//    }
-
-//    @Transactional
-//    public void updateLeader(Integer groupId,Integer leaderId, Integer userId) {
-//        em.createQuery("update GroupsUser gu " +
-//                "set gu.leader=false " +
-//                "where gu.group.gup_id=:groupId " +
-//                        "and gu.user.id=:leaderId")
-//                .setParameter("groupId",groupId)
-//                .setParameter("leaderId",leaderId)
-//                .executeUpdate();
-//
-//        em.createQuery("update GroupsUser gu " +
-//                "set gu.leader=true " +
-//                "where gu.group.gup_id=:groupId " +
-//                "and gu.user.id=:userid")
-//        .setParameter("groupId",groupId)
-//        .setParameter("userid",userId)
-//                .executeUpdate();
-//
-//    }
 }

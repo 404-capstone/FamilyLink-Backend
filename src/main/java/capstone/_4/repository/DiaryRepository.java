@@ -59,14 +59,6 @@ public class DiaryRepository {
                  .getResultList().stream().findFirst();
     }
 
-    public Optional<GroupQuestion> findTopGroupQuestion(Integer groupId) {
-        return em.createQuery("select gs from GroupQuestion gs " +
-                "where gs.groups.id=:groupId " +
-                "order by gs.id desc",GroupQuestion.class)
-                .setParameter("groupId", groupId)
-                .setMaxResults(1).getResultStream()
-                .findFirst();
-    }
 
     public Map<Integer,List<QuestionAnswerResponse>> findAllAnswer(List<QuestionInventory> questionInventory) {
         QGroupAnswer  groupAnswer=QGroupAnswer.groupAnswer;
