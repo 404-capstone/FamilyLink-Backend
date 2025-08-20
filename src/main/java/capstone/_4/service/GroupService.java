@@ -270,6 +270,7 @@ public class GroupService {
         final int BATCH_SIZE = 100;
         int pagenum=0;
         Page<Groups> groups;
+        log.info("그룹 질문 생성 시작.");
 
         do{
             PageRequest pageRequest = PageRequest.of(pagenum,BATCH_SIZE); //100개씩 페이징해 부르기.
