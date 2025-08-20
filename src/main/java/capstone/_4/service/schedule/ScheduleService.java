@@ -306,7 +306,10 @@ public class ScheduleService {
                          cr.bodyToMono(String.class).flatMap(error->Mono.error(new FastApiException("최적화중 오류가 발생했습니다."+error))))
                 .bodyToMono(SchedulelOptimizeApiResponse.class)
                 .block();
-
+        if(schedulelOptimizeApiResponse.getPersonalSchedule().stream().anyMatch(
+                ps->!ps.getCanParticipate())){
+            throw new FastApiException("가족인원 참여인원을 최적화하는데 실패했습니다.");
+        }
         log.info("응답하기.");
         return new OptimalResponse(optimalSchedule.getGroupId(),new BeforeSchedule(personalSchedule),
                 new AfterSchedule(personalSchedule,schedulelOptimizeApiResponse,

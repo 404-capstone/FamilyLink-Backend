@@ -72,7 +72,7 @@ public class OpenAiService {
     public OpenAiQuestionContent createQuestion() {
         log.info("질문지 만들기 시작.");
         OpenAiRequestDto openAiRequestDto = new OpenAiRequestDto();
-        openAiRequestDto.setModel("gpt-4.1-nano");  //모델 설정
+        openAiRequestDto.setModel("gpt-5-nano");  //모델 설정
         List<MessageRequestDto> messages = generateQuestionMessage();
         ResponseFormatDto formatDto=generateQuestionSchema();
         openAiRequestDto.setMessages(messages);
