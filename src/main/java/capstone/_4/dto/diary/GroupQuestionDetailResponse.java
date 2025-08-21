@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class GroupQuestionDetailResponse {
-    private Integer slot;
+    private Integer questionId;
 
     private String content;
 }

@@ -7,13 +7,12 @@ import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupGenerateDto;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.GroupService;
-import capstone._4.service.other.AlarmService;
+import capstone._4.event.listners.TopicEventListeners;
 import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,13 +23,13 @@ public class GroupController implements GroupApi {
 
     private final GroupService groupService;
     private final JwtService jwtService;
-    private final AlarmService alarmService;
+    private final TopicEventListeners topicEventListeners;
 
     @Autowired
-    public GroupController(GroupService groupService,JwtService jwtService,AlarmService alarmService) {
+    public GroupController(GroupService groupService, JwtService jwtService, TopicEventListeners topicEventListeners) {
         this.groupService = groupService;
         this.jwtService = jwtService;
-        this.alarmService = alarmService;
+        this.topicEventListeners = topicEventListeners;
     }
 
     /**

@@ -5,9 +5,11 @@ import capstone._4.domain.question.QuestionInventory;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
 @Table(name = "group_answer")
+@Getter
 public class GroupAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,5 +42,12 @@ public class GroupAnswer {
 
     public void changeQuestion(GroupQuestion groupQuestion) {
         this.groupQuestion = groupQuestion;
+    }
+
+    public void insertInfo(String answer,GroupQuestion groupQuestion,User user,QuestionInventory questionInventory) {
+        this.answer = answer;
+        this.groupQuestion = groupQuestion;
+        this.user = user;
+        this.questionInventory = questionInventory;
     }
 }

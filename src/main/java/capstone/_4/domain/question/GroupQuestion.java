@@ -57,4 +57,8 @@ public class GroupQuestion {
         this.groups=groups;
         groups.addQuestion(this);
     }
+
+    public void changeDate(LocalDate date){
+        this.day=date;
+    }
 }

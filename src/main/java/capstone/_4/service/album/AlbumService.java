@@ -169,7 +169,7 @@ public class AlbumService {
         Integer month=date.getMonthValue();
         Album album=albumRepository.findByDate(groupId,year,month)
                 .orElseGet(()->{
-                    Groups groups=groupRepository.findById(groupId).get();
+                    Groups groups= groupRepository.findById(groupId).get();
                     Album newalbum=new Album(year,month,groups);
                     return albumRepository.save(newalbum);
                 });

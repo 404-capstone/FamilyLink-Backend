@@ -1,6 +1,7 @@
 package capstone._4.service;
 
 import capstone._4.domain.Diary;
+import capstone._4.domain.GroupAnswer;
 import capstone._4.domain.User;
 import capstone._4.domain.question.GroupQuestion;
 import capstone._4.domain.question.QuestionInventory;
@@ -14,6 +15,7 @@ import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
 import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.group.GroupsUserRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +24,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -37,6 +37,7 @@ public class DiaryService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final DiaryJpaRepository diaryJpaRepository;
+
     @Transactional
     public void deleteDiary(Integer diaryId) {
         try{
@@ -51,7 +52,7 @@ public class DiaryService {
         GroupQuestion questionsInfo=diaryRepository.findGroupQuestion(groupQuestionId,groupId)
                 .orElseThrow(()->new EntityNotFoundException("질문지가 존재하지 않습니다.")); //질문지 정보,이미 전에 조회했을때 그룹정보를 썻기때문에 여기서는 필요x
 
-        List<QuestionInventory> questionIds = diaryRepository.findQuestionsWithGroupQuestion(questionsInfo);
+        List<QuestionInventory> questionIds = questionRepository.findQuestionsWithGroupQuestion(questionsInfo);
 
         Map<Integer,List<QuestionAnswerResponse>> questionAnswerResponses =diaryRepository.findAllAnswer(questionIds); //문제id를 중점으로 가족 응답 response 존재.
 
@@ -131,11 +132,15 @@ public class DiaryService {
         );
     }
 
-    public GroupQuestionResponseDto searchQuestion(Integer groupId) {
-        GroupQuestion groupQuestion=diaryRepository.findTopGroupQuestion(groupId)
+    public GroupQuestionResponseDto searchQuestion(Integer groupId,Integer userId) {
+        LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
+        GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(groupId,now)
                 .orElseThrow(()->new EntityNotFoundException("최신 문제가 존재하지 않습니다."));
+        Optional<GroupAnswer> answer =questionRepository.checkAnswerWithUser(groupQuestion.getId(), userId);
+        if(answer.isPresent()) throw new IllegalStateException("오늘 해당 응답을 하셨습니다.");
+
         log.info("문제들 찾기.");
-        List<QuestionInventory> questions=diaryRepository.findQuestionsWithGroupQuestion(groupQuestion);
+        List<QuestionInventory> questions=questionRepository.findQuestionsWithGroupQuestion(groupQuestion);
         return new GroupQuestionResponseDto(groupId,questions);
     }
 }

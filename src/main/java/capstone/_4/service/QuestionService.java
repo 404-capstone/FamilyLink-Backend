@@ -1,17 +1,32 @@
 package capstone._4.service;
 
+import capstone._4.domain.GroupAnswer;
+import capstone._4.domain.Groups;
+import capstone._4.domain.User;
+import capstone._4.domain.question.GroupQuestion;
 import capstone._4.domain.question.QuestionInfoList;
 import capstone._4.domain.question.QuestionInventory;
 import capstone._4.domain.question.QuestionList;
+import capstone._4.dto.diary.input.QuestionInfoDto;
 import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.repository.QuestionRepository;
+import capstone._4.repository.group.GroupQuestionRepository;
+import capstone._4.repository.group.GroupRepository;
+import capstone._4.repository.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -19,7 +34,9 @@ import java.util.List;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
-
+    private final GroupRepository groupRepository;
+    private final GroupQuestionRepository groupQuestionRepository;
+    private final UserRepository userRepository;
 
     /**
      * 해당 메서드는, gpt로 생성 된 질문들을 각각 db에 저장하는것이다.
@@ -30,7 +47,7 @@ public class QuestionService {
      * @param content
      */
     @Transactional
-    public void questionSave(OpenAiQuestionContent content){ //생성된 질문 저장.
+    public void originalQuestionSave(OpenAiQuestionContent content){ //생성된 질문 저장.
         log.info("Question save");
         List<QuestionInventory> q=content.getQuestions().stream()
                 .map(OpenAiQuestionContent.Question::getContent)
@@ -64,4 +81,58 @@ public class QuestionService {
 
     }
 
+
+
+    @Transactional
+    public void checkQuestions(Groups group){
+        LocalDate date=LocalDate.now(ZoneId.of("Asia/Seoul"));
+        LocalDate before=date.minusDays(1);
+        Optional<GroupQuestion> groupQuestion=questionRepository.findTopGroupQuestion(group.getId(),before);
+        if(groupQuestion.isEmpty()){
+            groupQuestion.get().changeDate(date);
+            return;
+        }
+
+        if (questionRepository.checkAnswer(groupQuestion.get().getId())){ //만약 응답을 했다면 새로운 문제 생성.
+            List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
+            GroupQuestion newQuestion=new GroupQuestion(date);
+            int index=ThreadLocalRandom.current().nextInt(unQuestions.size());
+            newQuestion.changeQuestion(unQuestions.get(index),group);
+            questionRepository.groupsave(newQuestion);
+        }else{
+            groupQuestion.get().changeDate(date);
+        }
+    }
+
+    @Transactional
+    public void generateQuestion(Groups groups) {
+        QuestionList questionList = questionRepository.RandomSearchList();
+        GroupQuestion groupQuestion=new GroupQuestion(LocalDate.now(ZoneId.of("Asia/Seoul")));
+        log.info("그룹과 맺기.{}",groupQuestion);
+        groupQuestion.changeQuestion(questionList,groups);
+        groupQuestionRepository.save(groupQuestion);
+    }
+
+    @Transactional
+    public void questionSave(QuestionInfoDto questions, int userId) {
+        LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
+        User user=userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."));
+        GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(questions.getGroupId(),now)
+                .orElseThrow(()->new EntityNotFoundException("최신 문제가 존재하지 않습니다."));
+
+        List<QuestionInventory>questionInventories=questionRepository.findQuestionsWithGroupQuestion(groupQuestion);
+        Map<Integer,QuestionInventory> questionInventoryMap=questionInventories.stream()
+                .collect(Collectors.toMap(QuestionInventory::getId, Function.identity()));
+        log.info("응답 저장하기.");
+        List<GroupAnswer> answers=questions.getQuestions().stream()
+                .map((q)->{
+                    QuestionInventory qi=questionInventoryMap.get(q.getQuestionId());
+                    GroupAnswer ga=new GroupAnswer();
+                    ga.insertInfo(q.getContent(),groupQuestion,user, qi);
+                    return ga;}
+                ).toList();
+
+        questionRepository.saveAnswer(answers);
+    }
 }

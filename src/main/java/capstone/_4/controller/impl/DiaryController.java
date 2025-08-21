@@ -3,15 +3,18 @@ package capstone._4.controller.impl;
 import capstone._4.controller.doc.DiaryApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.diary.GroupAnswerDetailResponse;
-import capstone._4.dto.diary.GroupQuestionDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
+import capstone._4.dto.diary.input.QuestionInfoDto;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
 import capstone._4.dto.diary.output.DiaryDetailResponse;
 import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
+import capstone._4.service.QuestionService;
 import capstone._4.service.other.OpenAiService;
+import capstone._4.service.token.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,8 @@ public class DiaryController implements DiaryApi {
 
     private final DiaryService diaryService;
     private final OpenAiService openAiService;
+    private final QuestionService questionService;
+    private final JwtService jwtService;
 
     /**
      * 그룹 질문지 상세조회 api
@@ -89,8 +94,8 @@ public class DiaryController implements DiaryApi {
     }
 
     @Override
-    public ResponseEntity<?> searchQuestion(Integer groupId) {
-        GroupQuestionResponseDto groupQuestions =diaryService.searchQuestion(groupId);
+    public ResponseEntity<?> searchQuestion(Integer groupId,HttpServletRequest request) {
+        GroupQuestionResponseDto groupQuestions =diaryService.searchQuestion(groupId,tokenTakeUserId(request));
         return ResponseEntity.ok(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),
@@ -98,10 +103,24 @@ public class DiaryController implements DiaryApi {
         ));
     }
 
+    @Override
+    public ResponseEntity<?> writeQuestion(QuestionInfoDto questions, HttpServletRequest request) {
+        questionService.questionSave(questions,tokenTakeUserId(request));
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
+                "응답저장이 완료되었습니다."));
+    }
+
     @GetMapping("/question/generate")
     public ResponseEntity<?> createQuestion(){
         OpenAiQuestionContent response =openAiService.createQuestion();
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 response));
+    }
+
+
+
+    private int tokenTakeUserId(HttpServletRequest request) {
+        String token= request.getHeader("Authorization");
+        return jwtService.returnToken(token);
     }
 }

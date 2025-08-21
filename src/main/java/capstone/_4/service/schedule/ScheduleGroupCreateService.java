@@ -11,7 +11,6 @@ import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.schedule.GroupsScheduleRepository;
-import capstone._4.repository.calendar.CalendarRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,7 @@ public class ScheduleGroupCreateService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final GroupsScheduleRepository groupsScheduleRepository;
+
 
     @Transactional
     public GroupScheduleDto createGroupSchedule(ScheduleGroupCreateRequest request) {
