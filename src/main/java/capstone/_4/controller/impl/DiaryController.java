@@ -112,6 +112,7 @@ public class DiaryController implements DiaryApi {
 
     @GetMapping("/question/generate")
     public ResponseEntity<?> createQuestion(){
+        log.info("시작");
         OpenAiQuestionContent response =openAiService.createQuestion();
         return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(),
                 response));
