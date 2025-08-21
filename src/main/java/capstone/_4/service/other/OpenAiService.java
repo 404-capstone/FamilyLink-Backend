@@ -146,7 +146,7 @@ public class OpenAiService {
                         + "], 활동시간대는" + groupScheduleInfoDto.getStartTime().format(dtf) + "/" + groupScheduleInfoDto.getEndTime().format(dtf)
                         + "이고 " + groupScheduleInfoDto.getInoutdoor() + "에서 하기를 원해.")
                 .build());
-        log.info("메시지 정보:\n{}", messages.get(2).getContent());
+        log.info("메시지 정보:\n{}", messages.get(1).getContent());
         sb.append("활동분류는 ");
 
         sb.append(groupScheduleInfoDto.getActivityPersonalityList().stream().map(activityPersonality -> activityPersonality.getType())
@@ -273,7 +273,7 @@ public class OpenAiService {
 
     private OpenAiResponseDto getOpenAiRecommend(GroupScheduleInfoDto groupScheduleInfoDto, List<User> users) { //실질적 호출.
         OpenAiRequestDto openAiRequestDto = new OpenAiRequestDto();
-        openAiRequestDto.setModel("gpt-4.1-nano");  //모델 설정.
+        openAiRequestDto.setModel("gpt-5-nano");  //모델 설정.
         List<MessageRequestDto> messages = generateRecommendMessages(groupScheduleInfoDto, users); //메시지 생성.
         openAiRequestDto.setResponse_format(generateRecommendSchema());
         openAiRequestDto.setMessages(messages);
