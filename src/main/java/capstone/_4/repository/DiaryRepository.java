@@ -29,6 +29,8 @@ public class DiaryRepository {
     private final JPAQueryFactory queryFactory;
 
 
+
+
     public void deleteById(int diaryId) {
         Diary diary =em.find(Diary.class, diaryId);
         if(diary == null){
@@ -100,16 +102,5 @@ public class DiaryRepository {
                 .fetch();
     }
 
-    public List<QuestionInventory> findQuestionsWithGroupQuestion(GroupQuestion questionsInfo) {
-        QQuestionInfoList questionInfoList=QQuestionInfoList.questionInfoList;
-        QQuestionInventory questionInventory=QQuestionInventory.questionInventory;
 
-        return queryFactory.select(questionInventory)
-                .from(questionInfoList)
-                .join(questionInfoList.questionInventory,questionInventory)
-                .where(questionInfoList.questionList.id.eq(questionsInfo.getQuestionList().getId()))
-                .orderBy(questionInfoList.slot.asc())
-                .fetch();
-
-    }
 }

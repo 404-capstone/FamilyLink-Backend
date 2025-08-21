@@ -3,12 +3,14 @@ package capstone._4.controller.doc;
 import capstone._4.dto.diary.GroupAnswerDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
+import capstone._4.dto.diary.input.QuestionInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,5 +99,10 @@ public interface DiaryApi {
     content = {@Content(mediaType = "application/json",
             schema = @Schema(implementation = GroupQuestionResponseDto.class))})
     @GetMapping("/question/search")
-    ResponseEntity<?> searchQuestion(@RequestParam Integer groupId);
+    ResponseEntity<?> searchQuestion(@RequestParam Integer groupId,HttpServletRequest request);
+
+    @Operation(summary = "질문지 응답 저장하기", description = "질문지에 대한 응답지를 저장합니다.")
+    @ApiResponse(responseCode = "200", description = "요청 성공")
+    @PostMapping("/question/write")
+    public ResponseEntity<?> writeQuestion(@RequestBody QuestionInfoDto question, HttpServletRequest request);
 }

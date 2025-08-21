@@ -5,7 +5,6 @@ import capstone._4.dto.gpt.*;
 import capstone._4.dto.gpt.OpenAiResponseDto;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
 import capstone._4.exception.GptErrorException;
-import capstone._4.repository.DiaryRepository;
 import capstone._4.service.QuestionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -13,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -68,7 +66,7 @@ public class OpenAiService {
      * 매주 월요일에 질문을 생성하는 메서드
      * question안에 contetn에 문제 여러개 존재
      */
-    @Scheduled(cron = "0 58 23 ? * SUN",zone="Asia/Seoul")
+    //@Scheduled(cron = "0 58 23 ? * SUN",zone="Asia/Seoul")
     public OpenAiQuestionContent createQuestion() {
         log.info("질문지 만들기 시작.");
         OpenAiRequestDto openAiRequestDto = new OpenAiRequestDto();
@@ -92,7 +90,7 @@ public class OpenAiService {
             String question = response.getChoices().get(0).getMessage().getContent();
             ObjectMapper objectMapper = new ObjectMapper();
             OpenAiQuestionContent content = objectMapper.readValue(question, OpenAiQuestionContent.class);  //변환하기 json형태로.
-            questionService.questionSave(content);
+            questionService.originalQuestionSave(content);
             return content;
             //저장하기 로직
         } catch (JsonMappingException e) {

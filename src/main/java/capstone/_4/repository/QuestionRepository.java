@@ -1,25 +1,25 @@
 package capstone._4.repository;
 
 import capstone._4.domain.GroupAnswer;
-import capstone._4.domain.question.GroupQuestion;
-import capstone._4.domain.question.QuestionInfoList;
-import capstone._4.domain.question.QuestionInventory;
-import capstone._4.domain.question.QuestionList;
+import capstone._4.domain.question.*;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.time.LocalDate;
+import java.util.*;
 
 @Repository
 @Slf4j
+@RequiredArgsConstructor
 public class QuestionRepository {
 
     @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
     /**
      * 원본 문제 저장.
@@ -49,6 +49,15 @@ public class QuestionRepository {
 
     public void groupsave(GroupQuestion groupQuestion) {
         em.persist(groupQuestion);
+    }
+    public void saveAnswer(List<GroupAnswer> answers) {
+        for (GroupAnswer groupAnswer : answers) {
+            if(groupAnswer.getId() == null){
+                em.persist(groupAnswer);
+            }else{
+                em.merge(groupAnswer);
+            }
+        }
     }
 
     public Optional<GroupQuestion> findGroupQuestionByGroupId(Integer groupId) {
@@ -80,11 +89,22 @@ public class QuestionRepository {
         return !answers.isEmpty();
     }
 
-    public Optional<GroupQuestion> findTopGroupQuestion(Integer groupId) {
+    public Optional<GroupAnswer> checkAnswerWithUser(Integer groupQuestionId, Integer userId) {
+        Optional<GroupAnswer> ga=em.createQuery("select ga from GroupAnswer ga " +
+                "where ga.groupQuestion.id=:groupQuestionId and ga.user.id=:userId",GroupAnswer.class)
+                .setParameter("groupQuestionId", groupQuestionId)
+                .setParameter("userId", userId)
+                .getResultList().stream().findFirst();
+        return ga;
+    }
+
+    public Optional<GroupQuestion> findTopGroupQuestion(Integer groupId, LocalDate now) {
         return em.createQuery("select gs from GroupQuestion gs " +
                         "where gs.groups.id=:groupId " +
+                        "and gs.day=:now " +
                         "order by gs.id desc",GroupQuestion.class)
                 .setParameter("groupId", groupId)
+                .setParameter("now", now)
                 .setMaxResults(1).getResultStream()
                 .findFirst();
     }
@@ -107,4 +127,19 @@ public class QuestionRepository {
 
         return questionList;
     }
+
+    public List<QuestionInventory> findQuestionsWithGroupQuestion(GroupQuestion questionsInfo) {
+        QQuestionInfoList questionInfoList=QQuestionInfoList.questionInfoList;
+        QQuestionInventory questionInventory=QQuestionInventory.questionInventory;
+
+        return queryFactory.select(questionInventory)
+                .from(questionInfoList)
+                .join(questionInfoList.questionInventory,questionInventory)
+                .where(questionInfoList.questionList.id.eq(questionsInfo.getQuestionList().getId()))
+                .orderBy(questionInfoList.slot.asc())
+                .fetch();
+
+    }
+
+
 }
