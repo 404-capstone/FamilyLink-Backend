@@ -2,13 +2,16 @@ package capstone._4.controller.doc;
 
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.docs.schedule.ScheduleSearchResponse;
+import capstone._4.dto.gpt.OpenAiRecommendComment;
 import capstone._4.dto.schedule.OptimalResponse;
 import capstone._4.dto.schedule.ScheduleOptimizeRequest;
 import capstone._4.dto.schedule.input.CommentCreateRequest;
+import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
 import capstone._4.dto.schedule.input.ScheduleUpdateRequest;
 import capstone._4.dto.schedule.output.ScheduleEditResponseDto;
 import capstone._4.dto.schedule.output.CommentResponse;
 import capstone._4.dto.schedule.output.ScheduleWithCommentsResponse;
+import capstone._4.enums.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -104,6 +107,91 @@ public interface ScheduleApi { //이거 나중에 완성하면 이어서 작성�
     public ResponseEntity<?> searchSchedule(
             @Parameter(description = "그룹 dbid")
             @RequestParam Integer groupId);
+
+    @Operation(summary = "가족 활동 추천.",description = "가족 활동 추천을 위한 api")
+    @ApiResponse(
+            responseCode = "200",
+            description = "정상호출",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = OpenAiRecommendComment.class),
+                    examples = @ExampleObject(
+                            name = "성공 응답 예시",
+                            value = """
+                                {
+                                  "code": 200,
+                                  "message": "정상적으로 호출되었습니다",
+                                  "data": {
+                                    "recommendations": [
+                                      {
+                                        "category": "힐링/휴식",
+                                        "items": [
+                                          {
+                                            "activity": "도시 공원 산책",
+                                            "location": "서울시 강남구 테헤란로 일대 공원",
+                                            "description": "서울시 강남구의 공원에서 여유롭게 산책하며 힐링할 수 있는 활동입니다."
+                                          },
+                                          {
+                                            "activity": "자전거 타기",
+                                            "location": "강남구 일대 자전거 도로",
+                                            "description": "자전거를 타며 강남구의 경치를 즐기고 건강도 챙기는 활동입니다."
+                                          },
+                                          {
+                                            "activity": "스트레칭 및 요가",
+                                            "location": "근처 공원 또는 공공시설 야외 공간",
+                                            "description": "야외에서 간단한 스트레칭과 요가를 통해 몸과 마음을 쉬게 하는 활동입니다."
+                                          },
+                                          {
+                                            "activity": "피크닉 즐기기",
+                                            "location": "서울시 강남구의 공원 잔디밭",
+                                            "description": "바로 옆 공원에서 도시 속 피크닉을 하며 휴식을 취하는 시간입니다."
+                                          },
+                                          {
+                                            "activity": "산책 카페 방문",
+                                            "location": "강남구 카페거리 또는 커피숍의 야외 좌석",
+                                            "description": "야외 테이블이 있는 카페를 방문해 차 한잔하며 여유를 즐기는 활동입니다."
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "category": "문화/예술",
+                                        "items": [
+                                          {
+                                            "activity": "거리 미술 감상",
+                                            "location": "강남구 거리 일대",
+                                            "description": "공공 미술 작품과 거리 예술을 감상하며 문화적 경험을 쌓기 좋은 활동입니다."
+                                          },
+                                          {
+                                            "activity": "야외 사진 촬영",
+                                            "location": "강남구 거리 또는 공원",
+                                            "description": "도심 속 야외에서 사진 촬영하며 창의력을 발휘하는 활동입니다."
+                                          },
+                                          {
+                                            "activity": "버스 투어 또는 도보 탐방",
+                                            "location": "강남구 주요 명소",
+                                            "description": "가이드 없이도 자유롭게 강남구의 명소를 탐방하는 활동입니다."
+                                          },
+                                          {
+                                            "activity": "공공 미술 체험 워크숍",
+                                            "location": "공공 예술 공간 또는 문화센터",
+                                            "description": "공공 미술 체험 또는 간단한 워크숍에 참여하는 활동입니다."
+                                          },
+                                          {
+                                            "activity": "야외 공연 감상",
+                                            "location": "공원 또는 광장 무대",
+                                            "description": "공공 장소에서 열리는 버스킹, 연극, 공연 등을 감상하는 활동입니다."
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                                """
+                    )
+            )
+    )
+    @PostMapping("/group/recom")
+    public ResponseEntity<?> recommendSchedule(@RequestBody GroupScheduleInfoDto groupScheduleInfoDto);
 
 
     @Operation(summary = "일정 삭제", description = "일정을 삭제하는 API입니다.")

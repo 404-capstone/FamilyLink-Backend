@@ -39,7 +39,7 @@ public class ScheduleController implements ScheduleApi {
                 ResponseEnum.SUCCESS.getMessage(),scheduleResponseDto ));
     }
 
-    @PostMapping("/group/recom")
+    @Override
     public ResponseEntity<?> recommendSchedule(@RequestBody GroupScheduleInfoDto groupScheduleInfoDto){
         OpenAiRecommendComment openAiResponse =scheduleService.createRecommend(groupScheduleInfoDto);
         //String response= openAiService.createRecommend();
