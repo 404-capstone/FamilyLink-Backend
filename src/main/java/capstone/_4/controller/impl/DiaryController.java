@@ -11,6 +11,7 @@ import capstone._4.dto.diary.output.DiaryDetailResponse;
 import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
+import capstone._4.service.GeminiClient;
 import capstone._4.service.QuestionService;
 import capstone._4.service.other.OpenAiService;
 import capstone._4.service.token.JwtService;
@@ -23,7 +24,7 @@ import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 
 import java.util.List;
 
-
+@RequestMapping("/diary")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +34,7 @@ public class DiaryController implements DiaryApi {
     private final OpenAiService openAiService;
     private final QuestionService questionService;
     private final JwtService jwtService;
+    private final GeminiClient geminiClient;
 
     /**
      * 그룹 질문지 상세조회 api
@@ -123,5 +125,28 @@ public class DiaryController implements DiaryApi {
     private int tokenTakeUserId(HttpServletRequest request) {
         String token= request.getHeader("Authorization");
         return jwtService.returnToken(token);
+    }
+
+    /**
+     * Gemini를 사용한 일지 피드백 API
+     * @param diary 일지 텍스트
+     * @return Gemini 피드백
+     */
+    @PostMapping("/feedback")
+    public ResponseEntity<?> getDiaryFeedback(@RequestBody String diary) {
+        log.info("Gemini API - 일지 피드백 요청: {}", diary);
+        //프롬프트 짜는곳
+        String prompt = """
+                너는 감정적으로 공감해주고 간단한 개선 피드백을 주는 일지 코치야.
+                아래 일지를 읽고 2~3줄로 응원과 개선 피드백을 줘.
+                일지: %s
+                """.formatted(diary);
+        String feedback = geminiClient.generateContent(prompt);
+
+        return ResponseEntity.ok().body(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                feedback
+        ));
     }
 }
