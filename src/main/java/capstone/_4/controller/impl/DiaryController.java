@@ -11,6 +11,7 @@ import capstone._4.dto.diary.output.DiaryDetailResponse;
 import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
+import capstone._4.service.GeminiClient;
 import capstone._4.service.QuestionService;
 import capstone._4.service.other.OpenAiService;
 import capstone._4.service.token.JwtService;
@@ -21,9 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-
+@RequestMapping("/diary")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class DiaryController implements DiaryApi {
     private final OpenAiService openAiService;
     private final QuestionService questionService;
     private final JwtService jwtService;
+    private final GeminiClient geminiClient;
 
     /**
      * 그룹 질문지 상세조회 api
@@ -68,12 +72,21 @@ public class DiaryController implements DiaryApi {
      */
     @Override
     public ResponseEntity<?> writeDiary(DiaryCreateRequest request) {
+        // 1. 다이어리 생성
         DiaryCreateResponse diaryResponse = diaryService.createDiary(request);
+
+        // 2. Gemini 피드백 생성
+        String feedback = diaryService.generateAndSaveFeedback(diaryResponse.getId());
+
+        // 3. 다이어리 + 피드백을 함께 반환
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("diary", diaryResponse);
+        responseData.put("feedback", feedback);
 
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),
-                diaryResponse
+                responseData
         ));
     }
 
@@ -124,4 +137,5 @@ public class DiaryController implements DiaryApi {
         String token= request.getHeader("Authorization");
         return jwtService.returnToken(token);
     }
+
 }
