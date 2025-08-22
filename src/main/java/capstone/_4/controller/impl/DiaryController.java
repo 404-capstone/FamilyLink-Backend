@@ -22,7 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/diary")
 @RestController
@@ -70,12 +72,21 @@ public class DiaryController implements DiaryApi {
      */
     @Override
     public ResponseEntity<?> writeDiary(DiaryCreateRequest request) {
+        // 1. 다이어리 생성
         DiaryCreateResponse diaryResponse = diaryService.createDiary(request);
+
+        // 2. Gemini 피드백 생성
+        String feedback = diaryService.generateAndSaveFeedback(diaryResponse.getId());
+
+        // 3. 다이어리 + 피드백을 함께 반환
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("diary", diaryResponse);
+        responseData.put("feedback", feedback);
 
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),
-                diaryResponse
+                responseData
         ));
     }
 
@@ -127,22 +138,4 @@ public class DiaryController implements DiaryApi {
         return jwtService.returnToken(token);
     }
 
-    /**
-     * Gemini를 사용한 일지 피드백 API
-     * @param diaryId 다이어리 ID
-     * @return Gemini 피드백
-     */
-    @PostMapping("/feedback/{diaryId}")
-    public ResponseEntity<?> getDiaryFeedback(@PathVariable Long diaryId) {
-        log.info("Gemini API - 일지 피드백 요청: {}", diaryId);
-
-        // 서비스에서 di_content 불러오고 feedbook 생성 & 저장
-        String feedback = diaryService.generateAndSaveFeedback(diaryId);
-
-        return ResponseEntity.ok().body(new ApiResponseDto<>(
-                ResponseEnum.SUCCESS.getCode(),
-                ResponseEnum.SUCCESS.getMessage(),
-                feedback
-        ));
-    }
 }
