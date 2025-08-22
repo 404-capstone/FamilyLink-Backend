@@ -129,19 +129,15 @@ public class DiaryController implements DiaryApi {
 
     /**
      * Gemini를 사용한 일지 피드백 API
-     * @param diary 일지 텍스트
+     * @param diaryId 다이어리 ID
      * @return Gemini 피드백
      */
-    @PostMapping("/feedback")
-    public ResponseEntity<?> getDiaryFeedback(@RequestBody String diary) {
-        log.info("Gemini API - 일지 피드백 요청: {}", diary);
-        //프롬프트 짜는곳
-        String prompt = """
-                너는 감정적으로 공감해주고 간단한 개선 피드백을 주는 일지 코치야.
-                아래 일지를 읽고 2~3줄로 응원과 개선 피드백을 줘.
-                일지: %s
-                """.formatted(diary);
-        String feedback = geminiClient.generateContent(prompt);
+    @PostMapping("/feedback/{diaryId}")
+    public ResponseEntity<?> getDiaryFeedback(@PathVariable Long diaryId) {
+        log.info("Gemini API - 일지 피드백 요청: {}", diaryId);
+
+        // 서비스에서 di_content 불러오고 feedbook 생성 & 저장
+        String feedback = diaryService.generateAndSaveFeedback(diaryId);
 
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),

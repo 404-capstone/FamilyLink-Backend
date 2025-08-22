@@ -22,7 +22,10 @@ public class JeminaiConfig {
     }
 
     @Bean
-    public GeminiClient geminiClient(@Qualifier("geminiRestTemplate") RestTemplate restTemplate) {
+    public GeminiClient geminiClient(
+            @Value("${gemini.api-key}") String apiKey,
+            @Value("${gemini.model}") String model,
+            @Qualifier("geminiRestTemplate") RestTemplate restTemplate) {
         return new GeminiClient(apiKey, model, restTemplate);
     }
 }
