@@ -1,6 +1,7 @@
 package capstone._4.service;
 
 import capstone._4.domain.Diary;
+import capstone._4.domain.DiaryEmotion;
 import capstone._4.domain.GroupAnswer;
 import capstone._4.domain.User;
 import capstone._4.domain.question.GroupQuestion;
@@ -9,6 +10,7 @@ import capstone._4.dto.diary.*;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.*;
 import capstone._4.exception.FastApiException;
+import capstone._4.repository.EmotionRepository;
 import capstone._4.repository.diary.DiaryJpaRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
@@ -31,6 +33,8 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import static capstone._4.domain.QDiary.diary;
+
 @Service
 @Slf4j
 public class DiaryService {
@@ -41,12 +45,12 @@ public class DiaryService {
     private final UserRepository userRepository;
     private final DiaryJpaRepository diaryJpaRepository;
     private final GeminiClient geminiClient;
-    private final WebClient webClient;
+    private final EmotionRepository emotionRepository;
 
     public DiaryService(GeminiClient geminiClient, DiaryJpaRepository diaryJpaRepository,
                         UserRepository userRepository, QuestionRepository questionRepository,
                         GroupsUserRepository groupsUserRepository, DiaryRepository diaryRepository,
-                        @Qualifier("FastApiWebClient") WebClient webClient
+                        EmotionRepository emotionRepository
     ) {
         this.geminiClient = geminiClient;
         this.diaryJpaRepository = diaryJpaRepository;
@@ -54,7 +58,7 @@ public class DiaryService {
         this.questionRepository = questionRepository;
         this.groupsUserRepository = groupsUserRepository;
         this.diaryRepository = diaryRepository;
-        this.webClient = webClient;
+        this.emotionRepository = emotionRepository;
     }
 
 
@@ -166,40 +170,48 @@ public class DiaryService {
     }
 
 
-    /**
-     * gemini 피드백과 fastapi 병렬처리수행.
-     * @param diary
-     * @return
-     */
-    public FeedBackDto createFeedBack(DiaryCreateResponse diary){
-        //피드백 불러오기.
-        CompletableFuture<String> feedBackResult=CompletableFuture
-                .supplyAsync(()-> geminiClient.generateAndSaveFeedback(diary.getId()));
+    public String generateAndSaveFeedback(Long diaryId) {
+        // 1. DB에서 일지 조회
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new RuntimeException("일지를 찾을 수 없습니다."));
 
-        //감정 불러오기
-        CompletableFuture<List<EmotionResultDto>> emotionResult= createEmotionResult(diary.getContent());
+        // 2. 프롬프트 작성
+        String prompt = """
+            너는 따뜻하게 공감해주면서도 객관적인 개선 피드백을 주는 '일지 코치'야.
 
-        //두작업 다 완료시 결과 받아서 값을 반환한다.2개쓰니까 combine사용.그이상은 allof
-        CompletableFuture<FeedBackDto> result=feedBackResult.thenCombine(emotionResult,(feedBack,emotion)->
-                    FeedBackDto.builder()
-                            .diary(diary.getContent())
-                            .feedback(feedBack)
-                            .emotions(emotion)
-                            .build()
-                );
-        return result.join();
+            [지침]
+            1. 먼저 사용자의 감정을 공감하며 짧게 응원해줘. (따뜻한 톤)
+            2. 이어서 개선할 점이나 긍정적인 습관 제안을 간단히 해줘. (객관적 톤)
+            3. 전체 답변은 4~5줄로 제한해.
+
+            [일지]
+            %s
+            """.formatted(diary.getContent());
+
+
+
+        // 3. Gemini API 호출
+        String feedback = geminiClient.generateContent(prompt);
+
+
+
+
+        return feedback;
     }
 
-    private CompletableFuture<List<EmotionResultDto>> createEmotionResult(String feedback){
-        return webClient.post().uri("/emotion")
-                .bodyValue(Map.of("feedback",feedback))
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError,re->re.bodyToMono(String.class)
-                        .flatMap(error-> Mono.error(new FastApiException("감정분석중 오류가 발생했습니다."+error))))
-                .onStatus(HttpStatusCode::is5xxServerError,re->re.bodyToMono(String.class)
-                        .flatMap(error-> Mono.error(new FastApiException("감정분석중 오류가 발생했습니다."+error))))
-                .bodyToMono(EmotionResponse.class)
-                .map(EmotionResponse::getEmotions)
-                .toFuture(); //여기는 비동기 위해서 사용.
+
+    @Transactional
+    public void saveFeedBackInfo(String feedBack, List<EmotionResultDto> emtions,Long diaryId) {
+        log.info("감정 저장 시작.");
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new RuntimeException("일지를 찾을 수 없습니다."));
+        diary.setFeedbook(feedBack);
+
+        emtions.forEach(em -> {
+            DiaryEmotion emotion = new DiaryEmotion();
+            emotion.changeEmotion(em.getEmotion(), em.getPercent(), diary);
+            emotionRepository.save(emotion);
+        });
+        log.info("감정 저장 완료.");
     }
 }

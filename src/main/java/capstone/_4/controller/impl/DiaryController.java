@@ -14,6 +14,7 @@ import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
 import capstone._4.service.GeminiClient;
 import capstone._4.service.QuestionService;
+import capstone._4.service.other.FeedBackWriter;
 import capstone._4.service.other.OpenAiService;
 import capstone._4.service.token.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +39,7 @@ public class DiaryController implements DiaryApi {
     private final QuestionService questionService;
     private final JwtService jwtService;
     private final GeminiClient geminiClient;
+    private final FeedBackWriter feedBackWriter;
 
     /**
      * 그룹 질문지 상세조회 api
@@ -77,7 +79,7 @@ public class DiaryController implements DiaryApi {
         DiaryCreateResponse diaryResponse = diaryService.createDiary(request);
 
         // 2. Gemini 피드백 생성
-        FeedBackDto feedback = diaryService.createFeedBack(diaryResponse);
+        FeedBackDto feedback = feedBackWriter.createFeedBack(diaryResponse);
 
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),

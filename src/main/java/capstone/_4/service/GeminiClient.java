@@ -15,50 +15,18 @@ public class GeminiClient {
     private final String apiKey;
     private final String model;
     private final RestTemplate restTemplate;
-    private final DiaryRepository diaryRepository;
 
     private static final String GEMINI_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}";
 
     public GeminiClient(@Value("${gemini.api-key}") String apiKey,
                         @Value("${gemini.model}") String model,
-                        RestTemplate restTemplate,
-                        DiaryRepository diaryRepository) {
+                        RestTemplate restTemplate) {
         this.apiKey = apiKey;
         this.model = model;
         this.restTemplate = restTemplate;
-        this.diaryRepository = diaryRepository;
     }
-    @Transactional
-    public String generateAndSaveFeedback(Long diaryId) {
-        // 1. DB에서 일지 조회
-        Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new RuntimeException("일지를 찾을 수 없습니다."));
 
-        // 2. 프롬프트 작성
-        String prompt = """
-            너는 따뜻하게 공감해주면서도 객관적인 개선 피드백을 주는 '일지 코치'야.
-
-            [지침]
-            1. 먼저 사용자의 감정을 공감하며 짧게 응원해줘. (따뜻한 톤)
-            2. 이어서 개선할 점이나 긍정적인 습관 제안을 간단히 해줘. (객관적 톤)
-            3. 전체 답변은 4~5줄로 제한해.
-
-            [일지]
-            %s
-            """.formatted(diary.getContent());
-
-
-
-        // 3. Gemini API 호출
-        String feedback = generateContent(prompt);
-
-        // 4. DB에 feedbook 저장
-        diary.setFeedbook(feedback);
-        diaryRepository.save(diary);
-
-        return feedback;
-    }
 
     public String generateContent(String prompt) {
         Map<String, Object> request = new HashMap<>();
