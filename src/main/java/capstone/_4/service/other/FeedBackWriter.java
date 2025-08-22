@@ -28,14 +28,11 @@ import java.util.concurrent.ExecutionException;
 public class FeedBackWriter {
     private final DiaryService diaryService;
     private final WebClient webClient;
-    private final EmotionRepository emotionRepository;
 
     public FeedBackWriter(DiaryService diaryService,
-                          @Qualifier("FastApiWebClient") WebClient webClient,
-                          EmotionRepository emotionRepository) {
+                          @Qualifier("FastApiWebClient") WebClient webClient) {
         this.diaryService = diaryService;
         this.webClient = webClient;
-        this.emotionRepository = emotionRepository;
     }
 
     /**
