@@ -8,6 +8,7 @@ import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.input.QuestionInfoDto;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
 import capstone._4.dto.diary.output.DiaryDetailResponse;
+import capstone._4.dto.diary.output.FeedBackDto;
 import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.DiaryService;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RequestMapping("/diary")
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -71,22 +72,17 @@ public class DiaryController implements DiaryApi {
      * @return 생성된 다이어리 정보
      */
     @Override
-    public ResponseEntity<?> writeDiary(DiaryCreateRequest request) {
+    public ResponseEntity<?> diaryFeedBack(DiaryCreateRequest request) {
         // 1. 다이어리 생성
         DiaryCreateResponse diaryResponse = diaryService.createDiary(request);
 
         // 2. Gemini 피드백 생성
-        String feedback = diaryService.generateAndSaveFeedback(diaryResponse.getId());
-
-        // 3. 다이어리 + 피드백을 함께 반환
-        Map<String, Object> responseData = new HashMap<>();
-        responseData.put("diary", diaryResponse);
-        responseData.put("feedback", feedback);
+        FeedBackDto feedback = diaryService.createFeedBack(diaryResponse);
 
         return ResponseEntity.ok().body(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),
-                responseData
+                feedback
         ));
     }
 
