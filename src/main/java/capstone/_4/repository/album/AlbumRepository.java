@@ -1,6 +1,7 @@
 package capstone._4.repository.album;
 
 import capstone._4.domain.Album;
+import capstone._4.domain.Groups;
 import capstone._4.domain.QAlbum;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -68,5 +69,12 @@ public class AlbumRepository {
 //                        "order by a.year asc , a.month asc",Integer.class)
 //                .setParameter("groupId",groupId)
 //                .getResultList();
+    }
+
+    public Optional<Groups> findGroupByAlbumId(Integer albumid){
+        return em.createQuery("select a.groups from Album a " +
+                "where a.id=:albumid",Groups.class)
+                .setParameter("albumid",albumid)
+                .getResultList().stream().findFirst();
     }
 }

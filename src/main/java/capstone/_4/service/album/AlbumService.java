@@ -56,7 +56,7 @@ public class AlbumService {
             info=s3Service.uploadFiles(files);  //여러개 저장.
         }
 
-        Album album=getAlbum(albumInputDto,date); //새 앨범 생성
+        Album album=getAlbum(albumInputDto.getGroupId(),date); //새 앨범 생성
         log.info("album={}",album.getId());
         Photo photo=new Photo(date,albumInputDto.getArea(), albumInputDto.getContent()); //사진갤러리 생성.
         log.info("photo={}",photo.getId());
@@ -119,8 +119,16 @@ public class AlbumService {
                 }
             }
         }
-        photo.editInfo(photoEditDto.getTitle(),photoEditDto.getDate(),
-                photoEditDto.getArea(),photoEditDto.getContent());
+        LocalDateTime date = photoEditDto.getDate();
+        Album album = photo.getAlbum();
+        if(date!=null && album!=null) {
+            //날짜가 변경되면 새로 앨범 교체하기.
+            Groups groups = albumRepository.findGroupByAlbumId(photo.getAlbum().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("그룹이 존재하지 않습니다."));
+            album = getAlbum(groups.getGup_id(), date);
+        }
+        photo.editInfo(photoEditDto.getTitle(), photoEditDto.getDate(),
+                photoEditDto.getArea(), photoEditDto.getContent(), album);
         return PhotoInfoResponseDto.builder()
                 .photoid(photo.getId())
                 .title(photo.getTitle())
@@ -157,8 +165,7 @@ public class AlbumService {
                 .groupId(groupId).albumInfoDtoList(albumInfoDtoList).build();
     }
 
-    private Album getAlbum(AlbumInputDto albumInputDto,LocalDateTime date) {
-        Integer groupId= albumInputDto.getGroupId();
+    private Album getAlbum(Integer groupId,LocalDateTime date) {
         Integer year=date.getYear();
         Integer month=date.getMonthValue();
         Album album=albumRepository.findByDate(groupId,year,month)

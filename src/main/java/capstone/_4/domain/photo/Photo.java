@@ -72,11 +72,14 @@ public class Photo {
         this.photoUser.add(photoUser);
     }
 
-    public void editInfo(String title,LocalDateTime date,String area,String content){
+    public void editInfo(String title,LocalDateTime date,String area,String content,Album album){
         if(title!=null) this.title=title;
         if(date!=null) this.date=date;
         if(area!=null) this.area=area;
         if(content!=null) this.content=content;
+        if(this.album != null && !this.album.equals(album)) this.album.getPhoto().remove(this);
+        this.album=album;
+        if(!this.album.checkPhoto(this)) album.changeAlbum(this);
     }
 
     public void removeUser(PhotoUser photoUser) {

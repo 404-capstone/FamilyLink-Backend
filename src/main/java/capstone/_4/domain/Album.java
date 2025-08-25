@@ -50,4 +50,12 @@ public class Album {
     public void addPhoto(Photo photo){
         this.photo.add(photo);
     }
+
+    public void changeAlbum(Photo photo) {
+        this.photo.add(photo);
+    }
+
+    public boolean checkPhoto(Photo photo) {
+        return this.photo.contains(photo);
+    }
 }
