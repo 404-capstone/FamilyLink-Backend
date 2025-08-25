@@ -73,10 +73,10 @@ public class Photo {
     }
 
     public void editInfo(String title,LocalDateTime date,String area,String content){
-        this.title=title;
-        this.date=date;
-        this.area=area;
-        this.content=content;
+        if(title!=null) this.title=title;
+        if(date!=null) this.date=date;
+        if(area!=null) this.area=area;
+        if(content!=null) this.content=content;
     }
 
     public void removeUser(PhotoUser photoUser) {

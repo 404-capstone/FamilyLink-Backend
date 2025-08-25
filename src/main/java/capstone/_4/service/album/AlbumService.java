@@ -96,33 +96,27 @@ public class AlbumService {
         Set<Integer> users=photoUsers.stream()
                 .map(pu->pu.getUser().getId())
                 .collect(Collectors.toSet());
-        Set<Integer> newuser=new HashSet<>(photoEditDto.getUserid());
-        Iterator<PhotoUser> iterator=photoUsers.iterator();
+        if(photoEditDto.getUserid()!=null) {
+            Set<Integer> newuser = new HashSet<>(photoEditDto.getUserid());
+            Iterator<PhotoUser> iterator = photoUsers.iterator();
 
-        while(iterator.hasNext()){
-            PhotoUser photoUser=iterator.next();
-            Integer userId=photoUser.getUser().getId();
-            if(!newuser.contains(userId)){
-                photoRepository.deleteUser(photoUser);
-                iterator.remove();
-                photo.removeUser(photoUser);
+            while (iterator.hasNext()) {
+                PhotoUser photoUser = iterator.next();
+                Integer userId = photoUser.getUser().getId();
+                if (!newuser.contains(userId)) {
+                    photoRepository.deleteUser(photoUser);
+                    iterator.remove();
+                    photo.removeUser(photoUser);
+                }
             }
-        }
-//        for(PhotoUser photoUser:photoUsers){ //여기서 기존 id가 포함되지 않을시.
-//            Integer userId=photoUser.getUser().getId(); //순회중에 리스트 수정을 하면안됨.
-//            if(!newuser.contains(userId)){
-//                photoRepository.deleteUser(photoUser);
-//                photo.removeUser(photoUser);
-//            }
-//        }
-
-        for(Integer userId:newuser){
-            if(!users.contains(userId)){
-                User user=userRepository.findById(userId)
-                        .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."));
-                PhotoUser photoUser=new PhotoUser(user,photo);
-                photo.addPhotoUser(photoUser);
-                photoRepository.savePhotoUser(photoUser);
+            for (Integer userId : newuser) {
+                if (!users.contains(userId)) {
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
+                    PhotoUser photoUser = new PhotoUser(user, photo);
+                    photo.addPhotoUser(photoUser);
+                    photoRepository.savePhotoUser(photoUser);
+                }
             }
         }
         photo.editInfo(photoEditDto.getTitle(),photoEditDto.getDate(),
