@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfileEditDto {
+
     @Schema(description = "사용자 이름", example = "홍길동")
     private String username;
 
@@ -22,8 +23,30 @@ public class ProfileEditDto {
     private String gender;
 
     @Schema(description = "프로필 사진 URL", example = "https://example.com/profile.jpg")
-    private String image;
+    private String image; // DB에 저장될 URL
 
     @Schema(description = "업로드할 프로필 이미지 파일", type = "string", format = "binary")
     private MultipartFile imageFile;
+
+    @Schema(description = "이미지 삭제 요청 여부", example = "false")
+    private String deleteImage; // String으로 변경
+
+    // String 값을 boolean으로 변환
+    public boolean isDeleteImage() {
+        if (this.deleteImage == null) return false;
+        return "true".equalsIgnoreCase(this.deleteImage.replace("\"",""));
+    }
+
+    // String 필드 Setter
+    public void setDeleteImage(String deleteImage) {
+        this.deleteImage = deleteImage;
+    }
+
+    public String getImageUrl() {
+        return this.image;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.image = imageUrl;
+    }
 }

@@ -62,17 +62,17 @@ public interface UserApi {
                                     examples = @ExampleObject(
                                             name = "프로필 수정 성공 응답",
                                             value = """
-                                                {
-                                                  "code": 200,
-                                                  "message": "프로필이 성공적으로 수정되었습니다.",
-                                                  "data": {
-                                                    "username": "홍길동",
-                                                    "age": 30,
-                                                    "gender": "M",
-                                                    "image": "https://example.com/profile.jpg"
-                                                  }
-                                                }
-                                                """
+                                            {
+                                              "code": 200,
+                                              "message": "프로필이 성공적으로 수정되었습니다.",
+                                              "data": {
+                                                "username": "홍길동",
+                                                "age": 30,
+                                                "gender": "M",
+                                                "image": "https://example.com/profile.jpg"
+                                              }
+                                            }
+                                            """
                                     )
                             )
                     ),
@@ -83,9 +83,9 @@ public interface UserApi {
     @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> editProfile(
             @ModelAttribute ProfileEditDto dto,
-            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
             HttpServletRequest request
     );
+
 
 
 

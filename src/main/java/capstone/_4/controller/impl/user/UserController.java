@@ -1,13 +1,17 @@
 package capstone._4.controller.impl.user;
 
 import capstone._4.controller.doc.UserApi;
+import capstone._4.domain.User;
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.user.ProfileEditDto;
 import capstone._4.dto.user.output.UserSearchOutputDto;
 import capstone._4.enums.ErrorCode;
 import capstone._4.enums.ResponseEnum;
+import capstone._4.repository.user.UserRepository;
 import capstone._4.service.redis.RedisService;
 import capstone._4.service.user.UserProfileEditService;
+import capstone._4.service.other.S3Service;
 import capstone._4.service.user.UserService;
 import capstone._4.service.user.UserSearchService;
 import capstone._4.service.token.JwtService;
@@ -25,8 +29,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.net.URLDecoder;
 import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +46,8 @@ public class UserController implements UserApi {
     private final RedisService redisService;
     private final UserProfileEditService userEditService;
     private final UserSearchService userSearchService;
+    private final S3Service s3Service;
+    private final UserRepository userRepository;
 
 
     @Value("${jwt.access-secret}")
@@ -168,27 +176,36 @@ public class UserController implements UserApi {
     @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editProfile(
             @ModelAttribute ProfileEditDto dto,
-            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
             HttpServletRequest request
     ) {
-        int userId = 0;
         try {
+            //  인증
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization 헤더가 유효하지 않습니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Authorization 헤더가 유효하지 않습니다.");
             }
 
-            Integer idFromToken = jwtService.returnToken(authorizationHeader);
-            if (idFromToken == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+            Integer userId = jwtService.returnToken(authorizationHeader);
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("유효하지 않은 토큰입니다.");
             }
-            userId = idFromToken;
 
-            dto.setImageFile(imageFile);
-            userEditService.updateProfile(userId, dto);
+            // 서비스 호출
+            User updatedUser = userEditService.updateProfile(userId, dto);
 
-            return ResponseEntity.ok(dto);
+            // 응답
+            Map<String, Object> response = new HashMap<>();
+            response.put("username", updatedUser.getUsername());
+            response.put("age", updatedUser.getAge());
+            response.put("gender", updatedUser.getGender());
+            response.put("image", updatedUser.getImageUrl());
+
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
+            log.error("프로필 수정 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
