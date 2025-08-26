@@ -121,6 +121,7 @@ public class AlbumService {
         }
         LocalDateTime date = photoEditDto.getDate();
         Album album = photo.getAlbum();
+        //앨범 체크 로직.
         if(date!=null && album!=null) {
             //날짜가 변경되면 새로 앨범 교체하기.
             Groups groups = albumRepository.findGroupByAlbumId(photo.getAlbum().getId())
@@ -138,11 +139,19 @@ public class AlbumService {
                         .collect(Collectors.toList())).build();
     }
 
+    @Transactional
     public void deletePhoto(Integer groupId, Integer photoId) {
-        Integer count=photoRepository.deletePhotoById(photoId);
-        if(count <=0){
-            throw new EntityNotFoundException("사진이 존재하지 않습니다.");
+        Photo photo=photoRepository.findById(photoId)
+                .orElseThrow(()-> new EntityNotFoundException("사진이 존재하지 않습니다."));
+        Album album=photo.getAlbum();
+        album.deletePhoto(photo);
+        //Integer count=photoRepository.deletePhotoById(photoId);
+        if(album.checkSize()){
+            albumRepository.deleteAlbum(album);
         }
+//        if(count <=0){
+//            throw new EntityNotFoundException("사진이 존재하지 않습니다.");
+//        }
     }
 
     public AlbumInfoResponseDto searchAlbum(Integer groupId) {

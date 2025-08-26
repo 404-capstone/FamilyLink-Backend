@@ -43,7 +43,7 @@ public class Album {
     @JsonBackReference
     private Groups groups;
 
-    @OneToMany(mappedBy = "album",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "album",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY,orphanRemoval = true)
     @JsonManagedReference
     private List<Photo> photo=new ArrayList<>();
 
@@ -57,5 +57,13 @@ public class Album {
 
     public boolean checkPhoto(Photo photo) {
         return this.photo.contains(photo);
+    }
+
+    public void deletePhoto(Photo photo) {
+        this.photo.remove(photo);
+    }
+
+    public boolean checkSize() {
+       return this.photo.isEmpty();
     }
 }

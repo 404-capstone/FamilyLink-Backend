@@ -77,4 +77,14 @@ public class AlbumRepository {
                 .setParameter("albumid",albumid)
                 .getResultList().stream().findFirst();
     }
+
+    public Optional<Album> findAlbumByPhotoId(Integer photoId){
+        return em.createQuery("select p.album from Photo p where p.id=:photoid",Album.class)
+                .setParameter("photoid",photoId)
+                .getResultList().stream().findFirst();
+    }
+
+    public void deleteAlbum(Album album) {
+        em.remove(album);
+    }
 }
