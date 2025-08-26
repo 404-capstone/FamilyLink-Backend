@@ -88,4 +88,6 @@ public class User {
     public void chageAlarm(Alarm alarm) {
         this.alarm = alarm;
     }
+
+    public void setImage(String image) {this.image = image;}
 }

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name="유저",description = "유저 기능 관련 api") //이걸로 크게 목록별로 구분가능.
 @RequestMapping("/user")
@@ -61,17 +62,17 @@ public interface UserApi {
                                     examples = @ExampleObject(
                                             name = "프로필 수정 성공 응답",
                                             value = """
-                                                    {
-                                                      "code": 200,
-                                                      "message": "프로필이 성공적으로 수정되었습니다.",
-                                                      "data": {
-                                                        "username": "홍길동",
-                                                        "age": 30,
-                                                        "gender": "M",
-                                                        "image": "https://example.com/profile.jpg"
-                                                      }
-                                                    }
-                                                    """
+                                                {
+                                                  "code": 200,
+                                                  "message": "프로필이 성공적으로 수정되었습니다.",
+                                                  "data": {
+                                                    "username": "홍길동",
+                                                    "age": 30,
+                                                    "gender": "M",
+                                                    "image": "https://example.com/profile.jpg"
+                                                  }
+                                                }
+                                                """
                                     )
                             )
                     ),
@@ -79,11 +80,15 @@ public interface UserApi {
                     @ApiResponse(responseCode = "500", description = "서버 오류")
             }
     )
-    @PutMapping(value = "info/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> editProfile(
-            @RequestBody ProfileEditDto dto,
+            @ModelAttribute ProfileEditDto dto,
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
             HttpServletRequest request
     );
+
+
+
     @Operation(
             summary = "로그인 사용자 정보 조회",
             description = "Authorization 헤더에 액세스 토큰을 넣고 로그인된 사용자의 프로필 정보를 조회한다.",

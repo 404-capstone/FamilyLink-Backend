@@ -1,13 +1,17 @@
 package capstone._4.service.user;
 
 import capstone._4.domain.User;
+import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.user.ProfileEditDto;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.service.other.S3Service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 
 @Service
 @RequiredArgsConstructor
@@ -15,23 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserProfileEditService {
 
     private final UserRepository userRepository;
+    private final S3Service s3Service; // S3Service 주입
 
     @Transactional
     public User updateProfile(int userId, ProfileEditDto dto) {
-        log.info("[프로필 수정 서비스 호출] updateProfile userId: {}", userId);
-
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.warn("User not found with id: {}", userId);
-                    return new EntityNotFoundException("User not found with id: " + userId);
-                });
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
-        log.info("기존 사용자 정보 - username: {}, gender: {}, age: {}", user.getUsername(), user.getGender(), user.getAge());
-
+        // 텍스트 정보 업데이트
         user.updateProfile(dto.getUsername(), dto.getAge(), dto.getGender());
 
-        log.info("변경 후 사용자 정보 - username: {}, gender: {}, age: {}", user.getUsername(), user.getGender(), user.getAge());
+        // 이미지 업로드
+        MultipartFile imageFile = dto.getImageFile();
+        if (imageFile != null && !imageFile.isEmpty()) {
+            S3PhotoInfoDto uploadResult = s3Service.uploadFile(imageFile);
+            user.setImage(uploadResult.getFileUrl());
+            log.info("프로필 이미지 변경됨 -> {}", uploadResult.getFileUrl());
+        }
 
         return user;
     }
 }
+

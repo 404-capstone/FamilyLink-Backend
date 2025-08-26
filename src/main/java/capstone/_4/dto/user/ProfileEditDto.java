@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -22,4 +23,7 @@ public class ProfileEditDto {
 
     @Schema(description = "프로필 사진 URL", example = "https://example.com/profile.jpg")
     private String image;
+
+    @Schema(description = "업로드할 프로필 이미지 파일", type = "string", format = "binary")
+    private MultipartFile imageFile;
 }
