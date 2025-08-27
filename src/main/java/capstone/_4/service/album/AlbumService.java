@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,17 +49,17 @@ public class AlbumService {
         List<MultipartFile> files=albumInputDto.getFiles();
         List<PhotoImage> photos = new ArrayList<>();
         List<Integer> userIds = albumInputDto.getUserId();
-        LocalDateTime date=(albumInputDto.getTime()!=null)?  //날짜+시간 합치기.
-                LocalDateTime.of(albumInputDto.getDate(), albumInputDto.getTime()):albumInputDto.getDate().atStartOfDay();
+//        LocalDateTime date=(albumInputDto.getTime()!=null)?  //날짜+시간 합치기.
+//                LocalDateTime.of(albumInputDto.getDate(), albumInputDto.getTime()):albumInputDto.getDate().atStartOfDay();
         if(files == null || files.isEmpty()){
             throw new NoSuchElementException("파일이 존재하지 않습니다.");
         }else {
             info=s3Service.uploadFiles(files);  //여러개 저장.
         }
 
-        Album album=getAlbum(albumInputDto.getGroupId(),date); //새 앨범 생성
+        Album album=getAlbum(albumInputDto.getGroupId(),albumInputDto.getDate()); //새 앨범 생성
         log.info("album={}",album.getId());
-        Photo photo=new Photo(date,albumInputDto.getArea(), albumInputDto.getContent()); //사진갤러리 생성.
+        Photo photo=new Photo(albumInputDto.getDate(),albumInputDto.getTime(),albumInputDto.getArea(), albumInputDto.getContent()); //사진갤러리 생성.
         log.info("photo={}",photo.getId());
         photo.setAlbum(album);
         photoRepository.save(photo);
@@ -119,7 +120,7 @@ public class AlbumService {
                 }
             }
         }
-        LocalDateTime date = photoEditDto.getDate();
+        LocalDate date = photoEditDto.getDate();
         Album album = photo.getAlbum();
         //앨범 체크 로직.
         if(date!=null && album!=null) {
@@ -128,12 +129,13 @@ public class AlbumService {
                     .orElseThrow(() -> new EntityNotFoundException("그룹이 존재하지 않습니다."));
             album = getAlbum(groups.getGup_id(), date);
         }
-        photo.editInfo(photoEditDto.getTitle(), photoEditDto.getDate(),
+        photo.editInfo(photoEditDto.getTitle(), photoEditDto.getDate(),photoEditDto.getTime(),
                 photoEditDto.getArea(), photoEditDto.getContent(), album);
         return PhotoInfoResponseDto.builder()
                 .photoid(photo.getId())
                 .title(photo.getTitle())
                 .date(photo.getDate())
+                .time(photo.getTime())
                 .content(photo.getContent())
                 .userIds(photo.getPhotoUser().stream().map(pu->pu.getUser().getId())
                         .collect(Collectors.toList())).build();
@@ -174,7 +176,7 @@ public class AlbumService {
                 .groupId(groupId).albumInfoDtoList(albumInfoDtoList).build();
     }
 
-    private Album getAlbum(Integer groupId,LocalDateTime date) {
+    private Album getAlbum(Integer groupId, LocalDate date) {
         Integer year=date.getYear();
         Integer month=date.getMonthValue();
         Album album=albumRepository.findByDate(groupId,year,month)

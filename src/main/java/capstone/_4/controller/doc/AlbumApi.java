@@ -64,7 +64,8 @@ public interface AlbumApi {
                                     "photoid": 1,
                                     "title": "제주도여행",
                                     "content": "제주도에간사진",
-                                    "date": "2025-07-20 15:30",
+                                    "date": "2025-07-20",
+                                    "time":"15:30"
                                     "userIds": [1, 2]
                                   }
                                 }
@@ -105,63 +106,67 @@ public interface AlbumApi {
                     examples = @ExampleObject(
                             name = "성공 응답",
                             summary = "사진 전체 조회 성공",
-                            value = """
-                                {
-                                  "code": 200,
-                                  "message": "정상적으로 호출되었습니다",
-                                  "data": {
-                                    "groupId": 1,
-                                    "albumInfoDtoList": [
+                            value =  """
+                            {
+                              "code": 200,
+                              "message": "정상적으로 호출되었습니다",
+                              "data": {
+                                "groupId": 1,
+                                "albumInfoDtoList": [
+                                  {
+                                    "date": "2025-04",
+                                    "photoInfoDtoList": [
                                       {
-                                        "date": "2025-04",
-                                        "photoInfoDtoList": [
-                                          {
-                                            "photoid": 2,
-                                            "title": "제주도 여행",
-                                            "thumnailurl": "대표 사진 url",
-                                            "content": "가족들과 제주도여행간 사진",
-                                            "area": "제주도",
-                                            "time": 시간,
-                                            "userid": [2, 3]
-                                          },
-                                          {
-                                            "photoid": 3,
-                                            "title": "전주 비빔밥",
-                                            "thumnailurl": "대표 사진 url",
-                                            "content": "가족들과 전주비빔밥 먹는 사진",
-                                            "area": "전라도",
-                                            "time": 시간,
-                                            "userid": [1, 2, 3]
-                                          }
-                                        ]
+                                        "photoid": 2,
+                                        "title": "제주도 여행",
+                                        "thumnailurl": "대표 사진 url",
+                                        "content": "가족들과 제주도여행간 사진",
+                                        "area": "제주도",
+                                        "date": "2025-07-20",
+                                        "time":"15:30",
+                                        "userid": [2, 3]
                                       },
                                       {
-                                        "date": "2025-05",
-                                        "photoInfoDtoList": [
-                                          {
-                                            "photoid": 4,
-                                            "title": "오토바이 라이딩",
-                                            "thumnailurl": "대표 사진 url",
-                                            "content": "혼자서 오토바이 끌고 돌아다니는 사진",
-                                            "area": "제주도",
-                                            "time": 시간,
-                                            "userid": [1]
-                                          },
-                                          {
-                                            "photoid": 5,
-                                            "title": "바나나보트",
-                                            "thumnailurl": "대표 사진 url",
-                                            "content": "가족들과 바나나보트타면서 공중제비 하는 사진",
-                                            "area": "강릉",
-                                            "time": 시간,
-                                            "userid": [1, 2, 3]
-                                          }
-                                        ]
+                                        "photoid": 3,
+                                        "title": "전주 비빔밥",
+                                        "thumnailurl": "대표 사진 url",
+                                        "content": "가족들과 전주비빔밥 먹는 사진",
+                                        "area": "전라도",
+                                        "date": "2025-07-20",
+                                        "time":"16:30",
+                                        "userid": [1, 2, 3]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "date": "2025-05",
+                                    "photoInfoDtoList": [
+                                      {
+                                        "photoid": 4,
+                                        "title": "오토바이 라이딩",
+                                        "thumnailurl": "대표 사진 url",
+                                        "content": "혼자서 오토바이 끌고 돌아다니는 사진",
+                                        "area": "제주도",
+                                        "date": "2025-07-21",
+                                        "time":"17:30",
+                                        "userid": [1]
+                                      },
+                                      {
+                                        "photoid": 5,
+                                        "title": "바나나보트",
+                                        "thumnailurl": "대표 사진 url",
+                                        "content": "가족들과 바나나보트타면서 공중제비 하는 사진",
+                                        "area": "강릉",
+                                        "date": "2025-07-22",
+                                        "time":"12:30",
+                                        "userid": [1, 2, 3]
                                       }
                                     ]
                                   }
-                                }
-                                """
+                                ]
+                              }
+                            }
+                            """
                     )
             ))
     @GetMapping("/search")

@@ -8,7 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +21,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Photo {
 
-    public Photo(LocalDateTime date,String area, String content) {
+    public Photo(LocalDate date,LocalTime time, String area, String content) {
         this.date=date;
+        this.time=time;
         this.area=area;
         this.content=content;
     }
@@ -34,7 +37,10 @@ public class Photo {
     private String title;
 
     @Column(name="photo_date")
-    private LocalDateTime date;
+    private LocalDate date;
+
+    @Column(name="photo_time")
+    private LocalTime time;
 
     @Column(name="photo_area")
     private String area;
@@ -72,9 +78,10 @@ public class Photo {
         this.photoUser.add(photoUser);
     }
 
-    public void editInfo(String title,LocalDateTime date,String area,String content,Album album){
+    public void editInfo(String title,LocalDate date,LocalTime time,String area,String content,Album album){
         if(title!=null) this.title=title;
         if(date!=null) this.date=date;
+        if(time!=null) this.time=time;
         if(area!=null) this.area=area;
         if(content!=null) this.content=content;
         if(this.album != null && !this.album.equals(album)) this.album.getPhoto().remove(this);

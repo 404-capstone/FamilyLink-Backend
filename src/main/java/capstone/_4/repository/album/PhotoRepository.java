@@ -112,6 +112,7 @@ public class PhotoRepository {
                         p.getArea(),
                         p.getContent(),
                         p.getDate(),
+                        p.getTime(),
                         users
                 );
             dto.add(photoInfoDto);
