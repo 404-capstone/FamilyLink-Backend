@@ -5,6 +5,7 @@ import capstone._4.domain.User;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.user.ProfileEditDto;
+import capstone._4.dto.user.ProfileEditResponseDto;
 import capstone._4.dto.user.output.UserSearchOutputDto;
 import capstone._4.enums.ErrorCode;
 import capstone._4.enums.ResponseEnum;
@@ -174,39 +175,48 @@ public class UserController implements UserApi {
 
     @Override
     @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> editProfile(
+    public ResponseEntity<ApiResponseDto<ProfileEditResponseDto>> editProfile(
             @ModelAttribute ProfileEditDto dto,
             HttpServletRequest request
     ) {
         try {
-            //  인증
+            // 인증
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Authorization 헤더가 유효하지 않습니다.");
+                        .body(new ApiResponseDto<>(401, "Authorization 헤더가 유효하지 않습니다.", null));
             }
 
             Integer userId = jwtService.returnToken(authorizationHeader);
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("유효하지 않은 토큰입니다.");
+                        .body(new ApiResponseDto<>(401, "유효하지 않은 토큰입니다.", null));
             }
 
             // 서비스 호출
             User updatedUser = userEditService.updateProfile(userId, dto);
 
-            // 응답
-            Map<String, Object> response = new HashMap<>();
-            response.put("username", updatedUser.getUsername());
-            response.put("age", updatedUser.getAge());
-            response.put("gender", updatedUser.getGender());
-            response.put("image", updatedUser.getImageUrl());
+            // DTO 변환
+            ProfileEditResponseDto responseDto = ProfileEditResponseDto.builder()
+                    .username(updatedUser.getUsername())
+                    .age(updatedUser.getAge())
+                    .gender(updatedUser.getGender())
+                    .image(updatedUser.getImageUrl())
+                    .build();
 
-            return ResponseEntity.ok(response);
+            //ResponseEnum 활용
+            return ResponseEntity.ok(
+                    new ApiResponseDto<>(ResponseEnum.EDIT.getCode(), ResponseEnum.EDIT.getMessage(), responseDto)
+            );
 
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDto<>(404, "User not found", null));
         } catch (Exception e) {
             log.error("프로필 수정 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponseDto<>(500, "서버 오류가 발생했습니다.", null));
         }
     }
+
 }
