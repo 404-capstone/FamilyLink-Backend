@@ -109,8 +109,8 @@ public class PhotoRepository {
                         p.getId(),
                         p.getTitle(),
                         Images.get(0),
+                    p.getContent(),
                         p.getArea(),
-                        p.getContent(),
                         p.getDate(),
                         p.getTime(),
                         users

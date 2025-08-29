@@ -75,7 +75,6 @@ public interface AlbumApi {
     @PatchMapping("/edit")
     public ResponseEntity<?> editAlbum(@RequestBody PhotoEditDto photoEditDto);
 
-
     @Operation(summary = "사진 삭제", description = "사진을 삭제.")
     @ApiResponse(responseCode = "204",description = "정상호출",
             content = @Content(mediaType = "application/json",
@@ -112,10 +111,10 @@ public interface AlbumApi {
                               "message": "정상적으로 호출되었습니다",
                               "data": {
                                 "groupId": 1,
-                                "albumInfoDtoList": [
+                                "album": [
                                   {
                                     "date": "2025-04",
-                                    "photoInfoDtoList": [
+                                    "photo": [
                                       {
                                         "photoid": 2,
                                         "title": "제주도 여행",
@@ -140,7 +139,7 @@ public interface AlbumApi {
                                   },
                                   {
                                     "date": "2025-05",
-                                    "photoInfoDtoList": [
+                                    "photo": [
                                       {
                                         "photoid": 4,
                                         "title": "오토바이 라이딩",

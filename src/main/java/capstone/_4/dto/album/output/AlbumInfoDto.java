@@ -16,6 +16,6 @@ public class AlbumInfoDto {
     @Schema(description = "앨범날짜 ex)2025-03")
     private String date;
     @Schema(description = "사진들 정보")
-    private List<PhotoInfoDto> photoInfoDtoList;
+    private List<PhotoInfoDto> photo;
 
 }

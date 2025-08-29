@@ -21,7 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 public class Photo {
 
-    public Photo(LocalDate date,LocalTime time, String area, String content) {
+    public Photo(String title,LocalDate date,LocalTime time, String area, String content) {
+        this.title=title;
         this.date=date;
         this.time=time;
         this.area=area;

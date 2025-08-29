@@ -46,25 +46,27 @@ public class AlbumService {
     @Transactional
     public PhotoResponseDto addPitcure(AlbumInputDto albumInputDto) {
         S3PhotosInfoDto info=null;
-        List<MultipartFile> files=albumInputDto.getFiles();
+        List<MultipartFile> image=albumInputDto.getImage();
         List<PhotoImage> photos = new ArrayList<>();
         List<Integer> userIds = albumInputDto.getUserId();
 //        LocalDateTime date=(albumInputDto.getTime()!=null)?  //날짜+시간 합치기.
 //                LocalDateTime.of(albumInputDto.getDate(), albumInputDto.getTime()):albumInputDto.getDate().atStartOfDay();
-        if(files == null || files.isEmpty()){
+        if(image == null || image.isEmpty()){
+            log.info("image null:{}",image);
             throw new NoSuchElementException("파일이 존재하지 않습니다.");
         }else {
-            info=s3Service.uploadFiles(files);  //여러개 저장.
+            info=s3Service.uploadFiles(image);  //여러개 저장.
         }
 
         Album album=getAlbum(albumInputDto.getGroupId(),albumInputDto.getDate()); //새 앨범 생성
         log.info("album={}",album.getId());
-        Photo photo=new Photo(albumInputDto.getDate(),albumInputDto.getTime(),albumInputDto.getArea(), albumInputDto.getContent()); //사진갤러리 생성.
+        Photo photo=new Photo(albumInputDto.getTitle(),albumInputDto.getDate(),albumInputDto.getTime()
+                ,albumInputDto.getArea(), albumInputDto.getContent()); //사진갤러리 생성.
         log.info("photo={}",photo.getId());
         photo.setAlbum(album);
         photoRepository.save(photo);
         album.addPhoto(photo);
-        for(int i=0;i<files.size();i++){
+        for(int i=0;i<image.size();i++){
             String fileName = info.getFileNames().get(i);
             String fileUrl=info.getFileUrls().get(i);
             PhotoImage photoImage=new PhotoImage(fileName,fileUrl);
@@ -73,12 +75,15 @@ public class AlbumService {
         }
         photo.setPhotoImages(photos);//포토 저장.
         photoImageRepository.saveAll(photos); //이미지 저장
-        for(int j=0;j<userIds.size();j++){
-            User user=userRepository.findById(userIds.get(j)).get();
-            PhotoUser photoUser=new PhotoUser(user,photo);
-            user.addPhotoUser(photoUser);
-            photoRepository.savePhotoUser(photoUser);
-            photo.addPhotoUser(photoUser);
+        if(userIds!=null && !userIds.isEmpty()) {
+            for (int j = 0; j < userIds.size(); j++) {
+                User user = userRepository.findById(userIds.get(j)).get();
+                log.info("user={}", user.getId());
+                PhotoUser photoUser = new PhotoUser(user, photo);
+                user.addPhotoUser(photoUser);
+                photoRepository.savePhotoUser(photoUser);
+                photo.addPhotoUser(photoUser);
+            }
         }
 
         return PhotoResponseDto.builder()
@@ -94,10 +99,13 @@ public class AlbumService {
         Photo photo=photoRepository.findById(photoid)
                 .orElseThrow(()-> new EntityNotFoundException("사진 정보가 존재하지 않습니다."));
         List<PhotoUser> photoUsers=photo.getPhotoUser();
-        Set<Integer> users=photoUsers.stream()
-                .map(pu->pu.getUser().getId())
-                .collect(Collectors.toSet());
-        if(photoEditDto.getUserid()!=null) {
+        Set<Integer> users=new HashSet<>();
+        if(photoUsers != null && !photoUsers.isEmpty()) {
+            users = photoUsers.stream()
+                    .map(pu -> pu.getUser().getId())
+                    .collect(Collectors.toSet());
+        }
+        if(photoEditDto.getUserid()!=null && !photoEditDto.getUserid().isEmpty()) {
             Set<Integer> newuser = new HashSet<>(photoEditDto.getUserid());
             Iterator<PhotoUser> iterator = photoUsers.iterator();
 
@@ -165,15 +173,16 @@ public class AlbumService {
                 .map(t ->{
                     List<PhotoInfoDto> photoInfoDtoList=new ArrayList<>();
                     photoInfoDtoList=photoRepository.searchPhotoWithGroup(t.get(album.id));
-                    String date=String.format("04d-02d",t.get(album.year),t.get(album.month));
+                    //String date=t.get(album.year)+"-"+t.get(album.month);
+                    String date=String.format("%04d-%02d",t.get(album.year),t.get(album.month));
                     return AlbumInfoDto.builder().
                             date(date)
-                            .photoInfoDtoList(photoInfoDtoList)
+                            .photo(photoInfoDtoList)
                     .build();
                 }).toList();
 
         return AlbumInfoResponseDto.builder()
-                .groupId(groupId).albumInfoDtoList(albumInfoDtoList).build();
+                .groupId(groupId).album(albumInfoDtoList).build();
     }
 
     private Album getAlbum(Integer groupId, LocalDate date) {
