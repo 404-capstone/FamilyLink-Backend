@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "users")
 @ToString(exclude="groupsuser")
 @Getter
+@Setter
 public class User {
 
     public User() {
@@ -79,8 +80,12 @@ public class User {
     public void addGroupUser(GroupsUser groupsuser){
         this.groupsuser.add(groupsuser);
     }
-
-
+    public String getImageUrl() {
+        return this.image;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.image = imageUrl;
+    }
     public void addPhotoUser(PhotoUser photoUser) {
         this.photouser.add(photoUser);
     }
@@ -88,4 +93,6 @@ public class User {
     public void chageAlarm(Alarm alarm) {
         this.alarm = alarm;
     }
+
+    public void setImage(String image) {this.image = image;}
 }

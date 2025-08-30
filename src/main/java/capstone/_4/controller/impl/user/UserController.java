@@ -1,17 +1,23 @@
 package capstone._4.controller.impl.user;
 
 import capstone._4.controller.doc.UserApi;
+import capstone._4.domain.User;
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.user.ProfileEditDto;
+import capstone._4.dto.user.ProfileEditResponseDto;
 import capstone._4.dto.user.output.UserSearchOutputDto;
 import capstone._4.enums.ErrorCode;
 import capstone._4.enums.ResponseEnum;
+import capstone._4.repository.user.UserRepository;
 import capstone._4.service.redis.RedisService;
 import capstone._4.service.user.UserProfileEditService;
+import capstone._4.service.other.S3Service;
 import capstone._4.service.user.UserService;
 import capstone._4.service.user.UserSearchService;
 import capstone._4.service.token.JwtService;
 import capstone._4.util.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,10 +26,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.net.URLDecoder;
 import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,6 +47,8 @@ public class UserController implements UserApi {
     private final RedisService redisService;
     private final UserProfileEditService userEditService;
     private final UserSearchService userSearchService;
+    private final S3Service s3Service;
+    private final UserRepository userRepository;
 
 
     @Value("${jwt.access-secret}")
@@ -161,66 +173,50 @@ public class UserController implements UserApi {
         return ResponseEntity.ok("로그아웃 성공");
     }
 
-    @Operation(summary = "프로필 수정", description = "사용자 프로필을 수정합니다.")
-    @PutMapping("info/edit")
-    public ResponseEntity<ApiResponseDto<ProfileEditDto>> editProfile(
-            @RequestBody ProfileEditDto dto,
+    @Override
+    @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponseDto<ProfileEditResponseDto>> editProfile(
+            @ModelAttribute ProfileEditDto dto,
             HttpServletRequest request
     ) {
-        int userId = 0;
         try {
+            // 인증
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-                log.warn("Authorization 헤더가 유효하지 않습니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto<>(
-                        HttpStatus.UNAUTHORIZED.value(),
-                        "Authorization 헤더가 없거나 유효하지 않습니다.",
-                        null
-                ));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponseDto<>(401, "Authorization 헤더가 유효하지 않습니다.", null));
             }
 
-            Integer idFromToken = jwtService.returnToken(authorizationHeader);
-            if (idFromToken == null) {
-                log.warn("토큰에서 사용자 ID를 추출할 수 없습니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto<>(
-                        HttpStatus.UNAUTHORIZED.value(),
-                        "유효하지 않은 토큰입니다.",
-                        null
-                ));
-            }
-            userId = idFromToken;
-
-            log.info("[프로필 수정 요청 시작] userId: {}", userId);
-            log.info("수정할 정보 - username: {}, gender: {}, age: {}", dto.getUsername(), dto.getGender(), dto.getAge());
-
-            userEditService.updateProfile(userId, dto);
-
-            log.info("[프로필 수정 성공] userId: {}", userId);
-            return ResponseEntity.ok().body(new ApiResponseDto<>(
-                    HttpStatus.OK.value(),
-                    "프로필이 성공적으로 수정되었습니다.",
-                    dto // 수정된 프로필 데이터를 반환
-            ));
-        } catch (IllegalArgumentException e) {
-            log.error("[프로필 수정 실패 - 토큰 오류] 에러: {}", e.getMessage());
-
-            ErrorCode errorCode = ErrorCode.TOKEN_INVALID;
-            if (e.getMessage() != null && e.getMessage().contains("만료")) {
-                errorCode = ErrorCode.TOKEN_EXPIRED;
+            Integer userId = jwtService.returnToken(authorizationHeader);
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponseDto<>(401, "유효하지 않은 토큰입니다.", null));
             }
 
-            return ResponseEntity.status(errorCode.getStatus()).body(new ApiResponseDto<>(
-                    errorCode.getStatus(),
-                    errorCode.getMessage() + ": " + e.getMessage(),
-                    null
-            ));
+            // 서비스 호출
+            User updatedUser = userEditService.updateProfile(userId, dto);
+
+            // DTO 변환
+            ProfileEditResponseDto responseDto = ProfileEditResponseDto.builder()
+                    .username(updatedUser.getUsername())
+                    .age(updatedUser.getAge())
+                    .gender(updatedUser.getGender())
+                    .image(updatedUser.getImageUrl())
+                    .build();
+
+            //ResponseEnum 활용
+            return ResponseEntity.ok(
+                    new ApiResponseDto<>(ResponseEnum.EDIT.getCode(), ResponseEnum.EDIT.getMessage(), responseDto)
+            );
+
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDto<>(404, "User not found", null));
         } catch (Exception e) {
-            log.error("[프로필 수정 실패] userId: {}, 에러: {}", (userId != 0 ? userId : "알 수 없음"), e.getMessage(), e);
-            return ResponseEntity.status(ErrorCode.EXCEPTION.getStatus()).body(new ApiResponseDto<>(
-                    ErrorCode.EXCEPTION.getStatus(),
-                    ErrorCode.EXCEPTION.getMessage() + ": " + e.getMessage(),
-                    null
-            ));
+            log.error("프로필 수정 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponseDto<>(500, "서버 오류가 발생했습니다.", null));
         }
     }
+
 }
