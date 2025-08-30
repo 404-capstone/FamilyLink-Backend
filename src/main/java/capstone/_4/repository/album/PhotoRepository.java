@@ -119,4 +119,12 @@ public class PhotoRepository {
 
 
     }
+
+    public void deleteUsers(List<PhotoUser> photoUsers) {
+        if(photoUsers== null || photoUsers.isEmpty()) return;
+        for(PhotoUser photoUser:photoUsers){
+            photoUser.getPhoto().removeUser(photoUser);
+            em.remove(photoUser);
+        }
+    }
 }

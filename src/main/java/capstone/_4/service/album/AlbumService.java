@@ -4,6 +4,7 @@ import capstone._4.domain.*;
 import capstone._4.domain.photo.Photo;
 import capstone._4.domain.photo.PhotoImage;
 import capstone._4.domain.photo.PhotoUser;
+import capstone._4.dto.album.S3PhotoInfoDto;
 import capstone._4.dto.album.output.PhotoInfoDto;
 import capstone._4.dto.album.input.AlbumInputDto;
 import capstone._4.dto.album.input.PhotoEditDto;
@@ -75,6 +76,7 @@ public class AlbumService {
         }
         photo.setPhotoImages(photos);//포토 저장.
         photoImageRepository.saveAll(photos); //이미지 저장
+
         if(userIds!=null && !userIds.isEmpty()) {
             for (int j = 0; j < userIds.size(); j++) {
                 User user = userRepository.findById(userIds.get(j)).get();
@@ -128,6 +130,8 @@ public class AlbumService {
                     photoRepository.savePhotoUser(photoUser);
                 }
             }
+        }else{
+            photoRepository.deleteUsers(photoUsers);
         }
         LocalDate date = photoEditDto.getDate();
         Album currentAlbum = photo.getAlbum();
