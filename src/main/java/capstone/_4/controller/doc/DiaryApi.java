@@ -4,6 +4,7 @@ import capstone._4.dto.diary.GroupAnswerDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.input.QuestionInfoDto;
+import capstone._4.dto.diary.output.FeedBackDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -78,8 +79,38 @@ public interface DiaryApi {
     public ResponseEntity<?> deleteDiary(@RequestParam Integer diaryId);
 
 
-    @Operation(summary = "다이어리 작성", description = "새로운 다이어리를 작성합니다.")
-    @ApiResponse(responseCode = "200", description = "작성 성공")
+    @Operation(summary = "다이어리 작성(피드백 생성)", description = "일지를 작성하여 피드백을 생성합니다.")
+    @ApiResponse(responseCode = "200", description = "작성 성공",
+    content = @Content(mediaType = "application/json",schema = @Schema(implementation = FeedBackDto.class),
+            examples =@ExampleObject(
+                    name = "조회 성공",
+                    summary = "질문 상세 정보 조회 성공",
+                    value = """
+                            {
+                                "code": 200,
+                                "message": "정상적으로 호출되었습니다",
+                                "data": {
+                                    "diary": "오늘은 졸업작품 회의가 있어서 약간 피곤한 날이다. 하지만 날씨가 화창해서 기분은 좋다.",
+                                    "feedback": "졸업작품 회의 때문에 피곤하셨겠지만, 화창한 날씨 덕분에 좋은 기분으로 마무리하셨다니 다행이에요!\\n바쁜 일정 속에서도 자신의 컨디션을 챙기는 시간이 중요하답니다.\\n잠시 쉬어가거나 가벼운 활동으로 에너지를 충전하는 시간을 가져보세요.\\n내일도 맑은 기운으로 힘찬 하루를 맞이하시길 응원할게요!",
+                                    "emotions": [
+                                        {
+                                            "emotion": "행복",
+                                            "percent": 97.39
+                                        },
+                                        {
+                                            "emotion": "슬픔",
+                                            "percent": 1.32
+                                        },
+                                        {
+                                            "emotion": "분노",
+                                            "percent": 0.53
+                                        }
+                                    ]
+                                }
+                            }           
+                                    """
+
+            )))
     @PostMapping("/write")
     public ResponseEntity<?> diaryFeedBack(@RequestBody DiaryCreateRequest request);
 
