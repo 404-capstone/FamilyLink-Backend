@@ -12,7 +12,7 @@ public class DiaryDetailResponse {
     private String content;
     private Long userId;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime diaryAt;
 
     public DiaryDetailResponse(Long id, String content, LocalDateTime diaryAt, Long userId) {
