@@ -10,6 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmotionResultDto {
-    private String label;
+    private String emotion;
     private Double percent;
 }
