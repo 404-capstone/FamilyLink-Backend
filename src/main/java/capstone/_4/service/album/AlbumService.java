@@ -94,10 +94,11 @@ public class AlbumService {
 
     @Transactional
     public PhotoInfoResponseDto editPhotoInfo(PhotoEditDto photoEditDto) {
-        Integer photoid=photoEditDto.getPhotoid();
+        Integer photoid=photoEditDto.getPhotoId();
 
         Photo photo=photoRepository.findById(photoid)
                 .orElseThrow(()-> new EntityNotFoundException("사진 정보가 존재하지 않습니다."));
+        log.info("photo={}",photo.getId());
         List<PhotoUser> photoUsers=photo.getPhotoUser();
         Set<Integer> users=new HashSet<>();
         if(photoUsers != null && !photoUsers.isEmpty()) {
@@ -105,8 +106,8 @@ public class AlbumService {
                     .map(pu -> pu.getUser().getId())
                     .collect(Collectors.toSet());
         }
-        if(photoEditDto.getUserid()!=null && !photoEditDto.getUserid().isEmpty()) {
-            Set<Integer> newuser = new HashSet<>(photoEditDto.getUserid());
+        if(photoEditDto.getUserId()!=null && !photoEditDto.getUserId().isEmpty()) {
+            Set<Integer> newuser = new HashSet<>(photoEditDto.getUserId());
             Iterator<PhotoUser> iterator = photoUsers.iterator();
 
             while (iterator.hasNext()) {
@@ -129,16 +130,29 @@ public class AlbumService {
             }
         }
         LocalDate date = photoEditDto.getDate();
-        Album album = photo.getAlbum();
+        Album currentAlbum = photo.getAlbum();
+        Album newAlbum = currentAlbum;
+
         //앨범 체크 로직.
-        if(date!=null && album!=null) {
+        if(date!=null && currentAlbum!=null) {
             //날짜가 변경되면 새로 앨범 교체하기.
             Groups groups = albumRepository.findGroupByAlbumId(photo.getAlbum().getId())
                     .orElseThrow(() -> new EntityNotFoundException("그룹이 존재하지 않습니다."));
-            album = getAlbum(groups.getGup_id(), date);
+            newAlbum = getAlbum(groups.getGup_id(), date);
+            photo.changeAlbum(newAlbum);
         }
         photo.editInfo(photoEditDto.getTitle(), photoEditDto.getDate(),photoEditDto.getTime(),
-                photoEditDto.getArea(), photoEditDto.getContent(), album);
+                photoEditDto.getArea(), photoEditDto.getContent());
+
+        albumRepository.flush();
+
+        Album originalAlbum = albumRepository.findById(currentAlbum.getId())
+                .orElse(null);
+        if(originalAlbum!=null) {
+            if(originalAlbum.getPhoto().isEmpty()){
+                albumRepository.delete(originalAlbum);
+            }
+        }
         return PhotoInfoResponseDto.builder()
                 .photoid(photo.getId())
                 .title(photo.getTitle())
@@ -155,6 +169,7 @@ public class AlbumService {
                 .orElseThrow(()-> new EntityNotFoundException("사진이 존재하지 않습니다."));
         Album album=photo.getAlbum();
         album.deletePhoto(photo);
+        photoRepository.deletePhotoById(photo);
         //Integer count=photoRepository.deletePhotoById(photoId);
         if(album.checkSize()){
             albumRepository.deleteAlbum(album);

@@ -5,12 +5,7 @@ import capstone._4.dto.diary.output.DiaryCreateResponse;
 import capstone._4.dto.diary.output.EmotionResultDto;
 import capstone._4.dto.diary.output.FeedBackDto;
 import capstone._4.exception.FastApiException;
-import capstone._4.repository.DiaryRepository;
-import capstone._4.repository.EmotionRepository;
 import capstone._4.service.DiaryService;
-import capstone._4.service.GeminiClient;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
@@ -60,8 +55,8 @@ public class FeedBackWriter {
 
     private CompletableFuture<List<EmotionResultDto>> createEmotionResult(String feedback){
         log.info("감정 분석.");
-        return webClient.post().uri("/emotion")
-                .bodyValue(Map.of("feedback",feedback))
+        return webClient.post().uri("/predict_emotion")
+                .bodyValue(Map.of("text",feedback))
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, re->re.bodyToMono(String.class)
                         .flatMap(error-> Mono.error(new FastApiException("감정분석중 오류가 발생했습니다."+error))))

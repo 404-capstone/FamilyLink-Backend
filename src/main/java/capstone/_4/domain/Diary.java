@@ -25,9 +25,6 @@ public class Diary {
     @Column(name = "di_id")
     private Integer id;
 
-    @Column(name = "di_title")
-    private String title;
-
     @Column(name = "di_content")
     private String content;
 

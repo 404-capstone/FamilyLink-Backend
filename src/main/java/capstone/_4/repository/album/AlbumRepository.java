@@ -87,4 +87,19 @@ public class AlbumRepository {
     public void deleteAlbum(Album album) {
         em.remove(album);
     }
+
+    public Optional<Album> findById(Integer id) {
+        return em.createQuery("select a from Album a " +
+                "where a.id=:id",Album.class)
+                .setParameter("id",id )
+                .getResultList().stream().findFirst();
+    }
+
+    public void delete(Album originalAlbum) {
+        em.remove(originalAlbum);
+    }
+
+    public void flush() {
+        em.flush();
+    }
 }

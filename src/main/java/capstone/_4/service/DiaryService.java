@@ -209,7 +209,7 @@ public class DiaryService {
 
         emtions.forEach(em -> {
             DiaryEmotion emotion = new DiaryEmotion();
-            emotion.changeEmotion(em.getEmotion(), em.getPercent(), diary);
+            emotion.changeEmotion(em.getLabel(), em.getPercent(), diary);
             emotionRepository.save(emotion);
         });
         log.info("감정 저장 완료.");
