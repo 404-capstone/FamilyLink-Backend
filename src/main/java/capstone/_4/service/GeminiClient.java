@@ -1,5 +1,8 @@
 package capstone._4.service;
 
+import capstone._4.domain.Diary;
+import capstone._4.repository.DiaryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ public class GeminiClient {
         this.model = model;
         this.restTemplate = restTemplate;
     }
+
 
     public String generateContent(String prompt) {
         Map<String, Object> request = new HashMap<>();

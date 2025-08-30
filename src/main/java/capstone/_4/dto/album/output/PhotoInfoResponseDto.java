@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -22,8 +24,12 @@ public class PhotoInfoResponseDto {
     @Schema(description = "사진 설명 내용")
     private String content;
     @Schema(description = "사진 날짜")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime date;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
+
+    @Schema(description = "사진 시간")
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime time;
 
     @Schema(description = "사진에 참여하는 유저들.")
     private List<Integer> userIds;

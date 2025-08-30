@@ -81,7 +81,7 @@ public interface DiaryApi {
     @Operation(summary = "다이어리 작성", description = "새로운 다이어리를 작성합니다.")
     @ApiResponse(responseCode = "200", description = "작성 성공")
     @PostMapping("/write")
-    public ResponseEntity<?> writeDiary(@RequestBody DiaryCreateRequest request);
+    public ResponseEntity<?> diaryFeedBack(@RequestBody DiaryCreateRequest request);
 
 
     @Operation(summary = "특정 그룹 질문에 해당하는 다이어리와 질문 조회", description = "특정 그룹 질문 ID에 해당하는 다이어리와 질문을 함께 조회합니다.")

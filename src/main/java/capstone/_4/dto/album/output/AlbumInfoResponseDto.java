@@ -15,5 +15,5 @@ public class AlbumInfoResponseDto {
     private Integer groupId;
 
     @Schema(description = "앨범 정보들이 존재하는 dto")
-    private List<AlbumInfoDto> albumInfoDtoList;
+    private List<AlbumInfoDto> album;
 }

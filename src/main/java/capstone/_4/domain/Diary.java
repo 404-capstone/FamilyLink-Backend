@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "diary")
@@ -24,17 +25,11 @@ public class Diary {
     @Column(name = "di_id")
     private Integer id;
 
-    @Column(name = "di_title")
-    private String title;
-
     @Column(name = "di_content")
     private String content;
 
     @Column(name = "feedbook")
     private String feedbook;
-
-    @Column(name = "emotion")
-    private String emotion;
 
     @Column(name = "diary_at")
     private LocalDateTime time;
@@ -53,4 +48,12 @@ public class Diary {
     @JoinColumn(name = "cal_id")
     @JsonBackReference
     private Calendar calendar;
+
+    @OneToMany(mappedBy = "diary")
+    @JsonManagedReference
+    private List<DiaryEmotion> emotions;
+
+    public void addEmotions(DiaryEmotion diaryEmotion) {
+        emotions.add(diaryEmotion);
+    }
 }

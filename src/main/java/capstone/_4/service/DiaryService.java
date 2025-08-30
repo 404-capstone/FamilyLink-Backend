@@ -1,15 +1,16 @@
 package capstone._4.service;
 
 import capstone._4.domain.Diary;
+import capstone._4.domain.DiaryEmotion;
 import capstone._4.domain.GroupAnswer;
 import capstone._4.domain.User;
 import capstone._4.domain.question.GroupQuestion;
 import capstone._4.domain.question.QuestionInventory;
 import capstone._4.dto.diary.*;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
-import capstone._4.dto.diary.output.DiaryAllSearchResponse;
-import capstone._4.dto.diary.output.DiaryCreateResponse;
-import capstone._4.dto.diary.output.DiaryDetailResponse;
+import capstone._4.dto.diary.output.*;
+import capstone._4.exception.FastApiException;
+import capstone._4.repository.EmotionRepository;
 import capstone._4.repository.diary.DiaryJpaRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
@@ -20,16 +21,22 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
+import static capstone._4.domain.QDiary.diary;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class DiaryService {
 
     private final DiaryRepository diaryRepository;
@@ -38,6 +45,23 @@ public class DiaryService {
     private final UserRepository userRepository;
     private final DiaryJpaRepository diaryJpaRepository;
     private final GeminiClient geminiClient;
+    private final EmotionRepository emotionRepository;
+
+    public DiaryService(GeminiClient geminiClient, DiaryJpaRepository diaryJpaRepository,
+                        UserRepository userRepository, QuestionRepository questionRepository,
+                        GroupsUserRepository groupsUserRepository, DiaryRepository diaryRepository,
+                        EmotionRepository emotionRepository
+    ) {
+        this.geminiClient = geminiClient;
+        this.diaryJpaRepository = diaryJpaRepository;
+        this.userRepository = userRepository;
+        this.questionRepository = questionRepository;
+        this.groupsUserRepository = groupsUserRepository;
+        this.diaryRepository = diaryRepository;
+        this.emotionRepository = emotionRepository;
+    }
+
+
 
     @Transactional
     public void deleteDiary(Integer diaryId) {
@@ -145,7 +169,7 @@ public class DiaryService {
         return new GroupQuestionResponseDto(groupId,questions);
     }
 
-    @Transactional
+
     public String generateAndSaveFeedback(Long diaryId) {
         // 1. DB에서 일지 조회
         Diary diary = diaryRepository.findById(diaryId)
@@ -164,13 +188,30 @@ public class DiaryService {
             %s
             """.formatted(diary.getContent());
 
+
+
         // 3. Gemini API 호출
         String feedback = geminiClient.generateContent(prompt);
 
-        // 4. DB에 feedbook 저장
-        diary.setFeedbook(feedback);
-        diaryRepository.save(diary);
+
+
 
         return feedback;
+    }
+
+
+    @Transactional
+    public void saveFeedBackInfo(String feedBack, List<EmotionResultDto> emtions,Long diaryId) {
+        log.info("감정 저장 시작.");
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new RuntimeException("일지를 찾을 수 없습니다."));
+        diary.setFeedbook(feedBack);
+
+        emtions.forEach(em -> {
+            DiaryEmotion emotion = new DiaryEmotion();
+            emotion.changeEmotion(em.getEmotion(), em.getPercent(), diary);
+            emotionRepository.save(emotion);
+        });
+        log.info("감정 저장 완료.");
     }
 }

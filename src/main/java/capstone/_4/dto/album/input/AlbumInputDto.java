@@ -48,7 +48,7 @@ public class AlbumInputDto {
     private List<Integer> userId;
 
     @Schema(description = "사진 데이터,멀티파트파일임 잘생각.")
-    private List<MultipartFile> files;
+    private List<MultipartFile> image;
 
 
 

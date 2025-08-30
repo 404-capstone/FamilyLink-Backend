@@ -54,11 +54,8 @@ public class PhotoRepository {
         em.remove(photoUser);
     }
 
-    public Integer deletePhotoById(Integer photoId) {
-        return em.createQuery("delete from Photo p " +
-                "where p.id=:id")
-                .setParameter("id",photoId)
-                .executeUpdate();
+    public void deletePhotoById(Photo photo) {
+        em.remove(photo);
     }
 
     public List<PhotoInfoDto> searchPhotoWithGroup(Integer albumId) {
@@ -109,9 +106,10 @@ public class PhotoRepository {
                         p.getId(),
                         p.getTitle(),
                         Images.get(0),
+                    p.getContent(),
                         p.getArea(),
-                        p.getContent(),
                         p.getDate(),
+                        p.getTime(),
                         users
                 );
             dto.add(photoInfoDto);

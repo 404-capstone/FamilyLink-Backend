@@ -136,7 +136,11 @@ public class OpenAiService {
                         "\n" +
                         "                • 배열 하나당 items 5개를 반드시 채워줘.\n" +
                         "                •  recommendations 배열안에 category당 하나의 활동분류,오브젝트를 생성해줘." +
-                        "                    예) [\"힐링/휴식\"],[\"문화/예술\"] 이런식으로 각각                                                  " +
+                        "                    예) [\"힐링/휴식\"],[\"문화/예술\"] 이런식으로 각각   \n" +
+                        "                •  description에는 시간 표현(예: “시간대”, “~시”, “~분”, “am/pm”, “12:30”, “15:00-18:00”)을 넣지 않는다." +
+                        "                   나쁜예 - \"description\": \"바람 맞으며 달리는 활동. 시간대 12:00-15:30 추천.\n" +
+                        "                   좋은예 - \"description\": \"바람을 맞으며 달리는 활동. 한산한 때 방문하면 더 쾌적함.\n" +
+                        "                • 시간 관련 문구가 떠오르면 “한산한 때에 방문 권장” 같은 **비시간형 표현**으로 바꿀 것. \n" +
                         "                • 추가 필드는 허용되지 않습니다.")
                 .build());
         messages.add(MessageRequestDto.builder()
@@ -178,15 +182,19 @@ public class OpenAiService {
                                                         "items", Map.of(
                                                                 "type", "object",
                                                                 "properties", Map.of(
-                                                                        "category", Map.of("type", "string"),
+                                                                        "category", Map.of("type", "string",
+                                                                        "enum",List.of("힐링/휴식", "스포츠/레저", "식사", "먹거리/음료", "창의/체험", "여행/탐방", "문화/예술")), //생성 카테고리 제약
                                                                         "items", Map.of(
                                                                                 "type", "array",
+                                                                                "minItems",5, //최대 최소 제약.
+                                                                                "maxItems",5,
                                                                                 "items", Map.of(
                                                                                         "type", "object",
                                                                                         "properties", Map.of(
                                                                                                 "activity", Map.of("type", "string"),
                                                                                                 "location", Map.of("type", "string"),
-                                                                                                "description", Map.of("type", "string")
+                                                                                                "description", Map.of("type", "string", //시간 조건 제약.
+                                                                                                "pattern","^(?!.*((오전|오후)?\\s*(?:[01]?\\d|2[0-3])\\s*시(?:\\s*[0-5]?\\d\\s*분)?|\\b(?:[01]?\\d|2[0-3]):[0-5]\\d\\b|\\b[01]?\\d\\s*(?:am|pm)\\b|시간대)).+")
                                                                                         ),
                                                                                         "required", List.of("activity", "location", "description"),
                                                                                         "additionalProperties", false
