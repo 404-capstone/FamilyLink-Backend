@@ -47,7 +47,7 @@ public class DiaryService {
             throw new EntityNotFoundException("다이어리 삭제를 실패했습니다: "+e.getMessage());
         }
     }
-
+    //전체조회
     public GroupAnswerDetailResponse searchAnswerDetail(Integer groupQuestionId, Integer groupId) {
 
         GroupQuestion questionsInfo=diaryRepository.findGroupQuestion(groupQuestionId,groupId)
