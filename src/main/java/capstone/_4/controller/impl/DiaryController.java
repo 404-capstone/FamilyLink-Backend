@@ -2,12 +2,14 @@ package capstone._4.controller.impl;
 
 import capstone._4.controller.doc.DiaryApi;
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.diary.DiaryAndQuestionsResponse;
 import capstone._4.dto.diary.GroupAnswerDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.input.QuestionInfoDto;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
 import capstone._4.dto.diary.output.DiaryDetailResponse;
+import capstone._4.dto.diary.DiaryAllDetailResponse;
 import capstone._4.dto.diary.output.FeedBackDto;
 import capstone._4.dto.gpt.OpenAiQuestionContent;
 import capstone._4.enums.ResponseEnum;
@@ -22,11 +24,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import capstone._4.dto.diary.output.DiaryAllSearchResponse;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
@@ -89,9 +88,9 @@ public class DiaryController implements DiaryApi {
     }
 
     @GetMapping("/all/search")
-    public ResponseEntity<List<DiaryAllSearchResponse>> getDiaryAndQuestions(
-            @RequestParam Integer groupQuestionId) {
-        List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(groupQuestionId);
+    public ResponseEntity<DiaryAndQuestionsResponse> getDiaryAndQuestions(
+            @RequestParam Integer userId) {
+        DiaryAndQuestionsResponse response = diaryService.getDiaryAndQuestions(userId);
         return ResponseEntity.ok(response);
     }
 
