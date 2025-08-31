@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class GptConfig {
+public class ApiConfig {
 
     @Value("${url.gpt}")
     private String gptUrl;

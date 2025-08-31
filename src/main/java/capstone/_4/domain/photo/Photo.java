@@ -54,7 +54,7 @@ public class Photo {
     @JsonBackReference
     private Album album;
 
-    @OneToMany(mappedBy = "photo",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "photo",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY,orphanRemoval = true)
     @JsonManagedReference
     private List<PhotoUser> photoUser=new ArrayList<>();
 
@@ -80,11 +80,11 @@ public class Photo {
     }
 
     public void editInfo(String title,LocalDate date,LocalTime time,String area,String content){
-        if(title!=null) this.title=title;
-        if(date!=null) this.date=date;
-        if(time!=null) this.time=time;
-        if(area!=null) this.area=area;
-        if(content!=null) this.content=content;
+        this.title=title;
+        this.date=date;
+        this.time=time;
+        this.area=area;
+        this.content=content;
 
     }
 

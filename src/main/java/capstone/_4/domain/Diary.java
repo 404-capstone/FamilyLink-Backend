@@ -34,6 +34,9 @@ public class Diary {
     @Column(name = "diary_at")
     private LocalDateTime time;
 
+    @Column
+    private String emotion;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gq_id")
     @JsonBackReference

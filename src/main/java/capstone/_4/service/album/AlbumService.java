@@ -131,7 +131,7 @@ public class AlbumService {
                 }
             }
         }else{
-            photoRepository.deleteUsers(photoUsers);
+            if(photo.getPhotoUser()!=null) photo.getPhotoUser().clear();
         }
         LocalDate date = photoEditDto.getDate();
         Album currentAlbum = photo.getAlbum();
@@ -163,8 +163,11 @@ public class AlbumService {
                 .date(photo.getDate())
                 .time(photo.getTime())
                 .content(photo.getContent())
-                .userIds(photo.getPhotoUser().stream().map(pu->pu.getUser().getId())
-                        .collect(Collectors.toList())).build();
+                .userIds(photo.getPhotoUser() != null ?
+                        photo.getPhotoUser()
+                        .stream().map(pu->pu.getUser().getId())
+                                        .collect(Collectors.toList()):
+                        Collections.emptyList()).build();
     }
 
     @Transactional

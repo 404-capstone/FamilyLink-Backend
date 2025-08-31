@@ -201,15 +201,17 @@ public class DiaryService {
 
 
     @Transactional
-    public void saveFeedBackInfo(String feedBack, List<EmotionResultDto> emtions,Long diaryId) {
+    public void saveFeedBackInfo(String feedBack, List<EmotionResultDto> emotions,Long diaryId) {
         log.info("감정 저장 시작.");
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new RuntimeException("일지를 찾을 수 없습니다."));
         diary.setFeedbook(feedBack);
+        diary.setEmotion(emotions.get(0).getLabel());
 
-        emtions.forEach(em -> {
+        emotions.forEach(em -> {
+            log.info("emotion:{}",em.getLabel());
             DiaryEmotion emotion = new DiaryEmotion();
-            emotion.changeEmotion(em.getEmotion(), em.getPercent(), diary);
+            emotion.changeEmotion(em.getLabel(), em.getPercent(), diary);
             emotionRepository.save(emotion);
         });
         log.info("감정 저장 완료.");
