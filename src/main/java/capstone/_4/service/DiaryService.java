@@ -1,39 +1,32 @@
 package capstone._4.service;
 
-import capstone._4.domain.Diary;
-import capstone._4.domain.DiaryEmotion;
-import capstone._4.domain.GroupAnswer;
-import capstone._4.domain.User;
+import capstone._4.domain.*;
 import capstone._4.domain.question.GroupQuestion;
 import capstone._4.domain.question.QuestionInventory;
 import capstone._4.dto.diary.*;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.*;
-import capstone._4.exception.FastApiException;
 import capstone._4.repository.EmotionRepository;
 import capstone._4.repository.diary.DiaryJpaRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
 import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.group.GroupsUserRepository;
-import jakarta.persistence.EntityExistsException;
+import com.querydsl.core.types.dsl.Expressions;
 import jakarta.persistence.EntityNotFoundException;
+import com.querydsl.core.Tuple;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.types.dsl.DateTimePath;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-
-import static capstone._4.domain.QDiary.diary;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -125,23 +118,50 @@ public class DiaryService {
         );
     }
 
-    public List<DiaryAllSearchResponse> getDiaryAndQuestions(Integer groupQuestionId) {
-        List<Object[]> results = diaryJpaRepository.findDiaryAndQuestion(groupQuestionId);
 
-        return results.stream()
-                .map(row -> {
-                    Diary diary = (Diary) row[0];
-                    GroupQuestion groupQuestion = (GroupQuestion) row[1];
-                    return new DiaryAllSearchResponse(
-                            diary.getId(),
-                            diary.getContent(),
-                            diary.getTime(),
-                            groupQuestion.getId(),
-                            groupQuestion.getQuestionList().toString()
-                    );
-                })
-                .toList();
+    //전체조회
+    @Transactional
+    public List<DiaryAllSearchResponse> getAllDiaryWithAnswers(Integer userId) {
+        // 1. DB에서 조회
+        List<Tuple> results = diaryRepository.findDiaryWithTopEmotionAndAnswer(userId);
+
+        NumberPath<Integer> diIdPath = Expressions.numberPath(Integer.class, "diId");
+        DateTimePath<LocalDateTime> datePath = Expressions.dateTimePath(LocalDateTime.class, "date");
+        StringPath emotionPath = Expressions.stringPath("emotion");
+        StringPath userAnswerPath = Expressions.stringPath("userAnswer");
+        DateTimePath<LocalDateTime> submittedAtPath = Expressions.dateTimePath(LocalDateTime.class, "submittedAt");
+
+        // 3. diId별로 그룹핑
+        Map<Integer, List<Tuple>> diaryMap = results.stream()
+                .collect(Collectors.groupingBy(t -> t.get(diIdPath)));
+
+        List<DiaryAllSearchResponse> response = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<Tuple>> entry : diaryMap.entrySet()) {
+            Tuple first = entry.getValue().get(0);
+
+            DiaryDto diaryDto = new DiaryDto(
+                    first.get(datePath),
+                    first.get(emotionPath)
+            );
+
+            List<AnswerDto> answers = entry.getValue().stream()
+                    .filter(t -> t.get(userAnswerPath) != null)
+                    .map(t -> new AnswerDto(
+                            t.get(submittedAtPath),
+                            t.get(userAnswerPath)
+                    ))
+                    .collect(Collectors.toList());
+
+            response.add(new DiaryAllSearchResponse(diaryDto, answers));
+        }
+
+        return response;
     }
+
+
+
+
 
     public DiaryDetailResponse getDiaryDetail(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId)
@@ -201,17 +221,26 @@ public class DiaryService {
 
 
     @Transactional
-    public void saveFeedBackInfo(String feedBack, List<EmotionResultDto> emtions,Long diaryId) {
-        log.info("감정 저장 시작.");
+    public void saveFeedBackInfo(String feedBack, List<EmotionResultDto> topEmotions, Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new RuntimeException("일지를 찾을 수 없습니다."));
         diary.setFeedbook(feedBack);
 
-        emtions.forEach(em -> {
-            DiaryEmotion emotion = new DiaryEmotion();
-            emotion.changeEmotion(em.getEmotion(), em.getPercent(), diary);
-            emotionRepository.save(emotion);
-        });
-        log.info("감정 저장 완료.");
+        // DiaryEmotion 테이블에 top3 저장
+        for (EmotionResultDto em : topEmotions) {
+            DiaryEmotion diaryEmotion = new DiaryEmotion();
+            diaryEmotion.changeEmotion(em.getEmotion(), em.getPercent(), diary); // emotion과 percent 사용
+            emotionRepository.save(diaryEmotion);
+        }
+
+        // 대표 감정은 Diary 테이블에 top1 저장
+        if (topEmotions != null && !topEmotions.isEmpty()) {
+            diary.setEmotion(topEmotions.get(0).getEmotion());
+        }
+
+        diaryRepository.save(diary);
     }
+
+
+
 }

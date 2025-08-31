@@ -53,6 +53,9 @@ public class Diary {
     @JsonManagedReference
     private List<DiaryEmotion> emotions;
 
+    @Column(name = "emotion")
+    private String emotion;
+
     public void addEmotions(DiaryEmotion diaryEmotion) {
         emotions.add(diaryEmotion);
     }

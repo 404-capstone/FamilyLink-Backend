@@ -54,7 +54,8 @@ public class FeedBackWriter {
     }
 
     private CompletableFuture<List<EmotionResultDto>> createEmotionResult(String feedback){
-        log.info("감정 분석.");
+        log.info("감정 분석.",feedback);
+
         return webClient.post().uri("/predict_emotion")
                 .bodyValue(Map.of("text",feedback))
                 .retrieve()
@@ -63,6 +64,7 @@ public class FeedBackWriter {
                 .onStatus(HttpStatusCode::is5xxServerError,re->re.bodyToMono(String.class)
                         .flatMap(error-> Mono.error(new FastApiException("감정분석중 오류가 발생했습니다."+error))))
                 .bodyToMono(EmotionResponse.class)
+                .doOnNext(resp -> log.info("FastAPI 응답: {}", resp))
                 .map(EmotionResponse::getEmotions)
                 .toFuture(); //여기는 비동기 위해서 사용.
 

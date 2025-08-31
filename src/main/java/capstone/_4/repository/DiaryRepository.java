@@ -4,6 +4,8 @@ import capstone._4.domain.*;
 import capstone._4.domain.question.*;
 import capstone._4.dto.diary.QuestionAnswerResponse;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import capstone._4.domain.Diary;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -99,6 +102,32 @@ public class DiaryRepository {
                 .from(diaryPath)
                 .join(diaryPath.get("groupQuestion", GroupQuestion.class), groupQuestion)
                 .where(groupQuestion.id.eq(groupQuestionId))
+                .fetch();
+    }
+
+
+    public List<Tuple> findDiaryWithTopEmotionAndAnswer(Integer userId) {
+        PathBuilder<Diary> diary = new PathBuilder<>(Diary.class, "diary");
+        PathBuilder<DiaryEmotion> diaryEmotion = new PathBuilder<>(DiaryEmotion.class, "diaryEmotion");
+        PathBuilder<GroupAnswer> groupAnswer = new PathBuilder<>(GroupAnswer.class, "groupAnswer");
+
+        DateTimePath<LocalDateTime> diaryTime = Expressions.dateTimePath(LocalDateTime.class, diary, "time");
+
+        return queryFactory
+                .select(
+                        diary.get("id", Integer.class).as("diId"),
+                        diaryTime.as("date"),
+                        diaryEmotion.get("emotion", String.class).as("emotion"),
+                        groupAnswer.get("userAnswer", String.class).as("userAnswer"),
+                        groupAnswer.get("submittedAt", LocalDateTime.class).as("submittedAt")
+                )
+                .from(diary)
+                .leftJoin(diaryEmotion)
+                .on(diary.get("id", Integer.class).eq(diaryEmotion.get("diary").get("id", Integer.class)))
+                .leftJoin(groupAnswer)
+                .on(diary.get("id", Integer.class).eq(groupAnswer.get("diary").get("id", Integer.class)))
+                .where(diary.get("user").get("id", Integer.class).eq(userId))
+                .orderBy(diaryTime.desc())
                 .fetch();
     }
 

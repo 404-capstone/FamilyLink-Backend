@@ -91,7 +91,7 @@ public class DiaryController implements DiaryApi {
     @GetMapping("/all/search")
     public ResponseEntity<List<DiaryAllSearchResponse>> getDiaryAndQuestions(
             @RequestParam Integer groupQuestionId) {
-        List<DiaryAllSearchResponse> response = diaryService.getDiaryAndQuestions(groupQuestionId);
+        List<DiaryAllSearchResponse> response = diaryService.getAllDiaryWithAnswers(groupQuestionId);
         return ResponseEntity.ok(response);
     }
 
