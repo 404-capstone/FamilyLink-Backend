@@ -71,7 +71,7 @@ public class DiaryService {
             throw new EntityNotFoundException("다이어리 삭제를 실패했습니다: "+e.getMessage());
         }
     }
-    //전체조회
+
     public GroupAnswerDetailResponse searchAnswerDetail(Integer groupQuestionId, Integer groupId) {
 
         GroupQuestion questionsInfo=diaryRepository.findGroupQuestion(groupQuestionId,groupId)
@@ -124,24 +124,50 @@ public class DiaryService {
                 savedDiary.getUser().getId().longValue()
         );
     }
+    // 전체조회
+    // 전체조회 - 해당 유저가 작성한 다이어리 + 질문응답 조회
+    public DiaryAndQuestionsResponse getDiaryAndQuestions(Integer userId) {
+        // 1. 해당 유저가 작성한 다이어리 리스트 조회 (작성 시간 기준 내림차순)
+        List<Diary> diaries = diaryJpaRepository.findAllByUserOrderByTimeDesc(userId.longValue());
 
-    public List<DiaryAllSearchResponse> getDiaryAndQuestions(Integer groupQuestionId) {
-        List<Object[]> results = diaryJpaRepository.findDiaryAndQuestion(groupQuestionId);
+        // 2. 다이어리 DTO 생성 (날짜, 감정)
+        List<DiaryDto> diaryList = diaries.stream()
+                .map(d -> DiaryDto.builder()
+                        .date(d.getTime().toLocalDate())
+                        .emotion(d.getEmotion())
+                        .build())
+                .toList();
 
-        return results.stream()
-                .map(row -> {
-                    Diary diary = (Diary) row[0];
-                    GroupQuestion groupQuestion = (GroupQuestion) row[1];
-                    return new DiaryAllSearchResponse(
-                            diary.getId(),
-                            diary.getContent(),
-                            diary.getTime(),
-                            groupQuestion.getId(),
-                            groupQuestion.getQuestionList().toString()
-                    );
+        // 3. 질문응답 DTO 생성 (해당 다이어리 날짜 기준, 응답자 이름)
+        List<QuestionDto> questionList = diaries.stream()
+                .map(d -> {
+                    GroupQuestion gq = d.getGroupQuestion();
+                    List<String> responders = gq != null
+                            ? diaryJpaRepository.findRespondersByGroupQuestion(gq.getId())
+                            .stream()
+                            .map(uid -> userRepository.findById(uid.intValue())
+                                    .map(u -> u.getUsername()) // username으로 수정
+                                    .orElse("Unknown"))
+                            .toList()
+                            : Collections.emptyList();
+
+                    return QuestionDto.builder()
+                            .date(gq != null ? gq.getDay() : null)
+                            .responders(responders)
+                            .build();
                 })
                 .toList();
+
+        // 4. 최종 Response 빌드
+        return DiaryAndQuestionsResponse.builder()
+                .diary(diaryList)
+                .questions(questionList)
+                .build();
     }
+
+
+
+
 
     public DiaryDetailResponse getDiaryDetail(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId)
