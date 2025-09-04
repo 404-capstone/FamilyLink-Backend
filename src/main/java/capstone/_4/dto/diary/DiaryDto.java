@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class DiaryDto {
+    private Long diId;
     private LocalDate date;
     private String emotion;
 }

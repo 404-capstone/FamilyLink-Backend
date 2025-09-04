@@ -133,6 +133,7 @@ public class DiaryService {
         // 2. 다이어리 DTO 생성 (날짜, 감정)
         List<DiaryDto> diaryList = diaries.stream()
                 .map(d -> DiaryDto.builder()
+                        .diId(d.getId().longValue())
                         .date(d.getTime().toLocalDate())
                         .emotion(d.getEmotion())
                         .build())
@@ -152,6 +153,7 @@ public class DiaryService {
                             : Collections.emptyList();
 
                     return QuestionDto.builder()
+                            .gqId(gq != null ? gq.getId().longValue() : null)
                             .date(gq != null ? gq.getDay() : null)
                             .responders(responders)
                             .build();
@@ -168,18 +170,35 @@ public class DiaryService {
 
 
 
-
+    //상세조회
+    @Transactional
     public DiaryDetailResponse getDiaryDetail(Long diaryId) {
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new EntityNotFoundException("다이어리를 찾을 수 없습니다."));
 
-        int userId = diary.getUser() != null ? diary.getUser().getId() : null;
+        // diary_emotion 테이블에서 감정 조회
+        List<DiaryEmotion> diaryEmotions = emotionRepository.findByDiaryId(diary.getId());
+
+        // DiaryEmotion -> EmotionDetail DTO 매핑
+        List<EmotionDetail> emotionDetails = diaryEmotions.stream()
+                .map(em -> new EmotionDetail(
+                        em.getDe_id().longValue(),
+                        em.getEmotion(),
+                        em.getScore()
+                ))
+                .toList();
+        //공백 제거
+        String cleanFeedBack = diary.getFeedbook() != null
+                ? diary.getFeedbook().replace("\n", " ")
+                : null;
 
         return new DiaryDetailResponse(
-                diary.getId() != null ? diary.getId().longValue() : null,
+                diary.getId().longValue(),
                 diary.getContent(),
                 diary.getTime(),
-                diary.getUser() != null ? diary.getUser().getId().longValue() : null
+                diary.getUser() != null ? diary.getUser().getId().longValue() : null,
+                cleanFeedBack,
+                emotionDetails
         );
     }
 
