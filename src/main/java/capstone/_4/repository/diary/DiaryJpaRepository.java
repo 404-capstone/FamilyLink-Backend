@@ -21,4 +21,6 @@ public interface DiaryJpaRepository extends JpaRepository<Diary, Long> {
 
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId ORDER BY d.time DESC")
     List<Diary> findAllByUserOrderByTimeDesc(@Param("userId") Long userId);
+
+
 }
