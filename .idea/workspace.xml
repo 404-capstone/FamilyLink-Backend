@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7cc4eae2-a8fb-4d9b-9632-525302817ee2" name="변경" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/capstone.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/기본-이슈-템플릿.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/404-Backend" beforeDir="false" afterPath="$PROJECT_DIR$/404-Backend" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/controller/doc/DiaryApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/controller/doc/DiaryApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/controller/impl/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/controller/impl/user/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/dto/user/ProfileEditDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/dto/user/ProfileEditDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/service/user/UserProfileEditService.java" beforeDir="false" afterPath="$PROJECT_DIR$/404-Backend/src/main/java/capstone/_4/service/user/UserProfileEditService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/AppConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/AwsS3Config.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/CacheConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/FirebaseConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/QueryDslConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/RedisConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/SwaggerConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/WebConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/api/ApiConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/config/api/JeminaiConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/AlarmApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/AlbumApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/DeleteUserApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/DiaryApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/GroupApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/GroupScheduleCreateApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/ScheduleApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/ScheduleCreateApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/SocialApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/doc/UserApi.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/AlarmController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/AlbumController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/DiaryController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/GroupController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/HomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/Schedule/GroupScheduleCreateController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/Schedule/ScheduleController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/Schedule/ScheduleCreateController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/SocialController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/controller/impl/user/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/Alarm.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/Album.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/Calendar.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/Diary.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/DiaryEmotion.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/GroupAnswer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/Groups.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/GroupsSchedule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/GroupsUser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/Schedule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/UserPrincipal.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/photo/Photo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/photo/PhotoImage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/photo/PhotoUser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/question/GroupQuestion.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/question/QuestionInfoList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/question/QuestionInventory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/question/QuestionList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/domain/sch_comment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/ApiResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/S3PhotoInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/S3PhotosInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/input/AlbumInputDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/input/PhotoEditDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/output/AlbumInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/output/AlbumInfoResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/output/PhotoInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/output/PhotoInfoResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/album/output/PhotoResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/EmotionResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/GroupAnswerDetailResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/GroupAnswerResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/GroupQuestionDetailResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/GroupQuestionResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/QuestionAnswerResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/QuestionInventoryInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/input/DiaryCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/input/QuestionInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/input/QuestionsWritesDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/output/DiaryAllSearchResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/output/DiaryCreateResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/output/DiaryDetailResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/output/EmotionResultDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/diary/output/FeedBackDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/album/AlbumDeleteResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/album/AlbumEditResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/album/AlbumSaveResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/album/AlbumSearchResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupAccessResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupCodeGenerateResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupCodeSearchResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupDeleteDocResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupDeleteResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupEditDtoResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupGenerationResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupLeaderChangeResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupLeaderQuitResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupQuitResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupSearchResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/GroupUserDeleteDocResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/ServeySaveDocResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/group/ServeySearchDocResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/schedule/ScheduleSearchResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/user/LoginApiResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/user/LoginTokenResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/user/ProfileEditResponseDocDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/docs/user/TokenResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/gpt/MessageRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/gpt/OpenAiQuestionContent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/gpt/OpenAiRecommendComment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/gpt/OpenAiRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/gpt/OpenAiResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/gpt/ResponseFormatDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/group/input/ServeyDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/group/output/GroupGenerateDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/group/output/GroupInfoResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/group/output/GroupUserInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/AfterSchedule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/BeforeSchedule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/GroupSchedule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/GroupScheduleOptimizeRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/GroupScheduleSimpleInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/ItemDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/OptimalResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/OptimizeRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/PersonalScheduleDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/SchduleSimpleInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/ScheduleOptimizeApiRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/ScheduleOptimizeDetailRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/ScheduleOptimizeRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/SchedulelOptimizeApiResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/input/ActivityPersonality.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/input/CommentCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/input/GroupScheduleInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/input/ScheduleCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/input/ScheduleGroupCreateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/input/ScheduleUpdateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/CommentResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/CommentSimpleResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/GroupScheduleDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/GroupScheduleResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/PersonalSchedule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/PersonalScheduleResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/ScheduleCreateInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/ScheduleEditResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/ScheduleInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/ScheduleResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/ScheduleResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/schedule/output/ScheduleWithCommentsResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/OAuth2UserInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/ProfileEditDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/ProfileEditResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/ReGenerateTokenDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/SocialInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/TokenDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/input/SocialInputDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/input/UserSearchInputDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/kakao/KakaoCodeDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/kakao/KakaoLoginDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/kakao/KakaoTokenResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/kakao/KakaoUserInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/kakao/KakaoUserInfoResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/naver/NaverInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/naver/NaverUserInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/output/SocialResultDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/output/UserInfoResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/dto/user/output/UserSearchOutputDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/enums/ErrorCode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/enums/ResponseEnum.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/enums/TokenStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/event/TopicDeleteEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/event/TopicNotifyEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/event/TopicSubscribeEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/event/TopicUnSubscribeEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/event/listners/TopicEventListeners.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/DecryptionException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/EncryptionException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/FastApiException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/FileStorageException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/GptErrorException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/SocialLoginException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/TokenException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/handler/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/handler/GroupExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/exception/handler/SocialExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/filter/CustomAuthenticationEntryPoint.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/filter/ExceptionHandlerFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/filter/JwtAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/handler/OAuthLoginFailureHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/handler/OauthLoginSuccessHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/AlarmRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/DiaryRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/EmotionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/QuestionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/album/AlbumRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/album/PhotoImageRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/album/PhotoRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/calendar/CalendarRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/diary/DiaryJpaRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/group/GroupCustomRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/group/GroupCustomRepositoryImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/group/GroupQuestionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/group/GroupRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/group/GroupsUserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/schedule/CommentRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/schedule/GroupsScheduleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/schedule/ScheduleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/user/UserJpaRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/repository/user/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/DiaryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/GeminiClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/GroupService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/QuestionService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/album/AlbumService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/other/AlarmService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/other/CacheService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/other/FcmService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/other/FeedBackWriter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/other/OpenAiService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/other/S3Service.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/redis/RedisService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/schedule/ScheduleCreateService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/schedule/ScheduleGroupCreateService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/schedule/ScheduleService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/token/CustomUserdetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/token/JwtService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/user/UserProfileEditService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/user/UserSearchService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/service/user/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/util/AESUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/capstone/_4/util/JwtUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/capstone/_4/ApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/404-Backend">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/404-Backend">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/404-Backend" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="323OYWXFOOPsTfG3PgNYjB6Qi5d" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.404-Backend [bootJar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.404-Backend [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.404-Backend 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.E:/capstone/404-Backend/build.gradle.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Application.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;jh__refactoring/#82&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/capstone&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\capstone\404-Backend\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.Application">
+    <configuration name="404-Backend [bootJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/404-Backend" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bootJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="404-Backend [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/404-Backend" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="E:/capstone/404-Backend/build.gradle" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/404-Backend/build.gradle" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="404.main" />
+      <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="capstone._4.Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.E:/capstone/404-Backend/build.gradle" />
+        <item itemvalue="Gradle.404-Backend [bootJar]" />
+        <item itemvalue="Gradle.404-Backend [build]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="7cc4eae2-a8fb-4d9b-9632-525302817ee2" name="변경" comment="" />
+      <created>1756645839247</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1756645839247</updated>
+      <workItem from="1756645840579" duration="5648000" />
+      <workItem from="1756888160818" duration="508000" />
+      <workItem from="1756958648846" duration="2804000" />
+      <workItem from="1756962710600" duration="3122000" />
+      <workItem from="1757232574398" duration="326000" />
+      <workItem from="1757377956682" duration="307000" />
+      <workItem from="1757418585689" duration="1581000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

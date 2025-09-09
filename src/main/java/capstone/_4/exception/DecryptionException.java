@@ -1,7 +1,0 @@
-package capstone._4.exception;
-
-public class DecryptionException extends RuntimeException {
-    public DecryptionException(String message) {
-        super(message);
-    }
-}
