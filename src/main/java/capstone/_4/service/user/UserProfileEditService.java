@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,50 +20,42 @@ public class UserProfileEditService {
     private final capstone._4.repository.user.UserRepository userRepository;
 
     @Transactional
-    public User updateProfile(int userId, ProfileEditDto dto) {
+    public void updateProfile(int userId, ProfileEditDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
         // 텍스트 정보 업데이트
         user.updateProfile(dto.getUsername(), dto.getAge(), dto.getGender());
 
-        // 이미지 처리
         MultipartFile imageFile = dto.getImageFile();
-        String previousImageUrl = user.getImageUrl();
-        String imageUrl = previousImageUrl; // 기본값 유지
+        try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                // 새 이미지 업로드
+                S3PhotoInfoDto uploadResult = s3Service.uploadFile(imageFile);
 
-        boolean deleteRequested = dto.isDeleteImage();
+                // 기존 이미지 삭제
+                checkUserImage(user);
 
-        if (imageFile != null && !imageFile.isEmpty()) {
-            // 새 이미지 업로드
-            S3PhotoInfoDto uploadResult = s3Service.uploadFile(imageFile);
-            imageUrl = uploadResult.getFileUrl();
-            log.info("새 프로필 이미지 업로드 완료 -> {}", imageUrl);
+                // 새 이미지 반영
+                user.setImage(uploadResult.getFileUrl());
+                log.info("새 프로필 이미지 업로드 완료 -> {}", uploadResult.getFileUrl());
 
-            // 기존 이미지 삭제
-            if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
-                String previousFileName = URLDecoder.decode(
-                        previousImageUrl.substring(previousImageUrl.lastIndexOf("/") + 1),
-                        StandardCharsets.UTF_8
-                );
-                s3Service.deleteFile(previousFileName);
-                log.info("기존 이미지 S3 삭제 완료 -> {}", previousFileName);
+            } else {
+                // 이미지 없으면 기존 이미지 삭제 + null 처리
+                checkUserImage(user);
+                user.setImage(null);
             }
-
-        } else if (deleteRequested) {
-            // 삭제 요청 시
-            if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
-                String previousFileName = URLDecoder.decode(
-                        previousImageUrl.substring(previousImageUrl.lastIndexOf("/") + 1),
-                        StandardCharsets.UTF_8
-                );
-                s3Service.deleteFile(previousFileName);
-                log.info("이미지 삭제 요청, S3 삭제 완료 -> {}", previousFileName);
-            }
-            imageUrl = null;
+        } catch (Exception e) {
+            throw new RuntimeException("S3 업로드/삭제 실패: " + e.getMessage());
         }
+    }
 
-        user.setImage(imageUrl);
-        return user;
+    private void checkUserImage(User user) {
+        String previousImageUrl = user.getImageUrl();
+        if (previousImageUrl != null && !previousImageUrl.isEmpty()) {
+            String fileName = previousImageUrl.substring(previousImageUrl.lastIndexOf("/") + 1);
+            s3Service.deleteFile(fileName);
+            log.info("기존 프로필 이미지 S3 삭제 -> {}", fileName);
+        }
     }
 }

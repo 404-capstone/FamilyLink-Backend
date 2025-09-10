@@ -173,6 +173,7 @@ public class UserController implements UserApi {
         return ResponseEntity.ok("로그아웃 성공");
     }
 
+    //정보 수정
     @Override
     @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<ProfileEditResponseDto>> editProfile(
@@ -194,7 +195,10 @@ public class UserController implements UserApi {
             }
 
             // 서비스 호출
-            User updatedUser = userEditService.updateProfile(userId, dto);
+            userEditService.updateProfile(userId, dto); // void
+
+            User updatedUser = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
             // DTO 변환
             ProfileEditResponseDto responseDto = ProfileEditResponseDto.builder()

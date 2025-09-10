@@ -4,6 +4,7 @@ import capstone._4.dto.diary.GroupAnswerDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.input.QuestionInfoDto;
+import capstone._4.dto.diary.output.DiaryDetailResponse;
 import capstone._4.dto.diary.output.FeedBackDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -121,7 +122,14 @@ public interface DiaryApi {
     ResponseEntity<?> getDiaryAndQuestions(@RequestParam Integer groupQuestionId);
 
     @Operation(summary = "다이어리 상세 정보 조회", description = "다이어리 상세 정보를 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @ApiResponse(
+            responseCode = "200",
+            description = "조회 성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = DiaryDetailResponse.class)
+            )
+    )
     @GetMapping("/search")
     ResponseEntity<?> getDiaryDetail(@RequestParam Long diaryId);
 
