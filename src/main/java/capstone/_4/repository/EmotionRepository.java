@@ -1,6 +1,5 @@
 package capstone._4.repository;
 
-import capstone._4.domain.Diary;
 import capstone._4.domain.DiaryEmotion;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,7 +16,7 @@ public class EmotionRepository {
     private final EntityManager em;
 
     public void save(DiaryEmotion emotion) {
-        if(emotion.getDe_id()==null) em.persist(emotion);
+        if(emotion.getDe_id() == null) em.persist(emotion);
         else em.merge(emotion);
     }
 
@@ -25,5 +24,11 @@ public class EmotionRepository {
         for(DiaryEmotion emotion : emotions) save(emotion);
     }
 
-
+    // Diary PK 기준 조회
+    public List<DiaryEmotion> findByDiaryId(Integer diaryId) {
+        return em.createQuery(
+                        "SELECT e FROM DiaryEmotion e WHERE e.diary.id = :diaryId", DiaryEmotion.class)
+                .setParameter("diaryId", diaryId)
+                .getResultList();
+    }
 }

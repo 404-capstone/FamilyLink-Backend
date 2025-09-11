@@ -54,7 +54,7 @@ public class FeedBackWriter {
     }
 
     private CompletableFuture<List<EmotionResultDto>> createEmotionResult(String feedback){
-        log.info("감정 분석.");
+        log.info("감정 분석 요청: {}", feedback);
         return webClient.post().uri("/predict_emotion")
                 .bodyValue(Map.of("text",feedback))
                 .retrieve()
