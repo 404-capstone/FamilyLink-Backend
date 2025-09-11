@@ -3,6 +3,7 @@ package capstone._4.repository;
 import capstone._4.domain.*;
 import capstone._4.domain.question.*;
 import capstone._4.dto.diary.QuestionAnswerResponse;
+import capstone._4.dto.group.output.GroupUserInfoDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -53,7 +54,7 @@ public class DiaryRepository {
         return Optional.ofNullable(em.find(Diary.class, id));
     }
 
-    public Optional<GroupQuestion> findGroupQuestion(Integer groupQuestionId, Integer groupId) { //그룹이랑 맞는 질문지를 일단 가져옴.
+    public Optional<GroupQuestion> findGroupQuestion(Integer groupQuestionId) { //그룹이랑 맞는 질문지를 일단 가져옴.
 
          return em.createQuery("select gq from GroupQuestion gq " +
                  "where gq.id = :groupQuestionId", GroupQuestion.class)
@@ -62,7 +63,7 @@ public class DiaryRepository {
     }
 
 
-    public Map<Integer,List<QuestionAnswerResponse>> findAllAnswer(List<QuestionInventory> questionInventory) {
+    public Map<Integer,List<QuestionAnswerResponse>> findAllAnswer(List<QuestionInventory> questionInventory, Integer groupId) {
         QGroupAnswer  groupAnswer=QGroupAnswer.groupAnswer;
         QGroupQuestion groupQuestion=QGroupQuestion.groupQuestion;
         QUser user=QUser.user;
@@ -76,7 +77,8 @@ public class DiaryRepository {
                 .join(groupAnswer.questionInventory,qquestionInventory)
                 .join(groupAnswer.user,user)
                 .join(groupAnswer.user.groupsuser,gsUser)
-                .where(qquestionInventory.id.in(questionIds))
+                .where(qquestionInventory.id.in(questionIds),
+                        gsUser.group.gup_id.eq(groupId))
                 .fetch();
 
         return tuples.stream().collect(Collectors //map형태로,
