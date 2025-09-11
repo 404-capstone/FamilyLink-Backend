@@ -147,7 +147,7 @@ public interface DiaryApi {
             name = "성공 응답 예시",
             value = "{\n" +
                     "  \"code\": 200,\n" +
-                    "  \"message\": \"SUCCESS\",\n" +
+                    "  \"message\": \"요청 저장완료\",\n" +
                     "  \"data\": \"응답저장이 완료되었습니다.\"\n" +
                     "}"
     )))
