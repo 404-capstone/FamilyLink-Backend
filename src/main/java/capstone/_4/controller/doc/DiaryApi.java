@@ -141,7 +141,16 @@ public interface DiaryApi {
     ResponseEntity<?> searchQuestion(@RequestParam Integer groupId,HttpServletRequest request);
 
     @Operation(summary = "질문지 응답 저장하기", description = "질문지에 대한 응답지를 저장합니다.")
-    @ApiResponse(responseCode = "200", description = "요청 성공")
+    @ApiResponse(responseCode = "200", description = "요청 성공",
+    content = @Content(mediaType = "application/json",
+            examples = @ExampleObject(
+            name = "성공 응답 예시",
+            value = "{\n" +
+                    "  \"code\": 200,\n" +
+                    "  \"message\": \"요청 저장완료\",\n" +
+                    "  \"data\": \"응답저장이 완료되었습니다.\"\n" +
+                    "}"
+    )))
     @PostMapping("/question/write")
     public ResponseEntity<?> writeQuestion(@RequestBody QuestionInfoDto question, HttpServletRequest request);
 }

@@ -9,9 +9,11 @@ import capstone._4.domain.question.QuestionInventory;
 import capstone._4.dto.diary.*;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
 import capstone._4.dto.diary.output.*;
+import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.exception.FastApiException;
 import capstone._4.repository.EmotionRepository;
 import capstone._4.repository.diary.DiaryJpaRepository;
+import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
 import capstone._4.repository.QuestionRepository;
@@ -74,12 +76,13 @@ public class DiaryService {
 
     public GroupAnswerDetailResponse searchAnswerDetail(Integer groupQuestionId, Integer groupId) {
 
-        GroupQuestion questionsInfo=diaryRepository.findGroupQuestion(groupQuestionId,groupId)
+        GroupQuestion questionsInfo=diaryRepository.findGroupQuestion(groupQuestionId)
                 .orElseThrow(()->new EntityNotFoundException("질문지가 존재하지 않습니다.")); //질문지 정보,이미 전에 조회했을때 그룹정보를 썻기때문에 여기서는 필요x
 
         List<QuestionInventory> questionIds = questionRepository.findQuestionsWithGroupQuestion(questionsInfo);
+        //List<GroupUserInfoDto> users=groupsUserRepository.findBygroupId(groupId);
 
-        Map<Integer,List<QuestionAnswerResponse>> questionAnswerResponses =diaryRepository.findAllAnswer(questionIds); //문제id를 중점으로 가족 응답 response 존재.
+        Map<Integer,List<QuestionAnswerResponse>> questionAnswerResponses =diaryRepository.findAllAnswer(questionIds,groupId); //문제id를 중점으로 가족 응답 response 존재.
 
         List<GroupAnswerResponseDto> questionResponseDto= new ArrayList<>();
         for(QuestionInventory groupQuestion:questionIds){ //그룹 질문 가져오기.

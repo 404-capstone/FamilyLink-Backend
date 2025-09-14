@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "group_answer")
 @Getter
@@ -24,6 +26,9 @@ public class GroupAnswer {
 
     @Column
     private boolean flag;
+
+    @Column(name="submitted_at")
+    private LocalDateTime time;
 
     @ManyToOne
     @JoinColumn(name = "u_id")
@@ -44,10 +49,11 @@ public class GroupAnswer {
         this.groupQuestion = groupQuestion;
     }
 
-    public void insertInfo(String answer,GroupQuestion groupQuestion,User user,QuestionInventory questionInventory) {
+    public void insertInfo(String answer,GroupQuestion groupQuestion,User user,QuestionInventory questionInventory,LocalDateTime time) {
         this.answer = answer;
         this.groupQuestion = groupQuestion;
         this.user = user;
         this.questionInventory = questionInventory;
+        this.time=time;
     }
 }
