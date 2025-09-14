@@ -1,9 +1,6 @@
 package capstone._4.service;
 
-import capstone._4.domain.Diary;
-import capstone._4.domain.DiaryEmotion;
-import capstone._4.domain.GroupAnswer;
-import capstone._4.domain.User;
+import capstone._4.domain.*;
 import capstone._4.domain.question.GroupQuestion;
 import capstone._4.domain.question.QuestionInventory;
 import capstone._4.dto.diary.*;
@@ -142,25 +139,32 @@ public class DiaryService {
                         .build())
                 .toList();
 
+        // 3. 유저가 작성한 답변 조회
         List<GroupAnswer> answers = diaryJpaRepository.findAllByUserId(userId);
 
         List<QuestionDto> questionList = answers.stream()
+                .filter(ga -> ga.getGroupQuestion() != null)
+                .filter(ga -> {
+                    GroupQuestion gq = ga.getGroupQuestion();
+                    // 새로운 메서드 이름 사용
+                    List<Long> responderIds = diaryJpaRepository.findResponderIdsByGroupQuestion(gq.getId().longValue());
+                    System.out.println("gqId=" + gq.getId() + ", responderIds=" + responderIds);
+                    return responderIds != null && !responderIds.isEmpty();
+                })
                 .map(ga -> {
                     GroupQuestion gq = ga.getGroupQuestion();
-
-                    // gq와 그룹이 null이 아니면 responders 조회
-                    List<String> responders = (gq != null && gq.getGroups() != null)
-                            ? diaryJpaRepository.findRespondersByGroupQuestion(gq.getId())
+                    List<String> responders = diaryJpaRepository.findResponderIdsByGroupQuestion(gq.getId().longValue())
                             .stream()
-                            .map(uid -> groupsUserRepository.findByUIdAndGupId(uid.intValue(), gq.getGroups().getId())
-                                    .map(gu -> gu.getRole()) // 그룹에서의 역할 가져오기
-                                    .orElse("Unknown"))
-                            .toList()
-                            : Collections.emptyList();
+                            .map(uid -> {
+                                Optional<GroupsUser> guOpt = groupsUserRepository.findByUIdAndGupId(uid.intValue(), gq.getGroups().getId());
+                                System.out.println("uid=" + uid + ", GroupsUser=" + guOpt);
+                                return guOpt.map(GroupsUser::getRole).orElse("Unknown");
+                            })
+                            .toList();
 
                     return QuestionDto.builder()
-                            .gqId(gq != null ? gq.getId().longValue() : null)
-                            .date(gq != null ? gq.getDay() : null)
+                            .gqId(gq.getId().longValue())
+                            .date(gq.getDay())
                             .answerId(ga.getId())
                             .responders(responders)
                             .build();
@@ -173,6 +177,7 @@ public class DiaryService {
                 .questions(questionList)
                 .build();
     }
+
 
 
 

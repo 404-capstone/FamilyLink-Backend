@@ -88,7 +88,7 @@ public class DiaryController implements DiaryApi {
     }
 
     @Override
-    public ResponseEntity<?> getDiaryAndQuestions(@RequestParam Integer userId) {
+    public ResponseEntity<ApiResponseDto<DiaryAndQuestionsResponse>> getDiaryAndQuestions(@RequestParam Integer userId) {
         DiaryAndQuestionsResponse response = diaryService.getDiaryAndQuestions(userId);
         return ResponseEntity.ok(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
@@ -96,6 +96,7 @@ public class DiaryController implements DiaryApi {
                 response
         ));
     }
+
 
     @Override
     public ResponseEntity<?> getDiaryDetail(Long diaryId) {
