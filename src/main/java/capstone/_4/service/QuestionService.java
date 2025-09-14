@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
@@ -115,10 +116,10 @@ public class QuestionService {
 
     @Transactional
     public void questionSave(QuestionInfoDto questions, int userId) {
-        LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime now=LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."));
-        GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(questions.getGroupId(),now)
+        GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(questions.getGroupId(),now.toLocalDate())
                 .orElseThrow(()->new EntityNotFoundException("최신 문제가 존재하지 않습니다."));
 
         List<QuestionInventory>questionInventories=questionRepository.findQuestionsWithGroupQuestion(groupQuestion);
@@ -129,7 +130,7 @@ public class QuestionService {
                 .map((q)->{
                     QuestionInventory qi=questionInventoryMap.get(q.getQuestionId());
                     GroupAnswer ga=new GroupAnswer();
-                    ga.insertInfo(q.getContent(),groupQuestion,user, qi);
+                    ga.insertInfo(q.getContent(),groupQuestion,user, qi,now);
                     return ga;}
                 ).toList();
 
