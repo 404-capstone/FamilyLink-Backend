@@ -124,7 +124,7 @@ public class DiaryService {
                 savedDiary.getUser().getId().longValue()
         );
     }
-    // 전체조회
+
     // 전체조회 - 해당 유저가 작성한 다이어리 + 질문응답 조회
     public DiaryAndQuestionsResponse getDiaryAndQuestions(Integer userId) {
         // 1. 해당 유저가 작성한 다이어리 리스트 조회 (작성 시간 기준 내림차순)
@@ -139,15 +139,18 @@ public class DiaryService {
                         .build())
                 .toList();
 
-        // 3. 질문응답 DTO 생성 (해당 다이어리 날짜 기준, 응답자 이름)
-        List<QuestionDto> questionList = diaries.stream()
-                .map(d -> {
-                    GroupQuestion gq = d.getGroupQuestion();
-                    List<String> responders = gq != null
+        List<GroupAnswer> answers = diaryJpaRepository.findAllByUserId(userId);
+
+        List<QuestionDto> questionList = answers.stream()
+                .map(ga -> {
+                    GroupQuestion gq = ga.getGroupQuestion();
+
+                    // gq와 그룹이 null이 아니면 responders 조회
+                    List<String> responders = (gq != null && gq.getGroups() != null)
                             ? diaryJpaRepository.findRespondersByGroupQuestion(gq.getId())
                             .stream()
-                            .map(uid -> userRepository.findById(uid.intValue())
-                                    .map(u -> u.getUsername()) // username으로 수정
+                            .map(uid -> groupsUserRepository.findByUIdAndGupId(uid.intValue(), gq.getGroups().getId())
+                                    .map(gu -> gu.getRole()) // 그룹에서의 역할 가져오기
                                     .orElse("Unknown"))
                             .toList()
                             : Collections.emptyList();
@@ -155,17 +158,19 @@ public class DiaryService {
                     return QuestionDto.builder()
                             .gqId(gq != null ? gq.getId().longValue() : null)
                             .date(gq != null ? gq.getDay() : null)
+                            .answerId(ga.getId())
                             .responders(responders)
                             .build();
                 })
                 .toList();
 
-        // 4. 최종 Response 빌드
+        // 4. 최종 Response DTO 빌드
         return DiaryAndQuestionsResponse.builder()
                 .diary(diaryList)
                 .questions(questionList)
                 .build();
     }
+
 
 
 

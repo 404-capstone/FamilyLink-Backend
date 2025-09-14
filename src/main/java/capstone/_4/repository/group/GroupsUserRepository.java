@@ -49,6 +49,14 @@ public class GroupsUserRepository {
         return count > 0;
     }
 
+    public Optional<GroupsUser> findByUIdAndGupId(int uId, int gupId) {
+        return em.createQuery("select gu from GroupsUser gu " +
+                        "where gu.user.id = :uId and gu.group.id = :gupId", GroupsUser.class)
+                .setParameter("uId", uId)
+                .setParameter("gupId", gupId)
+                .getResultList().stream().findFirst();
+    }
+
     public int deleteUser(Integer groupId,Integer userid) {
         return em.createQuery("delete from GroupsUser gu " +
                 "where gu.group.gup_id = :groupid and " +
