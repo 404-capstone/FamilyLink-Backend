@@ -83,7 +83,11 @@ public class QuestionService {
     }
 
 
-
+    /**
+     * 질문에 응답했는지 체크하는 메소드.
+     * 변경할점은 응답을 전체 안했을시에도 체크.
+     * @param group
+     */
     @Transactional
     public void checkQuestions(Groups group){
         LocalDate date=LocalDate.now(ZoneId.of("Asia/Seoul"));
@@ -100,8 +104,14 @@ public class QuestionService {
             int index=ThreadLocalRandom.current().nextInt(unQuestions.size());
             newQuestion.changeQuestion(unQuestions.get(index),group);
             questionRepository.groupsave(newQuestion);
-        }else{
+        }else{ //응답이 없을시.
             groupQuestion.get().changeDate(date);
+//            List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
+//            GroupQuestion newQuestion=new GroupQuestion(date);
+//            int index=ThreadLocalRandom.current().nextInt(unQuestions.size());
+//            newQuestion.changeQuestion(unQuestions.get(index),group);
+//            questionRepository.groupsave(newQuestion);
+
         }
     }
 
@@ -127,6 +137,7 @@ public class QuestionService {
                 .collect(Collectors.toMap(QuestionInventory::getId, Function.identity()));
         log.info("응답 저장하기.");
         List<GroupAnswer> answers=questions.getQuestions().stream()
+                //.filter(q->q.getContent()!=null && !q.getContent().isEmpty())
                 .map((q)->{
                     QuestionInventory qi=questionInventoryMap.get(q.getQuestionId());
                     GroupAnswer ga=new GroupAnswer();

@@ -6,6 +6,7 @@ import capstone._4.dto.group.input.ServeyDto;
 import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupGenerateDto;
 import capstone._4.dto.group.output.GroupUserInfoDto;
+import capstone._4.exception.GroupException;
 import capstone._4.repository.calendar.CalendarRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
@@ -127,11 +128,11 @@ public class GroupService {
         Groups group= getGroupFromId(groupid);
         boolean flag = groupsUserRepository.existsByGroupIdAndUserid(groupid,id);
         if(flag){
-            throw new EntityExistsException("이미 그룹에 가입했습니다");
+            throw new GroupException("이미 그룹에 가입했습니다");
         }
         User user = getUserFromId(id);
         if(group.getGroupsuser().stream().anyMatch(groupsUser -> groupsUser.getRole().equals(role))){
-            throw new RuntimeException("그룹 역활이 겹칩니다.");
+            throw new GroupException("그룹 역활이 겹칩니다.");
         }
         GroupsUser groupsUser=new GroupsUser(group,user,role,false);
         groupsUserRepository.save(groupsUser);
@@ -264,7 +265,7 @@ public class GroupService {
     /**
      * 00시 1분마다 전체 그룹에 질문을 체크해 생성할지,다음에 또 사용할지 고르는 로직.
      */
-    @Scheduled(cron = "0 1 0 * * *",zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 0 * * *",zone = "Asia/Seoul")
     @Async
     public void createGroupQuestion(){
         final int BATCH_SIZE = 100;

@@ -120,6 +120,14 @@ public class DiaryController implements DiaryApi {
                 "응답저장이 완료되었습니다."));
     }
 
+    @Override
+    public ResponseEntity<?> checkDiary(HttpServletRequest request) {
+        Integer userId = tokenTakeUserId(request);
+        diaryService.checkDiary(userId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),ResponseEnum.SUCCESS.getMessage(),
+                "일지 작성이 가능합니다."));
+    }
+
     @GetMapping("/question/generate")
     public ResponseEntity<?> createQuestion(){
         log.info("시작");
