@@ -87,11 +87,14 @@ public class DiaryController implements DiaryApi {
         ));
     }
 
-    @GetMapping("/all/search")
-    public ResponseEntity<DiaryAndQuestionsResponse> getDiaryAndQuestions(
-            @RequestParam Integer userId) {
+    @Override
+    public ResponseEntity<?> getDiaryAndQuestions(@RequestParam Integer userId) {
         DiaryAndQuestionsResponse response = diaryService.getDiaryAndQuestions(userId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new ApiResponseDto<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                response
+        ));
     }
 
     @Override
