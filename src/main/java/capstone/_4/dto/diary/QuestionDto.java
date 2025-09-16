@@ -13,6 +13,5 @@ import java.util.List;
 public class QuestionDto {
     private Long gqId;
     private LocalDate date;
-    private Integer answerId;
     private List<String> responders; // 응답한 그룹원 이름
 }

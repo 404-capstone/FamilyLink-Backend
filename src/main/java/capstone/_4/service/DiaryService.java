@@ -165,7 +165,6 @@ public class DiaryService {
                     return QuestionDto.builder()
                             .gqId(gq.getId().longValue())
                             .date(gq.getDay())
-                            .answerId(ga.getId())
                             .responders(responders)
                             .build();
                 })

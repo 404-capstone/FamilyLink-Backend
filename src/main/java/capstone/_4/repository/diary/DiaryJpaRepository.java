@@ -14,7 +14,7 @@ public interface DiaryJpaRepository extends JpaRepository<Diary, Long> {
     @Query("SELECT d, gq FROM Diary d JOIN d.groupQuestion gq WHERE gq.id = :groupQuestionId")
     List<Object[]> findDiaryAndQuestion(@Param("groupQuestionId") Integer groupQuestionId);
 
-    // 특정 질문(gqId)에 답한 유저 ID 리스트 조회
+    // 특정 질문(gqId)에 답한 유저 ID 리스트 조회 (role찾는것)
     @Query("SELECT ga.user.id FROM GroupAnswer ga WHERE ga.groupQuestion.id = :gqId")
     List<Long> findResponderIdsByGroupQuestion(@Param("gqId") Long gqId);
 
