@@ -6,6 +6,7 @@ import capstone._4.dto.group.input.ServeyDto;
 import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupGenerateDto;
 import capstone._4.dto.group.output.GroupUserInfoDto;
+import capstone._4.exception.ConcurrencyException;
 import capstone._4.repository.calendar.CalendarRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
@@ -22,6 +23,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -30,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +48,7 @@ public class GroupService {
     private final S3Service s3Service;
     private final QuestionService questionService;
     private final AlarmService alarmService;
+    private final RedissonClient redissonClient;
 
 /**
  * 그룹 생성과 리더 설정을 수행.
@@ -93,12 +98,31 @@ public class GroupService {
      * */
     @Transactional
     public String generateCode(Integer group_id) {
-        Groups group= getGroupFromId(group_id);
-        String id = NanoIdUtils.randomNanoId(6);
-        redisService.saveCode(id, group.getGup_id());
-        group.setCode(id);
-        return id;
-
+        String code= groupRepository.findById(group_id).get().getCode();
+        Object check=redisService.getData(code);
+        //코드 생성 동시 하는것을 방지하기 위해 분산 락 사용.
+        String lockKey="group:code:"+group_id;
+        RLock lock=redissonClient.getLock(lockKey);
+        try {
+            boolean isLock=lock.tryLock(3, 2, TimeUnit.SECONDS);
+            if(!isLock){ throw new ConcurrencyException("이미 다른 사용자가 재생성을 요청하였습니다.");
+            }
+            if (check != null) {
+                return code;
+            } else {
+                Groups group = getGroupFromId(group_id);
+                String id = NanoIdUtils.randomNanoId(6);
+                redisService.saveCode(id, group.getGup_id());
+                group.setCode(id);
+                return id;
+            }
+        }
+        catch(InterruptedException e) {
+            throw new RuntimeException("락 기다리던중 인터럽트 발생.");
+        }finally {
+            //점유중일시 풀기.
+            if(lock.isHeldByCurrentThread()) lock.unlock();
+        }
     }
 
     //그룹 정보 조회 그룹원까지

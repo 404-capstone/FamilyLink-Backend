@@ -5,14 +5,10 @@ import capstone._4.domain.photo.Photo;
 import capstone._4.domain.photo.PhotoImage;
 import capstone._4.domain.photo.PhotoUser;
 import capstone._4.dto.album.S3PhotoInfoDto;
-import capstone._4.dto.album.output.PhotoInfoDto;
+import capstone._4.dto.album.output.*;
 import capstone._4.dto.album.input.AlbumInputDto;
 import capstone._4.dto.album.input.PhotoEditDto;
 import capstone._4.dto.album.S3PhotosInfoDto;
-import capstone._4.dto.album.output.AlbumInfoDto;
-import capstone._4.dto.album.output.AlbumInfoResponseDto;
-import capstone._4.dto.album.output.PhotoInfoResponseDto;
-import capstone._4.dto.album.output.PhotoResponseDto;
 import capstone._4.repository.album.AlbumRepository;
 import capstone._4.repository.album.PhotoImageRepository;
 import capstone._4.repository.album.PhotoRepository;
@@ -220,5 +216,10 @@ public class AlbumService {
     }
 
 
-
+    public AlbumDetailResponseDto searchDetail(Integer photoId) {
+        Photo photo=photoRepository.findById(photoId)
+                .orElseThrow(()-> new NoSuchElementException("사진 정보가 존재하지 않습니다."));
+        List<PhotoImage>images = photo.getPhotoImages();
+        return new AlbumDetailResponseDto(photo,images);
+    }
 }
