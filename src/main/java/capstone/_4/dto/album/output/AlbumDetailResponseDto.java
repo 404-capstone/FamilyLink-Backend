@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@Builder
 public class AlbumDetailResponseDto {
     @Schema(description = "사진 db id")
     private Integer photoid;

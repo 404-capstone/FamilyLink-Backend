@@ -109,4 +109,12 @@ public class GlobalExceptionHandler {
                 ErrorCode.EXCEPTION.getMessage(), e.getMessage()
         ));
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(GroupException.class)
+    public ResponseEntity<?> groupException(GroupException e){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ErrorCode.GROUP_ACCESS_ERROR.getStatus(),
+                ErrorCode.GROUP_ACCESS_ERROR.getMessage(), e.getMessage()
+        ));
+    }
 }
