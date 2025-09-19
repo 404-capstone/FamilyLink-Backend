@@ -3,11 +3,13 @@ package capstone._4.dto.diary;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @Builder
 public class QuestionDto {

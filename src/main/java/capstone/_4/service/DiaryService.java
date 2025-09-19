@@ -142,13 +142,12 @@ public class DiaryService {
         // 3. 유저가 작성한 답변 조회
         List<GroupAnswer> answers = diaryJpaRepository.findAllByUserId(userId);
 
-        List<QuestionDto> questionList = answers.stream()
+// rawQuestions 선언
+        List<QuestionDto> rawQuestions = answers.stream()
                 .filter(ga -> ga.getGroupQuestion() != null)
                 .filter(ga -> {
                     GroupQuestion gq = ga.getGroupQuestion();
-                    // 새로운 메서드 이름 사용
                     List<Long> responderIds = diaryJpaRepository.findResponderIdsByGroupQuestion(gq.getId().longValue());
-                    System.out.println("gqId=" + gq.getId() + ", responderIds=" + responderIds);
                     return responderIds != null && !responderIds.isEmpty();
                 })
                 .map(ga -> {
@@ -157,7 +156,6 @@ public class DiaryService {
                             .stream()
                             .map(uid -> {
                                 Optional<GroupsUser> guOpt = groupsUserRepository.findByUIdAndGupId(uid.intValue(), gq.getGroups().getId());
-                                System.out.println("uid=" + uid + ", GroupsUser=" + guOpt);
                                 return guOpt.map(GroupsUser::getRole).orElse("Unknown");
                             })
                             .toList();
@@ -169,6 +167,26 @@ public class DiaryService {
                             .build();
                 })
                 .toList();
+
+// 4. 중복 제거
+        Map<String, QuestionDto> mergedMap = new LinkedHashMap<>();
+        for (QuestionDto q : rawQuestions) {
+            String key = q.getGqId() + "_" + q.getDate();
+            if (!mergedMap.containsKey(key)) {
+                mergedMap.put(key, QuestionDto.builder()
+                        .gqId(q.getGqId())
+                        .date(q.getDate())
+                        .responders(new ArrayList<>(new HashSet<>(q.getResponders())))
+                        .build());
+            } else {
+                QuestionDto existing = mergedMap.get(key);
+                Set<String> mergedResponders = new HashSet<>(existing.getResponders());
+                mergedResponders.addAll(q.getResponders());
+                existing.setResponders(new ArrayList<>(mergedResponders));
+            }
+        }
+
+        List<QuestionDto> questionList = new ArrayList<>(mergedMap.values());
 
         // 4. 최종 Response DTO 빌드
         return DiaryAndQuestionsResponse.builder()

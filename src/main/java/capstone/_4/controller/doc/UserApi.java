@@ -54,31 +54,12 @@ public interface UserApi {
     @Operation(
             summary = "프로필 수정",
             description = "사용자의 프로필 정보를 수정합니다.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "수정 성공",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ProfileEditResponseDocDto.class),
-                                    examples = @ExampleObject(
-                                            name = "프로필 수정 성공 응답",
-                                            value = """
-                                            {
-                                              "code": 200,
-                                              "message": "프로필이 성공적으로 수정되었습니다.",
-                                              "data": {
-                                                "username": "홍길동",
-                                                "age": 30,
-                                                "gender": "M",
-                                                "image": "https://example.com/profile.jpg"
-                                              }
-                                            }
-                                            """
-                                    )
-                            )
-                    ),
-                    @ApiResponse(responseCode = "401", description = "인증 실패"),
-                    @ApiResponse(responseCode = "500", description = "서버 오류")
-            }
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = ProfileEditDto.class)
+                    )
+            )
     )
     @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> editProfile(
