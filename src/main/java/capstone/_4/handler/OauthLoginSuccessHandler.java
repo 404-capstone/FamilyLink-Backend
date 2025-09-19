@@ -73,7 +73,7 @@ public class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
         String email = aesUtil.encrypt(oAuth2UserInfo.getEmail());
         log.info("토큰정보{}", email);
-        User user = userService.findByEmail(email);
+        User user = userService.findBySocialEmail(email,provider);
 
         if(user==null){ //유저 없을시.
             log.info("신규 유저입니다. db 저장을 수행합니다.");

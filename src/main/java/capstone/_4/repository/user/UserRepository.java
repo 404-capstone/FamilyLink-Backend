@@ -13,6 +13,7 @@ public interface UserRepository {
     //암호화된 이메일로 유저 찾기
     Optional<User> findById(int id);
     Optional<User> findByEmail(String email);
+    Optional<User> findBySocialEmail(String email,String social);
 
     Optional<Groups> findGroupById(int userId);
 
