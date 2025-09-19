@@ -173,7 +173,7 @@ public class UserController implements UserApi {
         return ResponseEntity.ok("로그아웃 성공");
     }
 
-    //정보 수정
+    //유저 정보 수정
     @Override
     @PutMapping(value = "info/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<ProfileEditResponseDto>> editProfile(
