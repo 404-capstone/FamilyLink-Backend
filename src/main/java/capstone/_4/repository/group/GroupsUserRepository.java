@@ -56,7 +56,7 @@ public class GroupsUserRepository {
                 .setParameter("gupId", gupId)
                 .getResultList().stream().findFirst();
     }
-
+    //유저삭제
     public int deleteUser(Integer groupId,Integer userid) {
         return em.createQuery("delete from GroupsUser gu " +
                 "where gu.group.gup_id = :groupid and " +
@@ -66,10 +66,29 @@ public class GroupsUserRepository {
                 .executeUpdate();
 
     }
-
+    //엔티티 삭제
     public void deleteUserWithEm(GroupsUser groupUser){
         em.remove(groupUser);
 
+    }
+
+    // 특정 유저가 속한 그룹의 GroupsUser 엔티티 조회
+    public List<GroupsUser> findByUId(int uId) {
+        return em.createQuery("select gu from GroupsUser gu where gu.user.id = :uId", GroupsUser.class)
+                .setParameter("uId", uId)
+                .getResultList();
+    }
+
+    // 같은 그룹에서 특정 유저를 제외하고 u_id 오름차순으로 가장 낮은 사람 조회
+    public Optional<GroupsUser> findTopByGupIdAndUIdNot(int gupId, int excludedUId) {
+        return em.createQuery("select gu from GroupsUser gu " +
+                        "where gu.group.gup_id = :gupId and gu.user.id != :excludedUId " +
+                        "order by gu.user.id asc", GroupsUser.class)
+                .setParameter("gupId", gupId)
+                .setParameter("excludedUId", excludedUId)
+                .setMaxResults(1)
+                .getResultList()
+                .stream().findFirst();
     }
 
 }
