@@ -1,5 +1,7 @@
 package capstone._4.controller.doc;
 
+import capstone._4.dto.ApiResponseDto;
+import capstone._4.dto.diary.DiaryAndQuestionsResponse;
 import capstone._4.dto.diary.GroupAnswerDetailResponse;
 import capstone._4.dto.diary.GroupQuestionResponseDto;
 import capstone._4.dto.diary.input.DiaryCreateRequest;
@@ -116,10 +118,23 @@ public interface DiaryApi {
     public ResponseEntity<?> diaryFeedBack(@RequestBody DiaryCreateRequest request);
 
 
-    @Operation(summary = "특정 그룹 질문에 해당하는 다이어리와 질문 조회", description = "특정 그룹 질문 ID에 해당하는 다이어리와 질문을 함께 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "조회 성공")
+
     @GetMapping("/all/search")
-    ResponseEntity<?> getDiaryAndQuestions(@RequestParam Integer groupQuestionId);
+    @Operation(
+            summary = "특정 그룹 질문에 해당하는 다이어리와 질문 조회",
+            description = "특정 그룹 질문 ID에 해당하는 다이어리와 질문을 함께 조회합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "조회 성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = DiaryAndQuestionsResponse.class) // 여기서 내부 DTO 구조를 지정
+            )
+    )
+    ResponseEntity<ApiResponseDto<DiaryAndQuestionsResponse>> getDiaryAndQuestions(@RequestParam Integer userId);
+
+
 
     @Operation(summary = "다이어리 상세 정보 조회", description = "다이어리 상세 정보를 조회합니다.")
     @ApiResponse(
