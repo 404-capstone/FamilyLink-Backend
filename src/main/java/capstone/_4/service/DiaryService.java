@@ -273,4 +273,14 @@ public class DiaryService {
         });
         log.info("감정 저장 완료.");
     }
+
+    /**
+     * 해당 날에 다이어리 작성했나 체크하는 메소드.
+     * @param userId
+     */
+    public void checkDiary(Integer userId) {
+        Optional<Diary> diary=diaryRepository.findDiaryWithDay(userId, LocalDate.now());
+        if(diary.isPresent()) throw new IllegalArgumentException("다이어리가 존재하여 작성할수 없습니다.");
+
+    }
 }

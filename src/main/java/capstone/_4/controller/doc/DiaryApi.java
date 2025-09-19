@@ -168,4 +168,28 @@ public interface DiaryApi {
     )))
     @PostMapping("/question/write")
     public ResponseEntity<?> writeQuestion(@RequestBody QuestionInfoDto question, HttpServletRequest request);
+
+    @Operation(summary = "다이어리 작성 체크", description = "다이어리가 작성되었는지 체크합니다.")
+    @ApiResponse(responseCode = "200", description = "요청 성공",
+            content = @Content(mediaType = "application/json",
+                    examples = @ExampleObject(
+                            name = "성공 응답 예시",
+                            value = "{\n" +
+                                    "  \"code\": 200,\n" +
+                                    "  \"message\": \"요청 저장완료\",\n" +
+                                    "  \"data\": \"일지 작성이 가능합니다.\"\n" +
+                                    "}"
+                    )))
+    @ApiResponse(responseCode = "500", description = "다이어리 존재시 오류",
+            content = @Content(mediaType = "application/json",
+                    examples = @ExampleObject(
+                            name = "성공 응답 예시",
+                            value = "{\n" +
+                                    "  \"code\": 500,\n" +
+                                    "  \"message\": \"오류가 발생되었습니다.\",\n" +
+                                    "  \"data\": \"다이어리가 존재하여 작성할수 없습니다.\"\n" +
+                                    "}"
+                    )))
+    @GetMapping("/diary/check")
+    public ResponseEntity<?> checkDiary(HttpServletRequest request);
 }

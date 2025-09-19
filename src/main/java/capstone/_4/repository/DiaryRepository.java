@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import capstone._4.domain.Diary;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,7 +79,8 @@ public class DiaryRepository {
                 .join(groupAnswer.user,user)
                 .join(groupAnswer.user.groupsuser,gsUser)
                 .where(qquestionInventory.id.in(questionIds),
-                        gsUser.group.gup_id.eq(groupId))
+                        gsUser.group.gup_id.eq(groupId),
+                        groupAnswer.answer.isNotNull())
                 .fetch();
 
         return tuples.stream().collect(Collectors //map형태로,
@@ -104,5 +106,13 @@ public class DiaryRepository {
                 .fetch();
     }
 
+    public Optional<Diary> findDiaryWithDay(Integer userId, LocalDate date){
+        return em.createQuery("select d from Diary d " +
+                "where d.user.id =:userId " +
+                "and cast(d.time as date)=:date ",Diary.class)
+                .setParameter("userId", userId)
+                .setParameter("date", date)
+                .getResultList().stream().findFirst();
+    }
 
 }

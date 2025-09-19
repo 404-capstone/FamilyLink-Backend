@@ -18,7 +18,8 @@ public enum ErrorCode {
     REDIS_NOT_FOUND(400,"레디스에서 정보를 찾지 못했습니다."),
     FAST_API_ERROR(400,"API통신중 오류가 발생했습니다."),
     GPT_ERROR(500,"GPT 사용중 오류가 발생했습니다."),
-    S3_ERROR(500,"S3처리중 오류가 발생했습니다.");
+    S3_ERROR(500,"S3처리중 오류가 발생했습니다."),
+    GROUP_ACCESS_ERROR(409,"그룹 가입중 문제가 발생했습니다");
 
 
 
