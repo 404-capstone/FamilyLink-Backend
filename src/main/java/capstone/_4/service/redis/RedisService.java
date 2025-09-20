@@ -36,6 +36,7 @@ public class RedisService {
     //jwt를 통해서 refresh토큰을 찾는법. 또는 초대코드로 찾기.
     public Object getData(String key){
         try {
+            log.info("key={}",redisTemplate.opsForValue().get(key));
             return redisTemplate.opsForValue().get(key);
         }catch (RedisConnectionFailureException e){
             throw new RedisConnectionFailureException("redis 연결문제: "+ e.getMessage());

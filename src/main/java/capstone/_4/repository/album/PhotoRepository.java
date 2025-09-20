@@ -127,4 +127,10 @@ public class PhotoRepository {
             em.remove(photoUser);
         }
     }
+
+    public List<PhotoImage> findPhotoById(Integer photoId) {
+        return em.createQuery("select p from PhotoImage p where p.photo.id=:photoId",PhotoImage.class)
+                .setParameter("photoId",photoId)
+                .getResultList();
+    }
 }

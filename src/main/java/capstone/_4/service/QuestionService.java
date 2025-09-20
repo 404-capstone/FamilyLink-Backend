@@ -97,7 +97,11 @@ public class QuestionService {
             groupQuestion.get().changeDate(date);
             return;
         }
-
+//            List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
+//            GroupQuestion newQuestion=new GroupQuestion(date);
+//            int index=ThreadLocalRandom.current().nextInt(unQuestions.size());
+//            newQuestion.changeQuestion(unQuestions.get(index),group);
+//            questionRepository.groupsave(newQuestion);
         if (questionRepository.checkAnswer(groupQuestion.get().getId())){ //만약 응답을 했다면 새로운 문제 생성.
             List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
             GroupQuestion newQuestion=new GroupQuestion(date);
@@ -137,7 +141,7 @@ public class QuestionService {
                 .collect(Collectors.toMap(QuestionInventory::getId, Function.identity()));
         log.info("응답 저장하기.");
         List<GroupAnswer> answers=questions.getQuestions().stream()
-                //.filter(q->q.getContent()!=null && !q.getContent().isEmpty())
+                .filter(q->q.getContent()!=null && !q.getContent().isEmpty())
                 .map((q)->{
                     QuestionInventory qi=questionInventoryMap.get(q.getQuestionId());
                     GroupAnswer ga=new GroupAnswer();

@@ -237,7 +237,7 @@ public class DiaryService {
         GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(groupId,now)
                 .orElseThrow(()->new EntityNotFoundException("최신 문제가 존재하지 않습니다."));
         Optional<GroupAnswer> answer =questionRepository.checkAnswerWithUser(groupQuestion.getId(), userId);
-        if(answer.isPresent()) throw new IllegalStateException("오늘 해당 응답을 하셨습니다.");
+        //if(answer.isPresent()) throw new IllegalStateException("오늘 해당 응답을 하셨습니다.");
 
         log.info("문제들 찾기.");
         List<QuestionInventory> questions=questionRepository.findQuestionsWithGroupQuestion(groupQuestion);
