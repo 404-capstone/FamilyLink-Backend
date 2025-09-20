@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class GroupService {
     private final GroupRepository groupRepository;
@@ -51,7 +50,25 @@ public class GroupService {
     private final AlarmService alarmService;
     private final RedissonClient redissonClient;
 
-/**
+    public GroupService(GroupRepository groupRepository, UserRepository userRepository,
+                        GroupsUserRepository groupsUserRepository,
+                        CalendarRepository calendarRepository,
+                        ScheduleRepository scheduleRepository, RedisService redisService,
+                        S3Service s3Service, QuestionService questionService,
+                        AlarmService alarmService, RedissonClient redissonClient) {
+        this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
+        this.groupsUserRepository = groupsUserRepository;
+        this.calendarRepository = calendarRepository;
+        this.scheduleRepository = scheduleRepository;
+        this.redisService = redisService;
+        this.s3Service = s3Service;
+        this.questionService = questionService;
+        this.alarmService = alarmService;
+        this.redissonClient = redissonClient;
+    }
+
+    /**
  * 그룹 생성과 리더 설정을 수행.
  */
 
@@ -101,12 +118,15 @@ public class GroupService {
     public String generateCode(Integer group_id) {
         String code= groupRepository.findById(group_id).get().getCode();
         Object check=redisService.getData(code);
+        log.info("id 체크.={},lockKey={}",check,code);
         //코드 생성 동시 하는것을 방지하기 위해 분산 락 사용.
         String lockKey="group:code:"+group_id;
         RLock lock=redissonClient.getLock(lockKey);
         try {
             boolean isLock=lock.tryLock(3, 2, TimeUnit.SECONDS);
-            if(!isLock){ throw new ConcurrencyException("이미 다른 사용자가 재생성을 요청하였습니다.");
+            if(!isLock){
+                //log.info();
+                throw new ConcurrencyException("이미 다른 사용자가 재생성을 요청하였습니다.");
             }
             if (check != null) {
                 return code;
