@@ -5,9 +5,7 @@ import capstone._4.controller.doc.AlbumApi;
 import capstone._4.dto.ApiResponseDto;
 import capstone._4.dto.album.input.AlbumInputDto;
 import capstone._4.dto.album.input.PhotoEditDto;
-import capstone._4.dto.album.output.AlbumInfoResponseDto;
-import capstone._4.dto.album.output.PhotoInfoResponseDto;
-import capstone._4.dto.album.output.PhotoResponseDto;
+import capstone._4.dto.album.output.*;
 import capstone._4.enums.ResponseEnum;
 import capstone._4.service.album.AlbumService;
 import lombok.RequiredArgsConstructor;
@@ -52,12 +50,12 @@ public class AlbumController implements AlbumApi {
                 ResponseEnum.SUCCESS.getMessage(), albumInfoResponseDto));
     }
 
-//    @GetMapping("/search/detail")
-//    public ResponseEntity<?> searchAlbumDetail(@RequestParam Integer photoId){
-//
-//        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
-//                ResponseEnum.SUCCESS.getMessage(), albumInfoResponseDto));
-//    }
+    @GetMapping("/search/detail")
+    public ResponseEntity<?> searchAlbumDetail(@RequestParam Integer photoId){
+        AlbumDetailResponseDto albumDetailResponseDto=albumService.searchDetail(photoId);
+        return ResponseEntity.ok().body(new ApiResponseDto<>(ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(), albumDetailResponseDto));
+    }
 
 
 

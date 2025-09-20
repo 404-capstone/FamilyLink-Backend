@@ -52,6 +52,16 @@ public class UserJpaRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findBySocialEmail(String email, String social) {
+        return em.createQuery("select u From User u " +
+                "where u.email=:email and " +
+                "u.social=:social",User.class)
+                .setParameter("email", email)
+                .setParameter("social", social)
+                .getResultList().stream().findFirst();
+    }
+
+    @Override
     public Optional<Groups> findGroupById(int userId) {
         return em.createQuery("select gu.group from GroupsUser gu " +
                 "where gu.user.id=:userId",Groups.class)

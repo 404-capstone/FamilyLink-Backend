@@ -66,8 +66,8 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+    public User findBySocialEmail(String email,String social) {
+        return userRepository.findBySocialEmail(email,social).orElse(null);
     }
 
     // 회원 탈퇴
