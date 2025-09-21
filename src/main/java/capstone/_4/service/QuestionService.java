@@ -94,7 +94,11 @@ public class QuestionService {
         LocalDate before=date.minusDays(1);
         Optional<GroupQuestion> groupQuestion=questionRepository.findTopGroupQuestion(group.getId(),before);
         if(groupQuestion.isEmpty()){
-            groupQuestion.get().changeDate(date);
+            List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
+            GroupQuestion newQuestion=new GroupQuestion(date);
+            int index=ThreadLocalRandom.current().nextInt(unQuestions.size());
+            newQuestion.changeQuestion(unQuestions.get(index),group);
+            questionRepository.groupsave(newQuestion);
             return;
         }
 //            List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
@@ -110,11 +114,6 @@ public class QuestionService {
             questionRepository.groupsave(newQuestion);
         }else{ //응답이 없을시.
             groupQuestion.get().changeDate(date);
-//            List<QuestionList> unQuestions=questionRepository.findUnQuestionList(group.getId());
-//            GroupQuestion newQuestion=new GroupQuestion(date);
-//            int index=ThreadLocalRandom.current().nextInt(unQuestions.size());
-//            newQuestion.changeQuestion(unQuestions.get(index),group);
-//            questionRepository.groupsave(newQuestion);
 
         }
     }
