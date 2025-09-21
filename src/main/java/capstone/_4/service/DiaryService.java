@@ -298,7 +298,7 @@ public class DiaryService {
      * @param userId
      */
     public void checkDiary(Integer userId) {
-        Optional<Diary> diary=diaryRepository.findDiaryWithDay(userId, LocalDate.now());
+        Optional<Diary> diary=diaryRepository.findDiaryWithDay(userId, LocalDate.now(ZoneId.of("Asia/Seoul")));
         if(diary.isPresent()) throw new IllegalArgumentException("다이어리가 존재하여 작성할수 없습니다.");
 
     }

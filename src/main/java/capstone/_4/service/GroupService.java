@@ -326,7 +326,6 @@ public class GroupService {
      * 00시 1분마다 전체 그룹에 질문을 체크해 생성할지,다음에 또 사용할지 고르는 로직.
      */
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
-    @Async
     public void createGroupQuestion() {
         final int BATCH_SIZE = 100;
         int pagenum = 0;
