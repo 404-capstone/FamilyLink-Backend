@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+/**
+ * 이벤트를 받아 파이어베이스에게 전송 요청을 하는 클래스.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

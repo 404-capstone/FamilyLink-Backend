@@ -196,8 +196,8 @@ public class GroupService {
         }
         GroupsUser groupsUser = new GroupsUser(group, user, role, false);
         groupsUserRepository.save(groupsUser);
-        alarmService.createTopic(group, user); //d알람 토픽 저장.
         alarmService.groupAccess(group, role); //알람 전송.
+        alarmService.createTopic(group, user); //d알람 토픽 저장.
         return GroupGenerateDto.builder()
                 .groupName(group.getGroup_name())
                 .groupId(group.getGup_id())
