@@ -4,10 +4,7 @@ import capstone._4.domain.Alarm;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
-import capstone._4.event.TopicDeleteEvent;
-import capstone._4.event.TopicNotifyEvent;
-import capstone._4.event.TopicSubscribeEvent;
-import capstone._4.event.TopicUnSubscribeEvent;
+import capstone._4.event.*;
 import capstone._4.repository.AlarmRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
@@ -19,9 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -108,10 +103,56 @@ public class AlarmService {
 
     }
 
-    public void groupAccess(Groups group, User user) {
+    public void groupAccess(Groups group, String role) {
         if(group.getTopic_name()!=null) {
             log.info("그룹 가입 메시지 전송.");
-            publisher.publishEvent(new TopicNotifyEvent(group.getTopic_name(),"유저 그룹 가입", user.getUsername() + "유저가 그룹을 가입하였습니다.","groupAccess" ));
+            Map<String,String> body = new HashMap<>();
+            body.put("role",role);
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹 가입","group-1",body,group.getTopic_name()));
         }
+    }
+
+    public void groupUserDelete(User user){
+        if(user.getAlarm()!=null&&user.getAlarm().isEnabled()) {
+            Map<String,String> body = new HashMap<>();
+            body.put("message","가족 그룹에서 추방되었습니다.");
+            publisher.publishEvent(new TopicNotifyEvent("그룹원 퇴장","group-2",body,user.getAlarm().getDevice_token()));
         }
+    }
+
+    public void groupQuit(Groups group, String role) {
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("role", role);
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹원 탈퇴", "group-3",body,group.getTopic_name() ));
+        }
+    }
+
+    public void groupLeaderChange(Groups group, String role) {
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("role", role);
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹장 이전", "group-4",body,group.getTopic_name() ));
+        }
+    }
+
+    public void questionWrite(Groups group) {
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message","그룹원이 질문에 응답했습니다. 확인해주세요" );
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹 질문 작성", "diary-1",body,group.getTopic_name() ));
+        }
+    }
+
+    public void photoAdd(Groups group){
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message","앨범에 사진이 추가되었습니다. 앨범을 확인해주세요." );
+            publisher.publishEvent(new TopicNotifyAllEvent("사진 추가", "album-1",body,group.getTopic_name() ));
+        }
+    }
+
+
+
+
 }

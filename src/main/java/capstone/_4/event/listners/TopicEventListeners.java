@@ -1,9 +1,6 @@
 package capstone._4.event.listners;
 
-import capstone._4.event.TopicDeleteEvent;
-import capstone._4.event.TopicNotifyEvent;
-import capstone._4.event.TopicSubscribeEvent;
-import capstone._4.event.TopicUnSubscribeEvent;
+import capstone._4.event.*;
 import capstone._4.service.other.FcmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +36,19 @@ public class TopicEventListeners {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void onNotify(TopicNotifyEvent event) {
+    public void onNotifyAll(TopicNotifyAllEvent event) {
         log.info("그룹 가입 메시지 전송.");
-        fcmService.sendNotification(event.title(), event.body(), event.type(), event.topicName());
+        fcmService.sendNotificationAll(event.title(),event.type(),event.body(),event.topic());
         //fcmService.sendNotification("유저 그룹 가입", user.getUsername() + "유저가 그룹을 가입하였습니다.", "groupAccess", group.getTopic_name());
     }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onNotify(TopicNotifyEvent event) {
+        log.info("그룹 가입 메시지 전송.");
+        fcmService.sendNotification(event.title(),event.type(),event.body(),event.token());
+        //fcmService.sendNotification("유저 그룹 가입", user.getUsername() + "유저가 그룹을 가입하였습니다.", "groupAccess", group.getTopic_name());
+    }
+
 
 }
 

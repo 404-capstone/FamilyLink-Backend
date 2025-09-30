@@ -1,5 +1,7 @@
 package capstone._4.service.other;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.ErrorCode;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -9,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -72,9 +74,14 @@ public class FcmService {
 
 
 
-    public void sendNotification(String title,String message,String type,String topic){
-        log.info("전송 시작(title:{},message:{},type:{},token:{})",title,message,type,topic);
-        send(createMessage(title,message,type,topic));
+    public void sendNotificationAll(String title, String type, Map<String,String> body, String topic){
+        log.info("전송 시작(title:{},message:{},body:{})",title,type,body);
+        send(createTopicMessage(title,type,body,topic));
+    }
+
+    public void sendNotification(String title, String type, Map<String, String> body, String token) {
+        log.info("개인 전송");
+        send(createMessage(title,type,body,token));
     }
 
     private void send(Message message)  {
@@ -92,7 +99,7 @@ public class FcmService {
         }
     }
 
-    private Message createMessage(String title, String message, String type, String topic) {
+    private Message createTopicMessage(String title, String message, String type, String topic) {
         return Message.builder()
                 .putData("title", title)
                 .putData("message", message)
@@ -101,4 +108,41 @@ public class FcmService {
                 .build();
 
     }
+
+    private Message createTopicMessage(String title, String code, Map<String,String> body, String topic) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String bodyJson=mapper.writeValueAsString(body);
+            return Message.builder()
+                    .putData("title",title)
+                    .putData("code",code)
+                    .putData("data",bodyJson)
+                    .setTopic(topic)
+                    .build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("알람 포맷 변환중 오류가 발생했습니다."+e.getMessage());
+        }
+
+    }
+
+    private Message createMessage(String title, String code, Map<String,String> body, String token) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String bodyJson=mapper.writeValueAsString(body);
+            return Message.builder()
+                    .putData("title",title)
+                    .putData("code",code)
+                    .putData("data",bodyJson)
+                    .setToken(token)
+                    .build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("알람 포맷 변환중 오류가 발생했습니다."+e.getMessage());
+        }
+
+    }
+
+
+
+
+
 }
