@@ -4,10 +4,7 @@ import capstone._4.domain.Alarm;
 import capstone._4.domain.Groups;
 import capstone._4.domain.GroupsUser;
 import capstone._4.domain.User;
-import capstone._4.event.TopicDeleteEvent;
-import capstone._4.event.TopicNotifyEvent;
-import capstone._4.event.TopicSubscribeEvent;
-import capstone._4.event.TopicUnSubscribeEvent;
+import capstone._4.event.*;
 import capstone._4.repository.AlarmRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
@@ -19,10 +16,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
+/**
+ * 알람관련 이벤트를 발행하는 클래스. 첫시작 클래스.
+ * 사용시 이쪽 클래스와 같이 event 클래스만 추가해서 사용하면된다.(ex. topicNotifyEvent 같은거)
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,6 +33,11 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final ApplicationEventPublisher publisher;
 
+    /**
+     * 그룹원들을 묶어주는 topic을 생성하는 메소드. (사용안해도됌)
+     * @param groups
+     * @param user
+     */
     @Transactional
     public void createTopic(Groups groups, User user) {
         if(user.getAlarm()!=null &&user.getAlarm().isEnabled()) {
@@ -51,6 +55,11 @@ public class AlarmService {
         }
     }
 
+    /**
+     * 개인사용자에 디바이스 토큰을 fcm에 등록하는 메소드(알람 전송을 위해)
+     * @param androidToken
+     * @param userId
+     */
     @Transactional
     public void tokenSave(String androidToken, Integer userId) {
         log.info("token:{}", androidToken);
@@ -67,6 +76,11 @@ public class AlarmService {
     }
 
 
+    /**
+     * 알람 전송 여부를 on/off하는 메소드
+     * @param userId
+     * @param flag
+     */
     public void changeState(int userId, boolean flag) {
         Alarm alarm = alarmRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("알람 세팅을 찾을수 없습니다."));
@@ -82,6 +96,10 @@ public class AlarmService {
         else publisher.publishEvent(new TopicUnSubscribeEvent(groupName, userToken));//quitTopic(user, groups);
     }
 
+    /**
+     * 토픽을 fcm에서 삭제하는 클래스로 그룹 삭제시 사용.
+     * @param groupId
+     */
     public void deleteTopic(Integer groupId) {
         Groups groups = groupRepository.findById(groupId).orElseThrow(() ->
                 new EntityNotFoundException("그룹이 존재하지 않습니다"));
@@ -99,6 +117,11 @@ public class AlarmService {
 
     }
 
+    /**
+     * 개인 사용자를 그룹 topic에서 탈퇴시키는 메소드.
+     * @param user
+     * @param groups
+     */
     public void quitTopic(User user, Groups groups) {
         if (user.getAlarm() != null && user.getAlarm().isEnabled()) {
             log.info("토픽에서 제거.");
@@ -108,10 +131,85 @@ public class AlarmService {
 
     }
 
-    public void groupAccess(Groups group, User user) {
-        if(group.getTopic_name()!=null) {
+    /**
+     * 그룹 가입시 알람 전송 이벤트를 발생시키는 메소드
+     * @param group
+     * @param role
+     */
+    public void groupAccess(Groups group, String role) {
+        if(group.getTopic_name()!=null) { //topic이 있을때만 사용
             log.info("그룹 가입 메시지 전송.");
-            publisher.publishEvent(new TopicNotifyEvent(group.getTopic_name(),"유저 그룹 가입", user.getUsername() + "유저가 그룹을 가입하였습니다.","groupAccess" ));
+            Map<String,String> body = new HashMap<>(); //map형태로 전송해서 여러 데이터를 담게 작성.
+            body.put("role",role);
+            //이벤트 발생.그룹원 전체에게 알림.
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹 가입","group-1",body,group.getTopic_name()));
         }
+    }
+
+    /**
+     * 그룹원 추방시 이벤트를 발생시키는 이벤트.
+     * @param user
+     */
+    public void groupUserDelete(User user){
+        if(user.getAlarm()!=null&&user.getAlarm().isEnabled()) {
+            Map<String,String> body = new HashMap<>();
+            body.put("message","가족 그룹에서 추방되었습니다.");
+            //추방자 개인에게만 알림 전송.
+            publisher.publishEvent(new TopicNotifyEvent("그룹원 추방","group-2",body,user.getAlarm().getDevice_token()));
         }
+    }
+
+    /**
+     * 그룹 탈퇴시 그룹원들에게 전송시키는 이벤트.
+     * @param group
+     * @param role
+     */
+    public void groupQuit(Groups group, String role) {
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("role", role);
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹원 탈퇴", "group-3",body,group.getTopic_name() ));
+        }
+    }
+
+    /**
+     * 리더 변경시 그룹원들에게 전송시키는 이벤트.
+     * @param group
+     * @param role
+     */
+    public void groupLeaderChange(Groups group, String role) {
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("role", role);
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹장 이전", "group-4",body,group.getTopic_name() ));
+        }
+    }
+
+    /**
+     * 질문 작성 완료시 그룹원들에게 발생시키는 이벤트.
+     * @param group
+     */
+    public void questionWrite(Groups group) {
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message","그룹원이 질문에 응답했습니다. 확인해주세요" );
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹 질문 작성", "diary-1",body,group.getTopic_name() ));
+        }
+    }
+
+    /**
+     * 사진 추가시 그룹원들에게 알람을 전송하는 이벤트 메소드
+     * @param group
+     */
+    public void photoAdd(Groups group){
+        if(group.getTopic_name()!=null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message","앨범에 사진이 추가되었습니다. 앨범을 확인해주세요." );
+            publisher.publishEvent(new TopicNotifyAllEvent("사진 추가", "album-1",body,group.getTopic_name() ));
+        }
+    }
+
+
+
+
 }

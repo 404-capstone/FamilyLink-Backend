@@ -1,4 +1,6 @@
 package capstone._4.event;
 
-public record TopicNotifyEvent(String topicName,String title,String body,String type){
-}
+import java.util.Map;
+
+//개인에게만 전송하는 알림 이벤트 포맷.
+public record TopicNotifyEvent (String title,String type,Map<String,String> body, String token){}

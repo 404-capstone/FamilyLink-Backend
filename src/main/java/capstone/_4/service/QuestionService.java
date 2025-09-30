@@ -13,6 +13,7 @@ import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.group.GroupQuestionRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.service.other.AlarmService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class QuestionService {
     private final GroupRepository groupRepository;
     private final GroupQuestionRepository groupQuestionRepository;
     private final UserRepository userRepository;
+    private final AlarmService alarmService;
 
     /**
      * 해당 메서드는, gpt로 생성 된 질문들을 각각 db에 저장하는것이다.
@@ -134,7 +136,8 @@ public class QuestionService {
                 .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."));
         GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(questions.getGroupId(),now.toLocalDate())
                 .orElseThrow(()->new EntityNotFoundException("최신 문제가 존재하지 않습니다."));
-
+        Groups group=userRepository.findGroupById(userId)
+                .orElseThrow(()->new EntityNotFoundException("그룹이 존재하지 않습니다."));
         List<QuestionInventory>questionInventories=questionRepository.findQuestionsWithGroupQuestion(groupQuestion);
         Map<Integer,QuestionInventory> questionInventoryMap=questionInventories.stream()
                 .collect(Collectors.toMap(QuestionInventory::getId, Function.identity()));
@@ -149,5 +152,6 @@ public class QuestionService {
                 ).toList();
 
         questionRepository.saveAnswer(answers);
+        alarmService.questionWrite(group);
     }
 }

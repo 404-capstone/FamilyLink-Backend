@@ -196,8 +196,8 @@ public class GroupService {
         }
         GroupsUser groupsUser = new GroupsUser(group, user, role, false);
         groupsUserRepository.save(groupsUser);
+        alarmService.groupAccess(group, role); //알람 전송.
         alarmService.createTopic(group, user); //d알람 토픽 저장.
-        alarmService.groupAccess(group, user); //알람 전송.
         return GroupGenerateDto.builder()
                 .groupName(group.getGroup_name())
                 .groupId(group.getGup_id())
@@ -210,7 +210,9 @@ public class GroupService {
         int count = groupsUserRepository.deleteUser(groupId, userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
+        String role=user.getGroupsuser().get(0).getRole();
         alarmService.quitTopic(user, groups);
+        alarmService.groupQuit(groups,role);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -261,6 +263,7 @@ public class GroupService {
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
         alarmService.quitTopic(user, groups);
+        alarmService.groupUserDelete(user);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -308,8 +311,10 @@ public class GroupService {
     public void updateLeader(Integer groupId, Integer leaderId, Integer userId) {
         GroupsUser oldLeader = getGroupsUser(groupId, leaderId);
         GroupsUser newLeader = getGroupsUser(groupId, userId);
+        Groups group=newLeader.getGroup();
         oldLeader.changeLeader(false);
         newLeader.changeLeader(true);
+        alarmService.groupLeaderChange(group,newLeader.getRole());
         //return true;
         //groupsUserReponsitory.updateLeader(groupId,leaderId,userId);
     }

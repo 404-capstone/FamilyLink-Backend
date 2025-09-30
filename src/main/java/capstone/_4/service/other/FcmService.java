@@ -1,5 +1,7 @@
 package capstone._4.service.other;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.ErrorCode;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -9,10 +11,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+/**
+ * 실제로 fcm에게 알람을 전송하라고 호출하는 클래스.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +25,12 @@ public class FcmService {
 
     private final FirebaseMessaging firebaseMessaging;
 
+    /**
+     * 실제 토픽을 생성. 전체 그룹원들
+     * @param topicName
+     * @param tokens
+     * @return
+     */
     public String createTopic(String topicName, List<String> tokens){
         //String topicName="group"+groupId;
         log.info("토픽으로 인원");
@@ -33,6 +44,13 @@ public class FcmService {
 
     }
 
+    /**
+     * 토큰을 이용해 하나씩 토픽에 등록하는 메소드.
+     * @param topicName
+     * @param tokens
+     * @return
+     */
+
     public String createTopicOne(String topicName, String tokens){
         //String topicName="group"+groupId;
         log.info("토픽 추가.");
@@ -45,6 +63,7 @@ public class FcmService {
         return topicName;
 
     }
+
 
     public String deleteTopic(String topicName,List<String> tokens){
         //String topicName="group"+groupId;
@@ -71,10 +90,28 @@ public class FcmService {
     }
 
 
+    /**
+     * 그룹원 전체에게 알람 전송하도록 한 메소드.(이거사용)
+     * @param title
+     * @param type
+     * @param body
+     * @param topic
+     */
+    public void sendNotificationAll(String title, String type, Map<String,String> body, String topic){
+        log.info("전송 시작(title:{},message:{},body:{})",title,type,body);
+        send(createTopicMessage(title,type,body,topic));
+    }
 
-    public void sendNotification(String title,String message,String type,String topic){
-        log.info("전송 시작(title:{},message:{},type:{},token:{})",title,message,type,topic);
-        send(createMessage(title,message,type,topic));
+    /**
+     * 개인에게만 알람 전송하도록 한 메소드(이거 사용)
+     * @param title
+     * @param type
+     * @param body
+     * @param token
+     */
+    public void sendNotification(String title, String type, Map<String, String> body, String token) {
+        log.info("개인 전송");
+        send(createMessage(title,type,body,token));
     }
 
     private void send(Message message)  {
@@ -92,7 +129,7 @@ public class FcmService {
         }
     }
 
-    private Message createMessage(String title, String message, String type, String topic) {
+    private Message createTopicMessage(String title, String message, String type, String topic) {
         return Message.builder()
                 .putData("title", title)
                 .putData("message", message)
@@ -101,4 +138,41 @@ public class FcmService {
                 .build();
 
     }
+
+    private Message createTopicMessage(String title, String code, Map<String,String> body, String topic) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String bodyJson=mapper.writeValueAsString(body);
+            return Message.builder()
+                    .putData("title",title)
+                    .putData("code",code)
+                    .putData("data",bodyJson)
+                    .setTopic(topic)
+                    .build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("알람 포맷 변환중 오류가 발생했습니다."+e.getMessage());
+        }
+
+    }
+
+    private Message createMessage(String title, String code, Map<String,String> body, String token) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String bodyJson=mapper.writeValueAsString(body);
+            return Message.builder()
+                    .putData("title",title)
+                    .putData("code",code)
+                    .putData("data",bodyJson)
+                    .setToken(token)
+                    .build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("알람 포맷 변환중 오류가 발생했습니다."+e.getMessage());
+        }
+
+    }
+
+
+
+
+
 }
