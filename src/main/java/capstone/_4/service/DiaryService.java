@@ -10,6 +10,7 @@ import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.exception.FastApiException;
 import capstone._4.repository.EmotionRepository;
 import capstone._4.repository.diary.DiaryJpaRepository;
+import capstone._4.repository.group.GroupQuestionRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
@@ -45,11 +46,13 @@ public class DiaryService {
     private final DiaryJpaRepository diaryJpaRepository;
     private final GeminiClient geminiClient;
     private final EmotionRepository emotionRepository;
+    private final GroupQuestionRepository groupQuestionRepository;
 
     public DiaryService(GeminiClient geminiClient, DiaryJpaRepository diaryJpaRepository,
                         UserRepository userRepository, QuestionRepository questionRepository,
                         GroupsUserRepository groupsUserRepository, DiaryRepository diaryRepository,
-                        EmotionRepository emotionRepository
+                        EmotionRepository emotionRepository,
+                        GroupQuestionRepository groupQuestionRepository
     ) {
         this.geminiClient = geminiClient;
         this.diaryJpaRepository = diaryJpaRepository;
@@ -58,6 +61,7 @@ public class DiaryService {
         this.groupsUserRepository = groupsUserRepository;
         this.diaryRepository = diaryRepository;
         this.emotionRepository = emotionRepository;
+        this.groupQuestionRepository = groupQuestionRepository;
     }
 
 
@@ -139,31 +143,28 @@ public class DiaryService {
                         .build())
                 .toList();
 
-        // 3. 유저가 작성한 답변 조회
-        List<GroupAnswer> answers = diaryJpaRepository.findAllByUserId(userId);
+        // 3. 유저가 속한 그룹의 모든 공통질문 조회
+        List<GroupQuestion> groupQuestions = groupQuestionRepository.findAllByGroupUserId(userId);
 
 // rawQuestions 선언
-        List<QuestionDto> rawQuestions = answers.stream()
-                .filter(ga -> ga.getGroupQuestion() != null)
-                .filter(ga -> {
-                    GroupQuestion gq = ga.getGroupQuestion();
+        List<QuestionDto> rawQuestions = groupQuestions.stream()
+                .map(gq -> {
                     List<Long> responderIds = diaryJpaRepository.findResponderIdsByGroupQuestion(gq.getId().longValue());
-                    return responderIds != null && !responderIds.isEmpty();
-                })
-                .map(ga -> {
-                    GroupQuestion gq = ga.getGroupQuestion();
-                    List<String> responders = diaryJpaRepository.findResponderIdsByGroupQuestion(gq.getId().longValue())
-                            .stream()
-                            .map(uid -> {
-                                Optional<GroupsUser> guOpt = groupsUserRepository.findByUIdAndGupId(uid.intValue(), gq.getGroups().getId());
-                                return guOpt.map(GroupsUser::getRole).orElse("Unknown");
-                            })
-                            .toList();
+                    List<String> responders = responderIds == null ? List.of() :
+                            responderIds.stream()
+                                    .map(uid -> {
+                                        Optional<GroupsUser> guOpt = groupsUserRepository.findByUIdAndGupId(
+                                                uid.intValue(),
+                                                gq.getGroups().getId()
+                                        );
+                                        return guOpt.map(GroupsUser::getRole).orElse("Unknown");
+                                    })
+                                    .toList();
 
                     return QuestionDto.builder()
                             .gqId(gq.getId().longValue())
                             .date(gq.getDay())
-                            .responders(responders)
+                            .responders(responders) // 응답자가 없으면 빈 리스트
                             .build();
                 })
                 .toList();

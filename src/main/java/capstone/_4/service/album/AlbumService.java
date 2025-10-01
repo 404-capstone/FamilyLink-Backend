@@ -14,6 +14,7 @@ import capstone._4.repository.album.PhotoImageRepository;
 import capstone._4.repository.album.PhotoRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.user.UserRepository;
+import capstone._4.service.other.AlarmService;
 import capstone._4.service.other.S3Service;
 import com.querydsl.core.Tuple;
 import jakarta.persistence.EntityNotFoundException;
@@ -39,6 +40,7 @@ public class AlbumService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final AlarmService alarmService;
 
     @Transactional
     public PhotoResponseDto addPitcure(AlbumInputDto albumInputDto) {
@@ -72,6 +74,9 @@ public class AlbumService {
         }
         photo.setPhotoImages(photos);//포토 저장.
         photoImageRepository.saveAll(photos); //이미지 저장
+        Groups group=groupRepository.findById(albumInputDto.getGroupId())
+                .orElseThrow(()->new EntityNotFoundException("그룹이 존재하지 않습니다."));
+        alarmService.photoAdd(group);
 
         if(userIds!=null && !userIds.isEmpty()) {
             for (int j = 0; j < userIds.size(); j++) {
