@@ -116,43 +116,44 @@ public class GroupService {
      */
     @Transactional
     public String generateCode(Integer group_id) {
-        Groups group = getGroupFromId(group_id);
-        String id = NanoIdUtils.randomNanoId(6);
-        redisService.saveCode(id, group.getGup_id());
-        group.setCode(id);
-        return id;
-//        log.info("id 체크.={}", group_id);
-//        log.info("체크1:{}", redissonClient);
-//
-//
-//        //코드 생성 동시 하는것을 방지하기 위해 분산 락 사용.
-//        String lockKey = "group:code:" + group_id;
-//        RLock lock = redissonClient.getLock(lockKey);
-//        try {
-//            boolean isLock = lock.tryLock(3, 2, TimeUnit.SECONDS);
-//            if (!isLock) {
-//                //log.info();
-//                throw new ConcurrencyException("이미 다른 사용자가 재생성을 요청하였습니다.");
-//            }
-//            Groups group = getGroupFromId(group_id);
-//            String code = group.getCode();
-//            if(code ==null){
-//                return saveCode(group);
-//            }else{
-//                Object check = redisService.getData(code);
-//                if (check != null) {
-//                    return code;
-//                } else {
-//                    return saveCode(group);
-//                }
-//            }
-//
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException("락 기다리던중 인터럽트 발생.");
-//        } finally {
-//            //점유중일시 풀기.
-//            if (lock.isHeldByCurrentThread()) lock.unlock();
-//        }
+//        Groups group = getGroupFromId(group_id);
+//        String id = NanoIdUtils.randomNanoId(6);
+//        redisService.saveCode(id, group.getGup_id());
+//        group.setCode(id);
+//        return id;
+        log.info("id 체크.={}", group_id);
+        log.info("체크1:{}", redissonClient);
+
+
+        //코드 생성 동시 하는것을 방지하기 위해 분산 락 사용.
+        String lockKey = "group:code:" + group_id;
+        log.info("key 체크.={}", lockKey);
+        RLock lock = redissonClient.getLock(lockKey);
+        try {
+            boolean isLock = lock.tryLock(3, 2, TimeUnit.SECONDS);
+            if (!isLock) {
+                //log.info();
+                throw new ConcurrencyException("이미 다른 사용자가 재생성을 요청하였습니다.");
+            }
+            Groups group = getGroupFromId(group_id);
+            String code = group.getCode();
+            if(code ==null){
+                return saveCode(group);
+            }else{
+                Object check = redisService.getData(code);
+                if (check != null) {
+                    return code;
+                } else {
+                    return saveCode(group);
+                }
+            }
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException("락 기다리던중 인터럽트 발생.");
+        } finally {
+            //점유중일시 풀기.
+            if (lock.isHeldByCurrentThread()) lock.unlock();
+        }
     }
 
     private String saveCode(Groups group) {
