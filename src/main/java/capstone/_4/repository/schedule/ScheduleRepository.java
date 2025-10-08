@@ -1,6 +1,6 @@
 package capstone._4.repository.schedule;
 
-
+import capstone._4.domain.Calendar;
 import capstone._4.domain.QGroupsSchedule;
 import capstone._4.domain.QSchedule;
 import capstone._4.domain.QUser;
@@ -51,6 +51,21 @@ public class ScheduleRepository {
                 .getResultList();
     }
 
+    public boolean existsByCalendarAndStartTimeAndEndTime(Calendar calendar,
+                                                          LocalDateTime startTime,
+                                                          LocalDateTime endTime) {
+        Long count = em.createQuery(
+                        "SELECT COUNT(s) FROM Schedule s " +
+                                "WHERE s.calendar = :calendar " +
+                                "AND s.startTime = :startTime " +
+                                "AND s.endTime = :endTime", Long.class)
+                .setParameter("calendar", calendar)
+                .setParameter("startTime", startTime)
+                .setParameter("endTime", endTime)
+                .getSingleResult();
+
+        return count > 0;
+    }
 
     public List<GroupScheduleDto> getGroupSchedules(int groupid){
         QSchedule schedule= QSchedule.schedule;
@@ -166,6 +181,7 @@ public class ScheduleRepository {
                 .setParameter("userid", userid)
                 .executeUpdate();
     }
+
 
 //    private List<Integer> findUserWithSchedule(Integer scheduleid){ //이 부분은 필요없음. 이유는 이미 이너조인하면서, 조건에 충족하는 컬럼도 생성해서 반환해주기 때문이다.
 //        QGroupsSchedule groupsSchedule= QGroupsSchedule.groupsSchedule;
