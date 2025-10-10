@@ -11,6 +11,7 @@ import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.exception.ConcurrencyException;
 import capstone._4.exception.GroupException;
+import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.calendar.CalendarRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
@@ -29,7 +30,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +45,7 @@ public class GroupService {
     private final GroupsUserRepository groupsUserRepository;
     private final CalendarRepository calendarRepository;
     private final ScheduleRepository scheduleRepository;
+    private final QuestionRepository questionRepository;
     private final RedisService redisService;
     private final S3Service s3Service;
     private final QuestionService questionService;
@@ -56,7 +57,8 @@ public class GroupService {
                         CalendarRepository calendarRepository,
                         ScheduleRepository scheduleRepository, RedisService redisService,
                         S3Service s3Service, QuestionService questionService,
-                        AlarmService alarmService, RedissonClient redissonClient) {
+                        AlarmService alarmService, RedissonClient redissonClient,
+                        QuestionRepository questionRepository) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
         this.groupsUserRepository = groupsUserRepository;
@@ -67,6 +69,7 @@ public class GroupService {
         this.questionService = questionService;
         this.alarmService = alarmService;
         this.redissonClient = redissonClient;
+        this.questionRepository = questionRepository;
     }
 
     /**
@@ -213,6 +216,7 @@ public class GroupService {
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
         String role=user.getGroupsuser().get(0).getRole();
+        questionRepository.deleteUser(userid);
         int count = groupsUserRepository.deleteUser(groupId, userid);
         alarmService.quitTopic(user, groups);
        // alarmService.groupQuit(groups,role);
@@ -224,6 +228,7 @@ public class GroupService {
     @Transactional
     public void deleteGroup(Integer groupId) {
         alarmService.deleteTopic(groupId);
+        questionRepository.deleteGroup(groupId);
         int count = groupRepository.deleteGroupe(groupId);
         if (count == 0) {
             throw new EntityNotFoundException("그룹 삭제 안됨");
@@ -262,6 +267,7 @@ public class GroupService {
     @Transactional
     public void deleteUserWithGroup(Integer groupId, Integer userid) {
         scheduleRepository.deleteScheduleByUserId(userid);
+        questionRepository.deleteUser(userid);
         int count = groupsUserRepository.deleteUser(groupId, userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);

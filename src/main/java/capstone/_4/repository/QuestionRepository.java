@@ -142,4 +142,19 @@ public class QuestionRepository {
     }
 
 
+    public void deleteUser(Integer userid) {
+        int delete=em.createQuery("delete from GroupAnswer ga " +
+                "where ga.user.id=:userid",GroupAnswer.class)
+                .setParameter("userid", userid).executeUpdate();
+        em.clear();
+
+    }
+
+    public void deleteGroup(Integer groupId) {
+        em.createQuery("delete from GroupAnswer ga " +
+                "where ga.groupQuestion.groups.id=:groupId",GroupAnswer.class)
+                .setParameter("groupId", groupId).executeUpdate();
+        em.clear();
+
+    }
 }
