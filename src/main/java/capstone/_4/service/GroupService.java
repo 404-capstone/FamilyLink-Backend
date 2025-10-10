@@ -84,6 +84,7 @@ public class GroupService {
         calendarRepository.save(calendar);
         GroupsUser groupsuser = new GroupsUser(groups, user, role, true);
         groupsUserRepository.save(groupsuser);
+        log.info("그룹 topic 생성");
         alarmService.createTopic(groups, user);
         log.info("그룹 질문 랜덤생성.");
         questionService.generateQuestion(groups);
@@ -208,12 +209,13 @@ public class GroupService {
     @Transactional
     public void quitGroup(Integer groupId, Integer userid) {
         scheduleRepository.deleteScheduleByUserId(userid);
-        int count = groupsUserRepository.deleteUser(groupId, userid);
+        log.info("유저 탈퇴 진행");
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
         String role=user.getGroupsuser().get(0).getRole();
+        int count = groupsUserRepository.deleteUser(groupId, userid);
         alarmService.quitTopic(user, groups);
-        alarmService.groupQuit(groups,role);
+       // alarmService.groupQuit(groups,role);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -264,7 +266,7 @@ public class GroupService {
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
         alarmService.quitTopic(user, groups);
-        alarmService.groupUserDelete(user);
+        //alarmService.groupUserDelete(user);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
