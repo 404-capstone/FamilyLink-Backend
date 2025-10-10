@@ -49,6 +49,14 @@ public class ScheduleGroupCreateService {
         if (calendar == null) {
             throw new IllegalArgumentException("그룹에 연결된 캘린더가 없습니다.");
         }
+
+        // 해당 날짜에 이미 일정이 있는지 확인
+        boolean exists = scheduleRepository.existsByCalendarAndStartTimeAndEndTime(calendar,
+                request.getStartTime(), request.getEndTime());
+
+        if (exists) {
+            throw new IllegalStateException("이미 해당 시간대에 일정이 존재합니다.");
+        }
         // 일정 생성
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())

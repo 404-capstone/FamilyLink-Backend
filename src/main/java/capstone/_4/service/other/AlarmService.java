@@ -192,6 +192,17 @@ public class AlarmService {
     }
 
     /**
+     * 그룹 정보 수정 시 그룹원들에게 알람 전송
+     * @param group
+     */
+    public void groupInfoUpdate(Groups group) {
+        if (group.getTopic_name() != null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message", "가족 그룹 정보가 수정되었습니다.");
+            publisher.publishEvent(new TopicNotifyAllEvent("그룹 정보 수정", "group-5", body, group.getTopic_name()));
+        }
+    }
+    /**
      * 질문 작성 완료시 그룹원들에게 발생시키는 이벤트.
      * @param group
      */
@@ -215,6 +226,47 @@ public class AlarmService {
         }
     }
 
+
+    /**
+     * 가족 일정 추가 시 그룹원들에게 알람 전송
+     * @param group
+     */
+    public void familyScheduleAdd(Groups group) {
+        if (group.getTopic_name() != null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message", "가족 일정이 추가되었습니다. 일정을 확인하세요!");
+            publisher.publishEvent(new TopicNotifyAllEvent("가족 일정 추가", "calendar-1", body, group.getTopic_name()));
+        }
+    }
+
+    /**
+     * 가족 일정 수정 시 (참여자 수정 포함) 그룹원들에게 알람 전송
+     * @param group
+     * @param scheduleId
+     */
+    public void familyScheduleUpdate(Groups group, Long scheduleId) {
+        if (group.getTopic_name() != null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message", "가족 일정 정보가 수정되었습니다. 일정을 확인하세요!");
+            body.put("sch_id", String.valueOf(scheduleId));
+            publisher.publishEvent(new TopicNotifyAllEvent("가족 일정 수정", "calendar-2", body, group.getTopic_name()));
+        }
+    }
+
+    /**
+     * 일정 코멘트 작성 시 참여자들에게 알람 전송
+     * @param group
+     * @param scheduleTitle
+     * @param commentId
+     */
+    public void scheduleCommentAdd(Groups group, String scheduleTitle, Long commentId) {
+        if (group.getTopic_name() != null) {
+            Map<String, String> body = new HashMap<>();
+            body.put("message", scheduleTitle + "에 댓글이 작성되었습니다.");
+            body.put("com_id", String.valueOf(commentId));
+            publisher.publishEvent(new TopicNotifyAllEvent("일정 코멘트 작성", "calendar-3", body, group.getTopic_name()));
+        }
+    }
 
 
 
