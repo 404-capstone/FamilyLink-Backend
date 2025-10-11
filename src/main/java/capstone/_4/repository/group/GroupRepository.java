@@ -15,7 +15,7 @@ public interface GroupRepository extends JpaRepository<Groups, Integer>,GroupCus
     //Page<Groups> findAll(Pageable pageable);
 
 //    @Query("select g from Groups g left join fetch g.groupQuestions")
-//    Page<Groups> findAllWithQuestion(List<Integer> ids);
+//    Page<Groups> findAllWithQuestions(Pageable pageable);
 //
 //    @Query("select g.gup_id from Groups g")
 //    Page<Integer> findAllGroupIds(Pageable pageable);

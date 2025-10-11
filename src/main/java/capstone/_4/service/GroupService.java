@@ -215,9 +215,12 @@ public class GroupService {
         log.info("유저 탈퇴 진행");
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
-        String role=user.getGroupsuser().get(0).getRole();
+        log.info("사용자이름:{},사용자 번호:{},그룹번호:{}",user.getUsername(),user.getId(),groupId);
+        //String role=user.getGroupsuser().get(0).getRole();
         questionRepository.deleteUser(userid);
+        log.info("삭제 진행");
         int count = groupsUserRepository.deleteUser(groupId, userid);
+        log.info("삭제여부:{}",count);
         alarmService.quitTopic(user, groups);
        // alarmService.groupQuit(groups,role);
         if (count == 0) {
@@ -339,6 +342,7 @@ public class GroupService {
     /**
      * 00시 1분마다 전체 그룹에 질문을 체크해 생성할지,다음에 또 사용할지 고르는 로직.
      */
+    @Transactional
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void createGroupQuestion() {
         final int BATCH_SIZE = 100;
@@ -349,6 +353,7 @@ public class GroupService {
         do {
             PageRequest pageRequest = PageRequest.of(pagenum, BATCH_SIZE); //100개씩 페이징해 부르기.
             groups = groupRepository.findAll(pageRequest);
+//            groups=groupRepository.findAllWithQuestions(pageRequest);
             for (Groups group : groups.getContent()) {
                 try {
                     questionService.checkQuestions(group);

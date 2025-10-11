@@ -143,8 +143,8 @@ public class QuestionRepository {
 
 
     public void deleteUser(Integer userid) {
-        int delete=em.createQuery("delete from GroupAnswer ga " +
-                "where ga.user.id=:userid",GroupAnswer.class)
+        em.createQuery("delete from GroupAnswer ga " +
+                "where ga.user.id=:userid")
                 .setParameter("userid", userid).executeUpdate();
         em.clear();
 
