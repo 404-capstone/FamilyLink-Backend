@@ -152,7 +152,7 @@ public class QuestionRepository {
 
     public void deleteGroup(Integer groupId) {
         em.createQuery("delete from GroupAnswer ga " +
-                "where ga.groupQuestion.groups.id=:groupId",GroupAnswer.class)
+                "where ga.groupQuestion.groups.id=:groupId")
                 .setParameter("groupId", groupId).executeUpdate();
         em.clear();
 
