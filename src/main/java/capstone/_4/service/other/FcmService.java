@@ -53,7 +53,7 @@ public class FcmService {
 
     public String createTopicOne(String topicName, String tokens){
         //String topicName="group"+groupId;
-        log.info("토픽 추가.");
+        log.info("fcm 토픽 추가.");
         try {
             FirebaseMessaging.getInstance()
                     .subscribeToTopic(Collections.singletonList(tokens), (topicName));
@@ -117,6 +117,7 @@ public class FcmService {
     private void send(Message message)  {
         try {
             String response= firebaseMessaging.send(message);
+            log.info("응답:{}",response);
         }catch (FirebaseMessagingException e) {
             log.error("Firebase 메시지 전송 실패", e);
             throw new RuntimeException(
@@ -145,7 +146,7 @@ public class FcmService {
             String bodyJson=mapper.writeValueAsString(body);
             return Message.builder()
                     .putData("title",title)
-                    .putData("code",code)
+                    .putData("type",code)
                     .putData("data",bodyJson)
                     .setTopic(topic)
                     .build();
@@ -161,7 +162,7 @@ public class FcmService {
             String bodyJson=mapper.writeValueAsString(body);
             return Message.builder()
                     .putData("title",title)
-                    .putData("code",code)
+                    .putData("type",code)
                     .putData("data",bodyJson)
                     .setToken(token)
                     .build();

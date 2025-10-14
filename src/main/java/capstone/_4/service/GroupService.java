@@ -11,6 +11,7 @@ import capstone._4.dto.group.output.GroupInfoResponseDto;
 import capstone._4.dto.group.output.GroupUserInfoDto;
 import capstone._4.exception.ConcurrencyException;
 import capstone._4.exception.GroupException;
+import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.calendar.CalendarRepository;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.group.GroupsUserRepository;
@@ -29,7 +30,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +45,7 @@ public class GroupService {
     private final GroupsUserRepository groupsUserRepository;
     private final CalendarRepository calendarRepository;
     private final ScheduleRepository scheduleRepository;
+    private final QuestionRepository questionRepository;
     private final RedisService redisService;
     private final S3Service s3Service;
     private final QuestionService questionService;
@@ -56,7 +57,8 @@ public class GroupService {
                         CalendarRepository calendarRepository,
                         ScheduleRepository scheduleRepository, RedisService redisService,
                         S3Service s3Service, QuestionService questionService,
-                        AlarmService alarmService, RedissonClient redissonClient) {
+                        AlarmService alarmService, RedissonClient redissonClient,
+                        QuestionRepository questionRepository) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
         this.groupsUserRepository = groupsUserRepository;
@@ -67,6 +69,7 @@ public class GroupService {
         this.questionService = questionService;
         this.alarmService = alarmService;
         this.redissonClient = redissonClient;
+        this.questionRepository = questionRepository;
     }
 
     /**
@@ -84,6 +87,7 @@ public class GroupService {
         calendarRepository.save(calendar);
         GroupsUser groupsuser = new GroupsUser(groups, user, role, true);
         groupsUserRepository.save(groupsuser);
+        log.info("그룹 topic 생성");
         alarmService.createTopic(groups, user);
         log.info("그룹 질문 랜덤생성.");
         questionService.generateQuestion(groups);
@@ -208,12 +212,17 @@ public class GroupService {
     @Transactional
     public void quitGroup(Integer groupId, Integer userid) {
         scheduleRepository.deleteScheduleByUserId(userid);
-        int count = groupsUserRepository.deleteUser(groupId, userid);
+        log.info("유저 탈퇴 진행");
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
-        String role=user.getGroupsuser().get(0).getRole();
+        log.info("사용자이름:{},사용자 번호:{},그룹번호:{}",user.getUsername(),user.getId(),groupId);
+        //String role=user.getGroupsuser().get(0).getRole();
+        questionRepository.deleteUser(userid);
+        log.info("삭제 진행");
+        int count = groupsUserRepository.deleteUser(groupId, userid);
+        log.info("삭제여부:{}",count);
         alarmService.quitTopic(user, groups);
-        alarmService.groupQuit(groups,role);
+       // alarmService.groupQuit(groups,role);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -222,6 +231,7 @@ public class GroupService {
     @Transactional
     public void deleteGroup(Integer groupId) {
         alarmService.deleteTopic(groupId);
+        questionRepository.deleteGroup(groupId);
         int count = groupRepository.deleteGroupe(groupId);
         if (count == 0) {
             throw new EntityNotFoundException("그룹 삭제 안됨");
@@ -260,11 +270,12 @@ public class GroupService {
     @Transactional
     public void deleteUserWithGroup(Integer groupId, Integer userid) {
         scheduleRepository.deleteScheduleByUserId(userid);
+        questionRepository.deleteUser(userid);
         int count = groupsUserRepository.deleteUser(groupId, userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
         alarmService.quitTopic(user, groups);
-        alarmService.groupUserDelete(user);
+        //alarmService.groupUserDelete(user);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
         }
@@ -331,6 +342,7 @@ public class GroupService {
     /**
      * 00시 1분마다 전체 그룹에 질문을 체크해 생성할지,다음에 또 사용할지 고르는 로직.
      */
+    @Transactional
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void createGroupQuestion() {
         final int BATCH_SIZE = 100;
@@ -341,6 +353,7 @@ public class GroupService {
         do {
             PageRequest pageRequest = PageRequest.of(pagenum, BATCH_SIZE); //100개씩 페이징해 부르기.
             groups = groupRepository.findAll(pageRequest);
+//            groups=groupRepository.findAllWithQuestions(pageRequest);
             for (Groups group : groups.getContent()) {
                 try {
                     questionService.checkQuestions(group);

@@ -57,11 +57,11 @@ public class GroupsUserRepository {
                 .getResultList().stream().findFirst();
     }
     //유저삭제
-    public int deleteUser(Integer groupId,Integer userid) {
+    public int deleteUser(Integer groupid,Integer userid) {
         return em.createQuery("delete from GroupsUser gu " +
                 "where gu.group.gup_id = :groupid and " +
                 "gu.user.id = :userid")
-                .setParameter("groupid", groupId)
+                .setParameter("groupid", groupid)
                 .setParameter("userid", userid)
                 .executeUpdate();
 

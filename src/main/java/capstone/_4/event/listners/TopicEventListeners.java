@@ -52,6 +52,11 @@ public class TopicEventListeners {
         //fcmService.sendNotification("유저 그룹 가입", user.getUsername() + "유저가 그룹을 가입하였습니다.", "groupAccess", group.getTopic_name());
     }
 
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void quitTopicSend(TopicUnSubscribeSendEvent event) {
+        fcmService.deleteOneTopic(event.topic(), event.token());
+        fcmService.sendNotificationAll(event.title(),event.type(),event.body(),event.topic());
+    }
 
 }
 

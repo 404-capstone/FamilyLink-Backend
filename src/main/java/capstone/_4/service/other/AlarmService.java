@@ -40,8 +40,11 @@ public class AlarmService {
      */
     @Transactional
     public void createTopic(Groups groups, User user) {
-        if(user.getAlarm()!=null &&user.getAlarm().isEnabled()) {
+        log.info("alarm:{}",user.getAlarm());
+        if(user.getAlarm()!=null ) {
+            log.info("토픽 생성.");
             String topicname = groups.getTopic_name();
+            log.info("topic:{}", topicname);
             if (topicname == null || topicname.isBlank()) {
                 topicname = "group" + groups.getGup_id();
                 groups.changeTopic(topicname);
@@ -49,7 +52,7 @@ public class AlarmService {
             }
 
             Alarm alarm = user.getAlarm();
-            if (alarm != null && alarm.isEnabled() && alarm.getDevice_token() != null) {
+            if (alarm != null && alarm.getDevice_token() != null) {
                 publisher.publishEvent(new TopicSubscribeEvent(topicname, alarm.getDevice_token()));
             }
         }
@@ -123,10 +126,13 @@ public class AlarmService {
      * @param groups
      */
     public void quitTopic(User user, Groups groups) {
-        if (user.getAlarm() != null && user.getAlarm().isEnabled()) {
+        if (user.getAlarm() != null && groups.getTopic_name() !=null) {
             log.info("토픽에서 제거.");
             String token = user.getAlarm().getDevice_token();
-            publisher.publishEvent(new TopicUnSubscribeEvent(groups.getTopic_name(), token));
+            Map<String,String> body = new HashMap<>();
+            String role=user.getGroupsuser().get(0).getRole();
+            body.put("role",role);
+            publisher.publishEvent(new TopicUnSubscribeSendEvent("그룹원 탈퇴", "group-3",body,groups.getTopic_name(),token));
         }
 
     }
@@ -151,7 +157,7 @@ public class AlarmService {
      * @param user
      */
     public void groupUserDelete(User user){
-        if(user.getAlarm()!=null&&user.getAlarm().isEnabled()) {
+        if(user.getAlarm()!=null) {
             Map<String,String> body = new HashMap<>();
             body.put("message","가족 그룹에서 추방되었습니다.");
             //추방자 개인에게만 알림 전송.
@@ -164,13 +170,13 @@ public class AlarmService {
      * @param group
      * @param role
      */
-    public void groupQuit(Groups group, String role) {
-        if(group.getTopic_name()!=null) {
-            Map<String, String> body = new HashMap<>();
-            body.put("role", role);
-            publisher.publishEvent(new TopicNotifyAllEvent("그룹원 탈퇴", "group-3",body,group.getTopic_name() ));
-        }
-    }
+//    public void groupQuit(Groups group, String role) {
+//        if(group.getTopic_name()!=null) {
+//            Map<String, String> body = new HashMap<>();
+//            body.put("role", role);
+//            publisher.publishEvent(new TopicNotifyAllEvent("그룹원 탈퇴", "group-3",body,group.getTopic_name() ));
+//        }
+//    }
 
     /**
      * 리더 변경시 그룹원들에게 전송시키는 이벤트.
