@@ -7,6 +7,8 @@ import capstone._4.domain.Calendar;
 import capstone._4.domain.GroupsSchedule;
 import capstone._4.dto.schedule.input.ScheduleGroupCreateRequest;
 import capstone._4.dto.schedule.output.GroupScheduleDto;
+import capstone._4.enums.CustomException;
+import capstone._4.enums.ErrorCode;
 import capstone._4.repository.group.GroupRepository;
 import capstone._4.repository.schedule.ScheduleRepository;
 import capstone._4.repository.user.UserRepository;
@@ -55,7 +57,7 @@ public class ScheduleGroupCreateService {
                 request.getStartTime(), request.getEndTime());
 
         if (exists) {
-            throw new IllegalStateException("이미 해당 시간대에 일정이 존재합니다.");
+            throw new CustomException(ErrorCode.ENTITY_EXISTS);
         }
         // 일정 생성
         Schedule schedule = Schedule.builder()
