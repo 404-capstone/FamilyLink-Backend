@@ -230,6 +230,7 @@ public class DiaryService {
                 .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."))
                 .getGroupsuser()
                 .stream().map(u->u.getUser().getId()).toList();
+        groupUser.remove(userId);
         LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
         Map<Integer,Integer> familyDiary=diaryRepository.findTopDiaryByDay(date,groupUser);
 
