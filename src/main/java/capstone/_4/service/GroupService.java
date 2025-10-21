@@ -216,12 +216,12 @@ public class GroupService {
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
         log.info("사용자이름:{},사용자 번호:{},그룹번호:{}",user.getUsername(),user.getId(),groupId);
-        //String role=user.getGroupsuser().get(0).getRole();
+        String role=user.getGroupsuser().get(0).getRole();
         questionRepository.deleteUser(userid);
         log.info("삭제 진행");
         int count = groupsUserRepository.deleteUser(groupId, userid);
         log.info("삭제여부:{}",count);
-        alarmService.quitTopic(user, groups);
+        alarmService.quitTopic(user, groups,role);
        // alarmService.groupQuit(groups,role);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
@@ -271,10 +271,11 @@ public class GroupService {
     public void deleteUserWithGroup(Integer groupId, Integer userid) {
         scheduleRepository.deleteScheduleByUserId(userid);
         questionRepository.deleteUser(userid);
+        String role= getGroupsUser(groupId,userid).getRole();
         int count = groupsUserRepository.deleteUser(groupId, userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
-        alarmService.quitTopic(user, groups);
+        alarmService.quitTopic(user, groups,role);
         //alarmService.groupUserDelete(user);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");
@@ -312,10 +313,11 @@ public class GroupService {
         GroupsUser oldLeader = getGroupsUser(groupId, leaderId);
         GroupsUser newLeader = getGroupsUser(groupId, userId);
         newLeader.changeLeader(true);
+        String role=oldLeader.getRole();
         groupsUserRepository.deleteUserWithEm(oldLeader);
         Groups groups = getGroupFromId(groupId);
         User user = getUserFromId(userId);
-        alarmService.quitTopic(user, groups);
+        alarmService.quitTopic(user, groups,role);
         //groupsUserReponsitory.updateUser(groupId,leaderId,userId);
     }
 
