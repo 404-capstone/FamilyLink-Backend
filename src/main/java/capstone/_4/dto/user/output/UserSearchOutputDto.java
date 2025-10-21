@@ -19,12 +19,16 @@ public class UserSearchOutputDto {
     @Schema(description = "소셜 로그인 타입", example = "kakao")
     private String social;
 
+    @Schema
+    private Boolean alarm;
+
     public UserSearchOutputDto(User user) {
         this.username = user.getUsername();
         this.gender = user.getGender();
         this.age = user.getAge();
         this.image = user.getImage();
         this.social = user.getSocial();
+        this.alarm=user.getAlarm().getEnabled();
     }
 
     // Getter 메서드들
@@ -33,4 +37,8 @@ public class UserSearchOutputDto {
     public Integer getAge() { return age; }
     public String getImage() { return image; }
     public String getSocial() { return social; }
+
+    public Boolean getAlarm() {
+        return alarm;
+    }
 }

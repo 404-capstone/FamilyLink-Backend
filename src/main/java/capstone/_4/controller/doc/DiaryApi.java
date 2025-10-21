@@ -146,7 +146,7 @@ public interface DiaryApi {
             )
     )
     @GetMapping("/search")
-    ResponseEntity<?> getDiaryDetail(@RequestParam Long diaryId);
+    ResponseEntity<?> getDiaryDetail(@RequestParam Long diaryId,HttpServletRequest request);
 
     @Operation(summary = "질문지 조회", description = "다이어리 작성에 사용할 질문을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공",

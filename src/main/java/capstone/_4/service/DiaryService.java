@@ -47,12 +47,14 @@ public class DiaryService {
     private final GeminiClient geminiClient;
     private final EmotionRepository emotionRepository;
     private final GroupQuestionRepository groupQuestionRepository;
+    private final GroupRepository groupRepository;
 
     public DiaryService(GeminiClient geminiClient, DiaryJpaRepository diaryJpaRepository,
                         UserRepository userRepository, QuestionRepository questionRepository,
                         GroupsUserRepository groupsUserRepository, DiaryRepository diaryRepository,
                         EmotionRepository emotionRepository,
-                        GroupQuestionRepository groupQuestionRepository
+                        GroupQuestionRepository groupQuestionRepository,
+                        GroupRepository groupRepository
     ) {
         this.geminiClient = geminiClient;
         this.diaryJpaRepository = diaryJpaRepository;
@@ -62,6 +64,7 @@ public class DiaryService {
         this.diaryRepository = diaryRepository;
         this.emotionRepository = emotionRepository;
         this.groupQuestionRepository = groupQuestionRepository;
+        this.groupRepository = groupRepository;
     }
 
 
@@ -203,7 +206,7 @@ public class DiaryService {
 
     //상세조회
     @Transactional
-    public DiaryDetailResponse getDiaryDetail(Long diaryId) {
+    public DiaryDetailResponse getDiaryDetail(Long diaryId,int userId) {
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new EntityNotFoundException("다이어리를 찾을 수 없습니다."));
 
@@ -223,13 +226,23 @@ public class DiaryService {
                 ? diary.getFeedbook().replace("\n", " ")
                 : null;
 
+        List<Integer> groupUser= userRepository.findGroupById(userId)
+                .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."))
+                .getGroupsuser()
+                .stream().map(u->u.getUser().getId()).toList();
+        LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        Map<Integer,Integer> familyDiary=diaryRepository.findTopDiaryByDay(date,groupUser);
+
+        List<FamilyEmotion> familyEmotion = emotionRepository.findTopEmotionById(familyDiary);
+
         return new DiaryDetailResponse(
                 diary.getId().longValue(),
                 diary.getContent(),
                 diary.getTime(),
                 diary.getUser() != null ? diary.getUser().getId().longValue() : null,
                 cleanFeedBack,
-                emotionDetails
+                emotionDetails,
+                familyEmotion
         );
     }
 

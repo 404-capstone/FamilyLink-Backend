@@ -99,8 +99,9 @@ public class DiaryController implements DiaryApi {
 
 
     @Override
-    public ResponseEntity<?> getDiaryDetail(Long diaryId) {
-        DiaryDetailResponse response = diaryService.getDiaryDetail(diaryId);
+    public ResponseEntity<?> getDiaryDetail(Long diaryId,HttpServletRequest request) {
+        int id=tokenTakeUserId(request);
+        DiaryDetailResponse response = diaryService.getDiaryDetail(diaryId,id);
         return ResponseEntity.ok(new ApiResponseDto<>(
                 ResponseEnum.SUCCESS.getCode(),
                 ResponseEnum.SUCCESS.getMessage(),
