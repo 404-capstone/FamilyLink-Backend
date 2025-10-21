@@ -216,7 +216,7 @@ public class GroupService {
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
         log.info("사용자이름:{},사용자 번호:{},그룹번호:{}",user.getUsername(),user.getId(),groupId);
-        String role=user.getGroupsuser().get(0).getRole();
+        String role=getGroupsUser(groupId, userid).getRole();
         questionRepository.deleteUser(userid);
         log.info("삭제 진행");
         int count = groupsUserRepository.deleteUser(groupId, userid);
