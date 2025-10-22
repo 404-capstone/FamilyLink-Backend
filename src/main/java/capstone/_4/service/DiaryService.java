@@ -231,7 +231,7 @@ public class DiaryService {
                 .getGroupsuser()
                 .stream().map(u->u.getUser().getId()).toList();
         groupUser.remove(userId);
-        LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        LocalDate date = diary.getTime().toLocalDate();
         Map<Integer,Integer> familyDiary=diaryRepository.findTopDiaryByDay(date,groupUser);
 
         List<FamilyEmotion> familyEmotion = emotionRepository.findTopEmotionById(familyDiary);
