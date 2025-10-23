@@ -30,7 +30,8 @@ public class UserSearchOutputDto {
         this.age = user.getAge();
         this.image = user.getImage();
         this.social = user.getSocial();
-        this.alarm= Optional.ofNullable(user.getAlarm().getEnabled())
+        this.alarm = Optional.ofNullable(user.getAlarm())
+                .map(alarm -> alarm.getEnabled())
                 .orElse(false);
     }
 
