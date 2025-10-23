@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
+import capstone._4.service.other.AlarmService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -39,18 +39,21 @@ public class ScheduleService {
     private final OpenAiService openAiService;
     private final CommentRepository commentRepository;
     private final WebClient webClient;
+    private final AlarmService alarmService;
 
     public ScheduleService(UserRepository userRepository, ScheduleRepository scheduleRepository,
                            GroupsUserRepository groupsUserRepository,
                            OpenAiService openAiService,
                            CommentRepository commentRepository,
-                           @Qualifier("FastApiWebClient") WebClient webClient) {
+                           @Qualifier("FastApiWebClient") WebClient webClient,
+                           AlarmService alarmService) {
         this.userRepository = userRepository;
         this.scheduleRepository = scheduleRepository;
         this.groupsUserRepository = groupsUserRepository;
         this.openAiService = openAiService;
         this.commentRepository = commentRepository;
         this.webClient = webClient;
+        this.alarmService = alarmService;
     }
     //전체 일정 조회
     public ScheduleResponseDto getSchedule(Integer groupId) {  //그룹에 해당하는 유저를 찾고, 그룹 전체 가족 일정과,개인 일정들을 조회
@@ -124,6 +127,11 @@ public class ScheduleService {
         // Schedule -> ScheduleResponse 변환
         ScheduleResponse scheduleDto = convertToScheduleResponse(schedule);
 
+        // 알람 전송
+        Groups group = schedule.getGroup();
+        if (group != null) {
+            alarmService.scheduleCommentAdd(group, schedule.getTitle(), savedComment.getId().longValue());
+        }
         return new CommentResponse(
                 savedComment.getId(),
                 savedComment.getBody(),
@@ -157,6 +165,7 @@ public class ScheduleService {
         if (schedule.getUser() != null) { // 개인 일정이면
             permission = schedule.getPermission();
         }
+
 
         return ScheduleWithCommentsResponse.builder()
                 .scheduleId(schedule.getId())
@@ -251,8 +260,14 @@ public class ScheduleService {
 
             schedule.getGroupsSchedule().addAll(newParticipants);
         }
-
+        //일정 저장
         Schedule updatedSchedule = scheduleRepository.save(schedule);
+
+        // ✅ 알람 전송 (추가 부분)
+        Groups group = schedule.getGroup();
+        if (group != null) {
+            alarmService.familyScheduleUpdate(group, updatedSchedule.getId().longValue());
+        }
 
         return new ScheduleEditResponseDto(
                 updatedSchedule.getId().longValue(),
