@@ -16,7 +16,7 @@ import capstone._4.repository.schedule.GroupsScheduleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import capstone._4.service.other.AlarmService;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +28,8 @@ public class ScheduleGroupCreateService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final GroupsScheduleRepository groupsScheduleRepository;
-
-
+    private final AlarmService alarmService;
+//가족일정 추가
     @Transactional
     public GroupScheduleDto createGroupSchedule(ScheduleGroupCreateRequest request) {
         // 그룹 조회
@@ -82,6 +82,8 @@ public class ScheduleGroupCreateService {
                     .build();
             groupsScheduleRepository.save(gs);
         }
+        //알람
+        alarmService.familyScheduleAdd(group);
 
         // DTO로 변환하여 반환
         return GroupScheduleDto.builder()

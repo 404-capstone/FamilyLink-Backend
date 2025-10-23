@@ -32,7 +32,7 @@ public class UserProfileEditService {
             if (imageFile != null && !imageFile.isEmpty()) {
                 // 새 이미지 업로드
                 S3PhotoInfoDto uploadResult = s3Service.uploadFile(imageFile);
-
+                log.info("uploadResult.getFileUrl() -> {}", uploadResult.getFileUrl());
                 // 기존 이미지 삭제
                 checkUserImage(user);
 
