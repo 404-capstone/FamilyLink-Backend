@@ -125,13 +125,13 @@ public class AlarmService {
      * @param user
      * @param groups
      */
-    public void quitTopic(User user, Groups groups) {
+    public void quitTopic(User user, Groups groups,String role) {
         if (user.getAlarm() != null && groups.getTopic_name() !=null) {
             log.info("토픽에서 제거.");
             String token = user.getAlarm().getDevice_token();
             Map<String,String> body = new HashMap<>();
-            String role=user.getGroupsuser().get(0).getRole();
-            body.put("role",role);
+            //String role=user.getGroupsuser().get(0).getRole();
+            body.put("message",role+"이(가) 가족 그룹에서 탈퇴했습니다.");
             publisher.publishEvent(new TopicUnSubscribeSendEvent("그룹원 탈퇴", "group-3",body,groups.getTopic_name(),token));
         }
 
@@ -146,7 +146,7 @@ public class AlarmService {
         if(group.getTopic_name()!=null) { //topic이 있을때만 사용
             log.info("그룹 가입 메시지 전송.");
             Map<String,String> body = new HashMap<>(); //map형태로 전송해서 여러 데이터를 담게 작성.
-            body.put("role",role);
+            body.put("message",role+"이(가) 가족 그룹에 가입했습니다.");
             //이벤트 발생.그룹원 전체에게 알림.
             publisher.publishEvent(new TopicNotifyAllEvent("그룹 가입","group-1",body,group.getTopic_name()));
         }
@@ -186,7 +186,7 @@ public class AlarmService {
     public void groupLeaderChange(Groups group, String role) {
         if(group.getTopic_name()!=null) {
             Map<String, String> body = new HashMap<>();
-            body.put("role", role);
+            body.put("message", role+"(으)로 그룹장이 이전되었습니다.");
             publisher.publishEvent(new TopicNotifyAllEvent("그룹장 이전", "group-4",body,group.getTopic_name() ));
         }
     }
