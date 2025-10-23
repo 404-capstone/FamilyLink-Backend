@@ -3,6 +3,8 @@ package capstone._4.dto.user.output;
 import capstone._4.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Optional;
+
 public class UserSearchOutputDto {
     @Schema(description = "이름", example = "홍길동")
     private String username;  // 이름
@@ -28,7 +30,8 @@ public class UserSearchOutputDto {
         this.age = user.getAge();
         this.image = user.getImage();
         this.social = user.getSocial();
-        this.alarm=user.getAlarm().getEnabled();
+        this.alarm= Optional.ofNullable(user.getAlarm().getEnabled())
+                .orElse(false);
     }
 
     // Getter 메서드들
