@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import capstone._4.domain.Diary;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -115,4 +116,21 @@ public class DiaryRepository {
                 .getResultList().stream().findFirst();
     }
 
+    public Map<Integer, Integer> findTopDiaryByDay(LocalDate date,List<Integer> userId) {
+        QDiary diary = QDiary.diary;
+        QUser user = QUser.user;
+        LocalDateTime start=date.atStartOfDay();
+        LocalDateTime end=date.plusDays(1).atStartOfDay();
+        List<Tuple> diarys=queryFactory.select(diary.id,user.id)
+                .from(diary)
+                .join(diary.user,user)
+                .where(user.id.in(userId),
+                        diary.time.between(start,end))
+                .fetch();
+        return diarys.stream().collect(
+                Collectors.toMap(
+                        u->u.get(user.id)
+                ,t->t.get(diary.id) )
+        );
+    }
 }

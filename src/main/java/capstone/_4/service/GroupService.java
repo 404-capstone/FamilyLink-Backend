@@ -275,7 +275,8 @@ public class GroupService {
         int count = groupsUserRepository.deleteUser(groupId, userid);
         User user = getUserFromId(userid);
         Groups groups = getGroupFromId(groupId);
-        alarmService.quitTopic(user, groups,role);
+        alarmService.quitTopic(user, groups);
+        alarmService.groupUserDelete(user);
         //alarmService.groupUserDelete(user);
         if (count == 0) {
             throw new EntityNotFoundException("그룹유저가 삭제 되지 않았음.");

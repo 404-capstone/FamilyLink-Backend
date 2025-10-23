@@ -34,7 +34,7 @@ public class Alarm {
     private String device_token;
 
     @Column
-    private boolean enabled;
+    private Boolean enabled;
 
     @Column
     private LocalDateTime last_active;
