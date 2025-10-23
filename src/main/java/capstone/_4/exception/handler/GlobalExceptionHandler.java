@@ -1,6 +1,7 @@
 package capstone._4.exception.handler;
 
 import capstone._4.dto.ApiResponseDto;
+import capstone._4.enums.CustomException;
 import capstone._4.enums.ErrorCode;
 import capstone._4.exception.*;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
@@ -116,5 +117,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ErrorCode.GROUP_ACCESS_ERROR.getStatus(),
                 ErrorCode.GROUP_ACCESS_ERROR.getMessage(), e.getMessage()
         ));
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponseDto<Object>> handleCustomException(CustomException e) {
+        ErrorCode code = e.getErrorCode();
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(new ApiResponseDto<>(code.getStatus(), code.getMessage(), null));
     }
 }
