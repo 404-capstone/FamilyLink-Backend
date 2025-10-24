@@ -22,6 +22,7 @@ public class Alarm {
     public Alarm(String androidToken,User user) {
         this.device_token=androidToken;
         this.user=user;
+        this.enabled=true;
         user.chageAlarm(this);
     }
 

@@ -131,7 +131,7 @@ public class AlarmService {
             String token = user.getAlarm().getDevice_token();
             Map<String,String> body = new HashMap<>();
             //String role=user.getGroupsuser().get(0).getRole();
-            body.put("message","\""+role+"\" 이(가) 가족 그룹에서 탈퇴했습니다.");
+            body.put("message","“"+role+"”이(가) 가족 그룹에서 탈퇴했습니다.");
             publisher.publishEvent(new TopicUnSubscribeSendEvent("그룹원 탈퇴", "group-3",body,groups.getTopic_name(),token));
         }
 
@@ -152,7 +152,7 @@ public class AlarmService {
         if(group.getTopic_name()!=null) { //topic이 있을때만 사용
             log.info("그룹 가입 메시지 전송.");
             Map<String,String> body = new HashMap<>(); //map형태로 전송해서 여러 데이터를 담게 작성.
-            body.put("message","\""+role+"\"이(가) 가족 그룹에 가입했습니다.");
+            body.put("message","“"+role+"”이(가) 가족 그룹에 가입했습니다.");
             //이벤트 발생.그룹원 전체에게 알림.
             publisher.publishEvent(new TopicNotifyAllEvent("그룹 가입","group-1",body,group.getTopic_name()));
         }
@@ -192,7 +192,7 @@ public class AlarmService {
     public void groupLeaderChange(Groups group, String role) {
         if(group.getTopic_name()!=null) {
             Map<String, String> body = new HashMap<>();
-            body.put("message","\""+ role+"\"로 그룹장이 이전되었습니다.");
+            body.put("message","“"+ role+"”로 그룹장이 이전되었습니다.");
             publisher.publishEvent(new TopicNotifyAllEvent("그룹장 이전", "group-4",body,group.getTopic_name() ));
         }
     }
@@ -212,11 +212,11 @@ public class AlarmService {
      * 질문 작성 완료시 그룹원들에게 발생시키는 이벤트.
      * @param group
      */
-    public void questionWrite(Groups group) {
+    public void questionWrite(Groups group,List<String> tokens) {
         if(group.getTopic_name()!=null) {
             Map<String, String> body = new HashMap<>();
             body.put("message","그룹원이 질문에 응답했습니다. 확인해주세요" );
-            publisher.publishEvent(new TopicNotifyAllEvent("그룹 질문 작성", "diary-1",body,group.getTopic_name() ));
+            publisher.publishEvent(new TopicNotifySelectEvent("그룹 질문 작성", "diary-1",body,tokens ));
         }
     }
 

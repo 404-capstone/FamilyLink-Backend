@@ -152,6 +152,10 @@ public class QuestionService {
                 ).toList();
 
         questionRepository.saveAnswer(answers);
-        alarmService.questionWrite(group);
+        List<String> tokens=group.getGroupsuser() //사용자 토큰들
+                .stream().map(u->u.getUser().getAlarm().getDevice_token())
+                .filter(token->!token.equals(user.getAlarm().getDevice_token())).toList();
+
+        alarmService.questionWrite(group,tokens);
     }
 }
