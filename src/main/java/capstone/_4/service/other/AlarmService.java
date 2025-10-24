@@ -213,7 +213,7 @@ public class AlarmService {
      * @param group
      */
     public void questionWrite(Groups group,List<String> tokens) {
-        if(group.getTopic_name()!=null) {
+        if(!tokens.isEmpty()) {
             Map<String, String> body = new HashMap<>();
             body.put("message","그룹원이 질문에 응답했습니다. 확인해주세요" );
             publisher.publishEvent(new TopicNotifySelectEvent("그룹 질문 작성", "diary-1",body,tokens ));
