@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
@@ -152,6 +153,11 @@ public class QuestionService {
                 ).toList();
 
         questionRepository.saveAnswer(answers);
-        alarmService.questionWrite(group);
+        List<String> tokens=group.getGroupsuser() //사용자 토큰들
+                .stream().map(u->u.getUser().getAlarm().getDevice_token())
+                .filter(Objects::nonNull)
+                .filter(token->!token.equals(user.getAlarm().getDevice_token())).toList();
+
+        alarmService.questionWrite(group,tokens);
     }
 }

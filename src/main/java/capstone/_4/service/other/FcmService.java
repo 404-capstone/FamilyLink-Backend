@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -114,10 +115,33 @@ public class FcmService {
         send(createMessage(title,type,body,token));
     }
 
+    public void sendNotificationSelect(String title, String type, Map<String, String> body, List<String> token){
+        log.info("개인 전송");
+        send(createMessageSelect(title,type,body,token));
+    }
+
     private void send(Message message)  {
         try {
             String response= firebaseMessaging.send(message);
             log.info("응답:{}",response);
+        }catch (FirebaseMessagingException e) {
+            log.error("Firebase 메시지 전송 실패", e);
+            throw new RuntimeException(
+                    new FirebaseException(
+                            ErrorCode.CANCELLED,
+                            "파이어베이스 문자발생중 문제 발생: " + e.getMessage(),
+                            e
+                    )
+            );
+        }
+    }
+
+    private void send(List<Message> messages)  {
+        try {
+            for (Message message : messages) {
+                String response= firebaseMessaging.send(message);
+                log.info("응답:{}",response);
+            }
         }catch (FirebaseMessagingException e) {
             log.error("Firebase 메시지 전송 실패", e);
             throw new RuntimeException(
@@ -154,6 +178,25 @@ public class FcmService {
             throw new RuntimeException("알람 포맷 변환중 오류가 발생했습니다."+e.getMessage());
         }
 
+    }
+
+    private List<Message> createMessageSelect(String title, String code, Map<String,String> body, List<String> tokens) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String bodyJson=mapper.writeValueAsString(body);
+            List<Message> messages = new ArrayList<>();
+            for(String token : tokens) {
+                messages.add(Message.builder()
+                        .putData("title",title)
+                        .putData("type",code)
+                        .putData("data",bodyJson)
+                        .setToken(token)
+                        .build());
+            }
+            return messages;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("알람 포맷 변환중 오류가 발생했습니다."+e.getMessage());
+        }
     }
 
     private Message createMessage(String title, String code, Map<String,String> body, String token) {
