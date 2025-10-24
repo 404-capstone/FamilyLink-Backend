@@ -263,13 +263,13 @@ public class AlarmService {
      * 일정 코멘트 작성 시 참여자들에게 알람 전송
      * @param group
      * @param scheduleTitle
-     * @param commentId
+     * @param scheduleId
      */
-    public void scheduleCommentAdd(Groups group, String scheduleTitle, Long commentId) {
+    public void scheduleCommentAdd(Groups group, String scheduleTitle, Long scheduleId) {
         if (group.getTopic_name() != null) {
             Map<String, String> body = new HashMap<>();
             body.put("message", scheduleTitle + "에 댓글이 작성되었습니다.");
-            body.put("com_id", String.valueOf(commentId));
+            body.put("sch_id", String.valueOf(scheduleId));
             publisher.publishEvent(new TopicNotifyAllEvent("일정 코멘트 작성", "calendar-3", body, group.getTopic_name()));
         }
     }
