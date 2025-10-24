@@ -130,7 +130,7 @@ public class ScheduleService {
         // 알람 전송
         Groups group = schedule.getGroup();
         if (group != null) {
-            alarmService.scheduleCommentAdd(group, schedule.getTitle(), savedComment.getId().longValue());
+            alarmService.scheduleCommentAdd(group, schedule.getTitle(), schedule.getId().longValue());
         }
         return new CommentResponse(
                 savedComment.getId(),
@@ -263,7 +263,7 @@ public class ScheduleService {
         //일정 저장
         Schedule updatedSchedule = scheduleRepository.save(schedule);
 
-        // ✅ 알람 전송 (추가 부분)
+        // 알람 전송 (추가 부분)
         Groups group = schedule.getGroup();
         if (group != null) {
             alarmService.familyScheduleUpdate(group, updatedSchedule.getId().longValue());
