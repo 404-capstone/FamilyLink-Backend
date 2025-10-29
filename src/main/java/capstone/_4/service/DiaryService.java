@@ -119,7 +119,7 @@ public class DiaryService {
 
         Diary diary = new Diary();
         diary.setContent(request.getContent());
-        diary.setTime(LocalDateTime.now());
+        diary.setTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         diary.setUser(user);
 
         Diary savedDiary = diaryRepository.save(diary);
