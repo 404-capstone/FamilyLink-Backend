@@ -21,8 +21,9 @@ public class DiaryDetailResponse {
 
     private List<FamilyEmotion> familyEmotion;
 
-    public DiaryDetailResponse(Long id, String content, LocalDateTime diaryAt, Long userId, String feedBack,List<EmotionDetail> emotions,
-                               List<FamilyEmotion> familyEmotion) {
+    public DiaryDetailResponse(Long id, String content, LocalDateTime diaryAt, Long userId, String feedBack,List<EmotionDetail> emotions
+                               ,List<FamilyEmotion> familyEmotion
+                               ) {
         this.id = id;
         this.content = content;
         this.diaryAt = diaryAt;

@@ -64,7 +64,9 @@ public class UserJpaRepository implements UserRepository {
     @Override
     public Optional<Groups> findGroupById(int userId) {
         return em.createQuery("select gu.group from GroupsUser gu " +
-                "where gu.user.id=:userId",Groups.class)
+                "join fetch gu.group.groupsuser gus " +
+                        "join fetch gus.user u " +
+                        "where gu.user.id=:userId",Groups.class)
                 .setParameter("userId", userId)
                 .getResultList().stream().findFirst();
     }
