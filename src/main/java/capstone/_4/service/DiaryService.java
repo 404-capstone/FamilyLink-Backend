@@ -119,7 +119,7 @@ public class DiaryService {
 
         Diary diary = new Diary();
         diary.setContent(request.getContent());
-        diary.setTime(LocalDateTime.now());
+        diary.setTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
         diary.setUser(user);
 
         Diary savedDiary = diaryRepository.save(diary);
@@ -226,24 +226,34 @@ public class DiaryService {
                 ? diary.getFeedbook().replace("\n", " ")
                 : null;
 
-        List<Integer> groupUser= userRepository.findGroupById(userId)
-                .orElseThrow(()->new EntityNotFoundException("유저가 존재하지 않습니다."))
+
+        log.info("그룹유저 찾기.");
+        List<Integer> groupUser= new ArrayList<>(userRepository.findGroupById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."))
                 .getGroupsuser()
-                .stream().map(u->u.getUser().getId()).toList();
-        groupUser.remove(userId);
+                .stream().map(u -> {
+                    log.info("그룹유저 번호:{}", u.getUser().getId());
+                    return u.getUser().getId();
+                }).toList());
+
+        log.info("유저:{}",groupUser);
+        groupUser.remove(Integer.valueOf(userId));
+
+        log.info("시간:{}",diary.getTime());
         LocalDate date = diary.getTime().toLocalDate();
+        log.info("diary 찾기");
         Map<Integer,Integer> familyDiary=diaryRepository.findTopDiaryByDay(date,groupUser);
-
+        log.info("map1:{}",familyDiary);
         List<FamilyEmotion> familyEmotion = emotionRepository.findTopEmotionById(familyDiary);
-
+        //log.info("map2:{}",familyEmotion.get(0));
         return new DiaryDetailResponse(
                 diary.getId().longValue(),
                 diary.getContent(),
                 diary.getTime(),
                 diary.getUser() != null ? diary.getUser().getId().longValue() : null,
                 cleanFeedBack,
-                emotionDetails,
-                familyEmotion
+                emotionDetails
+                ,familyEmotion
         );
     }
 

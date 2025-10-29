@@ -84,12 +84,14 @@ public class AlarmService {
      * @param userId
      * @param flag
      */
+    @Transactional
     public void changeState(int userId, boolean flag) {
         Alarm alarm = alarmRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("알람 세팅을 찾을수 없습니다."));
 
-        alarm.chageState(flag);
 
+        alarm.chageState(flag);
+        log.info("flag:{}", alarm.getEnabled());
         User user = alarm.getUser();
         Optional<Groups> groups = userRepository.findGroupById(userId);
         if (groups.isEmpty()) return;
