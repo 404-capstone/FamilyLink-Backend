@@ -226,10 +226,11 @@ public class AlarmService {
      * 사진 추가시 그룹원들에게 알람을 전송하는 이벤트 메소드
      * @param group
      */
-    public void photoAdd(Groups group){
+    public void photoAdd(Groups group,Integer id){
         if(group.getTopic_name()!=null) {
             Map<String, String> body = new HashMap<>();
             body.put("message","앨범에 사진이 추가되었습니다. 앨범을 확인해주세요." );
+            body.put("id",String.valueOf(id));
             publisher.publishEvent(new TopicNotifyAllEvent("사진 추가", "album-1",body,group.getTopic_name() ));
         }
     }

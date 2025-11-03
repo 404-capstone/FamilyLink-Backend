@@ -244,6 +244,7 @@ public class DiaryService {
         log.info("diary 찾기");
         Map<Integer,Integer> familyDiary=diaryRepository.findTopDiaryByDay(date,groupUser);
         log.info("map1:{}",familyDiary);
+
         List<FamilyEmotion> familyEmotion = emotionRepository.findTopEmotionById(familyDiary);
         //log.info("map2:{}",familyEmotion.get(0));
         return new DiaryDetailResponse(
