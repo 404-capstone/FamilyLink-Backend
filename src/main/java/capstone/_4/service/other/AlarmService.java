@@ -238,11 +238,13 @@ public class AlarmService {
     /**
      * 가족 일정 추가 시 그룹원들에게 알람 전송
      * @param group
+     * @param scheduleId
      */
-    public void familyScheduleAdd(Groups group) {
+    public void familyScheduleAdd(Groups group,Long scheduleId) {
         if (group.getTopic_name() != null) {
             Map<String, String> body = new HashMap<>();
             body.put("message", "가족 일정이 추가되었습니다. 일정을 확인하세요!");
+            body.put("sch_id", String.valueOf(scheduleId));
             publisher.publishEvent(new TopicNotifyAllEvent("가족 일정 추가", "calendar-1", body, group.getTopic_name()));
         }
     }

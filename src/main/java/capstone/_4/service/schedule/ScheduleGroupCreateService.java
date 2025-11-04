@@ -83,7 +83,7 @@ public class ScheduleGroupCreateService {
             groupsScheduleRepository.save(gs);
         }
         //알람
-        alarmService.familyScheduleAdd(group);
+        alarmService.familyScheduleAdd(group,schedule.getId().longValue());
 
         // DTO로 변환하여 반환
         return GroupScheduleDto.builder()
