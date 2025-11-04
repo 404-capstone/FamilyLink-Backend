@@ -16,6 +16,7 @@ import capstone._4.repository.user.UserRepository;
 import capstone._4.repository.DiaryRepository;
 import capstone._4.repository.QuestionRepository;
 import capstone._4.repository.group.GroupsUserRepository;
+import capstone._4.service.other.AlarmService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -38,7 +39,7 @@ import static capstone._4.domain.QDiary.diary;
 @Service
 @Slf4j
 public class DiaryService {
-
+    private final AlarmService alarmService;
     private final DiaryRepository diaryRepository;
     private final GroupsUserRepository groupsUserRepository;
     private final QuestionRepository questionRepository;
@@ -54,7 +55,8 @@ public class DiaryService {
                         GroupsUserRepository groupsUserRepository, DiaryRepository diaryRepository,
                         EmotionRepository emotionRepository,
                         GroupQuestionRepository groupQuestionRepository,
-                        GroupRepository groupRepository
+                        GroupRepository groupRepository,
+                        AlarmService alarmService
     ) {
         this.geminiClient = geminiClient;
         this.diaryJpaRepository = diaryJpaRepository;
@@ -65,6 +67,7 @@ public class DiaryService {
         this.emotionRepository = emotionRepository;
         this.groupQuestionRepository = groupQuestionRepository;
         this.groupRepository = groupRepository;
+        this.alarmService = alarmService;
     }
 
 
@@ -108,7 +111,7 @@ public class DiaryService {
                 .groupQuestionId(groupQuestionId)
                 .build();
     }
-
+    //다이어리 작성
     @Transactional
     public DiaryCreateResponse createDiary(DiaryCreateRequest request) {
         // User 엔티티 조회 (userId로)
@@ -198,10 +201,6 @@ public class DiaryService {
                 .questions(questionList)
                 .build();
     }
-
-
-
-
 
 
     //상세조회
