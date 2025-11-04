@@ -76,7 +76,6 @@ public class AlbumService {
         photoImageRepository.saveAll(photos); //이미지 저장
         Groups group=groupRepository.findById(albumInputDto.getGroupId())
                 .orElseThrow(()->new EntityNotFoundException("그룹이 존재하지 않습니다."));
-        alarmService.photoAdd(group);
 
         if(userIds!=null && !userIds.isEmpty()) {
             for (int j = 0; j < userIds.size(); j++) {
@@ -89,6 +88,7 @@ public class AlbumService {
             }
         }
 
+        alarmService.photoAdd(group,photo.getId());
         return PhotoResponseDto.builder()
                 .albumId(album.getId())
                 .photoId(photo.getId())

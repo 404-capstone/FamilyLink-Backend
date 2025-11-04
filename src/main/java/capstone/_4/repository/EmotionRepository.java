@@ -45,6 +45,9 @@ public class EmotionRepository {
     }
 
     public List<FamilyEmotion> findTopEmotionById(Map<Integer, Integer> familyDiary) {
+        if(familyDiary == null || familyDiary.isEmpty()){
+            return new ArrayList<>();
+        }
         List<Integer> diaryIds=new ArrayList<>(familyDiary.values());
         QDiaryEmotion emotion = QDiaryEmotion.diaryEmotion;
         QDiaryEmotion emotionSub= new QDiaryEmotion("emotionSub");

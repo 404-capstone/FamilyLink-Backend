@@ -243,6 +243,7 @@ public class DiaryService {
         log.info("diary 찾기");
         Map<Integer,Integer> familyDiary=diaryRepository.findTopDiaryByDay(date,groupUser);
         log.info("map1:{}",familyDiary);
+
         List<FamilyEmotion> familyEmotion = emotionRepository.findTopEmotionById(familyDiary);
         //log.info("map2:{}",familyEmotion.get(0));
         return new DiaryDetailResponse(
@@ -321,8 +322,15 @@ public class DiaryService {
      * @param userId
      */
     public void checkDiary(Integer userId) {
+        Groups group=userRepository.findGroupById(userId)
+                .orElseThrow(() -> new RuntimeException("그룹 존재 x"));
         Optional<Diary> diary=diaryRepository.findDiaryWithDay(userId, LocalDate.now(ZoneId.of("Asia/Seoul")));
         if(diary.isPresent()) throw new IllegalArgumentException("다이어리가 존재하여 작성할수 없습니다.");
+        LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
+        GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(group.getId(),now)
+                .orElseThrow(() -> new RuntimeException("그룹 존재 x"));
+        Optional<GroupAnswer> answer =questionRepository.checkAnswerWithUser(groupQuestion.getId(), userId);
+        if(answer.isPresent()) throw new IllegalStateException("오늘 해당 응답을 하셨습니다.");
 
     }
 }
