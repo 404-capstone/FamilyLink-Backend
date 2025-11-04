@@ -157,7 +157,7 @@ public class QuestionService {
                 .stream().map(u->u.getUser().getAlarm().getDevice_token())
                 .filter(Objects::nonNull)
                 .filter(token->!token.equals(user.getAlarm().getDevice_token())).toList();
-
-        alarmService.questionWrite(group,tokens);
+        int question_id=groupQuestion.getId();
+        alarmService.questionWrite(group,tokens,question_id);
     }
 }

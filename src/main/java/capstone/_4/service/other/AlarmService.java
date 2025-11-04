@@ -165,7 +165,7 @@ public class AlarmService {
      * @param user
      */
     public void groupUserDelete(User user){
-        if(user.getAlarm()!=null) {
+        if(user.getAlarm()!=null && user.getAlarm().getEnabled() == true) {
             Map<String,String> body = new HashMap<>();
             body.put("message","가족 그룹에서 추방되었습니다.");
             //추방자 개인에게만 알림 전송.
@@ -214,10 +214,11 @@ public class AlarmService {
      * 질문 작성 완료시 그룹원들에게 발생시키는 이벤트.
      * @param group
      */
-    public void questionWrite(Groups group,List<String> tokens) {
+    public void questionWrite(Groups group,List<String> tokens,int question_id) {
         if(!tokens.isEmpty()) {
             Map<String, String> body = new HashMap<>();
             body.put("message","그룹원이 질문에 응답했습니다. 확인해주세요" );
+            body.put("gq_id", String.valueOf(question_id));
             publisher.publishEvent(new TopicNotifySelectEvent("그룹 질문 작성", "diary-1",body,tokens ));
         }
     }
@@ -230,7 +231,7 @@ public class AlarmService {
         if(group.getTopic_name()!=null) {
             Map<String, String> body = new HashMap<>();
             body.put("message","앨범에 사진이 추가되었습니다. 앨범을 확인해주세요." );
-            body.put("id",String.valueOf(id));
+            body.put("photo_id",String.valueOf(id));
             publisher.publishEvent(new TopicNotifyAllEvent("사진 추가", "album-1",body,group.getTopic_name() ));
         }
     }
