@@ -329,8 +329,8 @@ public class DiaryService {
         LocalDate now=LocalDate.now(ZoneId.of("Asia/Seoul"));
         GroupQuestion groupQuestion=questionRepository.findTopGroupQuestion(group.getId(),now)
                 .orElseThrow(() -> new RuntimeException("그룹 존재 x"));
-        Optional<GroupAnswer> answer =questionRepository.checkAnswerWithUser(groupQuestion.getId(), userId);
-        if(answer.isPresent()) throw new IllegalStateException("오늘 해당 응답을 하셨습니다.");
+//        Optional<GroupAnswer> answer =questionRepository.checkAnswerWithUser(groupQuestion.getId(), userId);
+//        if(answer.isPresent()) throw new IllegalStateException("오늘 해당 응답을 하셨습니다.");
 
     }
 }

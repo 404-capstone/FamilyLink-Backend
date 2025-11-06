@@ -16,6 +16,7 @@ public class Alarm {
 
     public Alarm(User user) {
         this.user=user;
+        this.enabled=true;
         user.chageAlarm(this);
     }
 
