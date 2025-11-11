@@ -70,7 +70,7 @@ public class OpenAiService {
     public OpenAiQuestionContent createQuestion() {
         log.info("질문지 만들기 시작.");
         OpenAiRequestDto openAiRequestDto = new OpenAiRequestDto();
-        openAiRequestDto.setModel("gpt-5-nano");  //모델 설정
+        openAiRequestDto.setModel("gpt-5-mini");  //모델 설정
         List<MessageRequestDto> messages = generateQuestionMessage();
         ResponseFormatDto formatDto=generateQuestionSchema();
         openAiRequestDto.setMessages(messages);
@@ -287,7 +287,7 @@ public class OpenAiService {
 
     private OpenAiResponseDto getOpenAiRecommend(GroupScheduleInfoDto groupScheduleInfoDto, List<User> users) { //실질적 호출.
         OpenAiRequestDto openAiRequestDto = new OpenAiRequestDto();
-        openAiRequestDto.setModel("gpt-5-nano");  //모델 설정.
+        openAiRequestDto.setModel("gpt-5-mini");  //모델 설정.
         List<MessageRequestDto> messages = generateRecommendMessages(groupScheduleInfoDto, users); //메시지 생성.
         openAiRequestDto.setResponse_format(generateRecommendSchema());
         openAiRequestDto.setMessages(messages);

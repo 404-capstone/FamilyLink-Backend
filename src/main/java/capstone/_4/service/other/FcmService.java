@@ -80,6 +80,7 @@ public class FcmService {
     public String deleteOneTopic(String topicName,String tokens){
         //String topicName="group"+groupId;
         try {
+            log.info(" 토픽 탈퇴 topicName:{},tokens:{}",topicName,tokens);
             if (topicName != null) {
                 FirebaseMessaging.getInstance()
                         .unsubscribeFromTopic(Collections.singletonList(tokens), (topicName));
