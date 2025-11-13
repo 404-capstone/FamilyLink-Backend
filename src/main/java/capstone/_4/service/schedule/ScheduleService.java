@@ -229,7 +229,8 @@ public class ScheduleService {
         if (request.getStartTime() != null) schedule.setStartTime(request.getStartTime());
         if (request.getEndTime() != null) schedule.setEndTime(request.getEndTime());
         if (request.getTimeflex() != null) schedule.setTimeflex(request.getTimeflex());
-
+        if (request.getContent() != null) schedule.setContent(request.getContent());
+        if (request.getLocation() != null) schedule.setLocation(request.getLocation());
 
         if (request.getParticipantIds() != null) {
             schedule.getGroupsSchedule().clear();
