@@ -29,6 +29,9 @@ public class ApiConfig {
     @Qualifier("FastApiWebClient")
     @Bean
     public WebClient FastApiWebClient() {
-        return WebClient.builder().baseUrl(fastApiUrl).build();
+
+        return WebClient.builder()
+                .baseUrl(fastApiUrl)
+                .build();
     }
 }

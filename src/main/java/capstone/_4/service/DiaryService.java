@@ -96,11 +96,11 @@ public class DiaryService {
             Integer questionId=groupQuestion.getId();
 
             GroupAnswerResponseDto groupAnswerResponseDto =
-                   GroupAnswerResponseDto.builder()
-                           .questionId(questionId)
-                           .question(groupQuestion.getContent())
-                           .answerInfo(questionAnswerResponses.getOrDefault(questionId, Collections.emptyList()))
-                           .build();
+                    GroupAnswerResponseDto.builder()
+                            .questionId(questionId)
+                            .question(groupQuestion.getContent())
+                            .answerInfo(questionAnswerResponses.getOrDefault(questionId, Collections.emptyList()))
+                            .build();
             questionResponseDto.add(groupAnswerResponseDto);
         }
 
