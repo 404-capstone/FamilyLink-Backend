@@ -1,16 +1,21 @@
 package capstone._4.service.other;
 
+import capstone._4.domain.Diary;
 import capstone._4.domain.User;
 import capstone._4.dto.gpt.*;
 import capstone._4.dto.gpt.OpenAiResponseDto;
 import capstone._4.dto.schedule.input.GroupScheduleInfoDto;
 import capstone._4.exception.GptErrorException;
 import capstone._4.service.QuestionService;
+import capstone._4.repository.DiaryRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -28,11 +33,14 @@ public class OpenAiService {
 
     private final WebClient webClient;
     private final QuestionService questionService;
+    private final DiaryRepository diaryRepository;
 
     public OpenAiService(@Qualifier("OpenAiWebClient") WebClient webClient,
-                         QuestionService questionService) {
+                         QuestionService questionService,
+                         DiaryRepository diaryRepository) {
         this.webClient = webClient;
         this.questionService = questionService;
+        this.diaryRepository = diaryRepository;
     }
 
     /**
