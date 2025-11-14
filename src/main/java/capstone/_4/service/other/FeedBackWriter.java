@@ -4,6 +4,9 @@ import capstone._4.dto.diary.EmotionResponse;
 import capstone._4.dto.diary.output.DiaryCreateResponse;
 import capstone._4.dto.diary.output.EmotionResultDto;
 import capstone._4.dto.diary.output.FeedBackDto;
+import capstone._4.dto.gpt.MessageRequestDto;
+import capstone._4.dto.gpt.OpenAiRequestDto;
+import capstone._4.dto.gpt.OpenAiResponseDto;
 import capstone._4.exception.FastApiException;
 import capstone._4.service.DiaryService;
 import lombok.extern.slf4j.Slf4j;
@@ -65,46 +68,46 @@ public class FeedBackWriter {
     private String generateAndSaveFeedback(String content) {
         log.info("GPT 피드백 요청: {}", content);
 
-        // GPT API 호출 (예시)
-        String feedback = null;
         try {
-            feedback = openAiWebClient.post()
-                    .uri("/chat/completions")  // 엔드포인트
-                    .bodyValue(Map.of(
-                            "model", "gpt-3.5-turbo",  // 사용하는 모델 이름
-                            "messages", List.of(Map.of(  // 메시지 내용
-                                    "role", "user",  // 메시지의 역할 (사용자의 메시지)
-                                    "content", content  // 다이어리 내용
-                            )),
-                            "max_tokens", 150  // 최대 토큰 수 설정
-                    ))
+            OpenAiRequestDto req = new OpenAiRequestDto();
+            req.setModel("gpt-5-mini");
+
+            req.setMessages(List.of(
+                    new MessageRequestDto("system",
+                            """
+                            너는 사용자의 일기에 대해 따뜻하고 공감하는 상담가 역할을 한다.
+                            - 비난 금지
+                            - 판단 금지
+                            - 감정 공감 먼저
+                            - 4~6줄로 작성
+                            - 마지막 줄은 '응원 문장'으로 마무리
+                            - 어려운 단어 사용 금지, 부드러운 톤 유지
+                            """),
+                    new MessageRequestDto("user", content)
+            ));
+
+            OpenAiResponseDto response = openAiWebClient.post()
+                    .uri("/chat/completions")
+                    .bodyValue(req)
                     .retrieve()
-                    .bodyToMono(Map.class) // 응답을 Map으로 받음
-                    .map(response -> {
-                        // 응답에서 'choices'가 있는지 확인
-                        if (response != null && response.containsKey("choices")) {
-                            List<Map> choices = (List<Map>) response.get("choices");
-                            if (choices.isEmpty()) {
-                                log.error("GPT 응답에서 'choices' 배열이 비어 있습니다.");
-                                return "피드백 생성 실패";  // 선택지가 없으면 실패 메시지 반환
-                            }
-                            // 선택지에서 message.content를 추출
-                            Map<String, Object> choice = choices.get(0);  // 첫 번째 선택지
-                            Map<String, Object> message = (Map<String, Object>) choice.get("message");
-                            return (String) message.get("content");  // message 안의 content 반환
-                        } else {
-                            log.error("GPT 응답에서 'choices' 필드가 누락되었습니다.");
-                            return "피드백 생성 실패";  // 응답에 'choices'가 없으면 실패 메시지 반환
-                        }
-                    })
-                    .block(); // 동기 호출로 응답 기다리기
+                    .bodyToMono(OpenAiResponseDto.class)
+                    .block();
+
+            String feedback = response.getChoices()
+                    .get(0)
+                    .getMessage()
+                    .getContent()
+                    .replace("\\n", "\n")
+                    .replace("  \n", "\n");
+
+            return feedback;
+
         } catch (Exception e) {
             log.error("GPT 피드백 요청 중 예외 발생: {}", e.getMessage());
-            return "피드백 생성 실패";  // 예외 발생 시 실패 메시지 반환
+            return "피드백 생성 실패";
         }
-
-        return feedback != null ? feedback : "피드백 생성 실패"; // 응답이 없으면 기본값 반환
     }
+
 
 
     /**
