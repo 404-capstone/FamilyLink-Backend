@@ -30,6 +30,7 @@
 
 ## ERD
 ---
+<img width="603" height="336" alt="image" src="https://github.com/user-attachments/assets/eecb8fb5-586d-41b0-8788-0eeb4c2078ad" />
 
 ## System Architecture
 ---
